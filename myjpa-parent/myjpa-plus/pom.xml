@@ -5,7 +5,7 @@
     <parent>
         <artifactId>myjpa-parent</artifactId>
         <groupId>cn.sexycode</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -44,16 +44,6 @@
         <dependency>
             <groupId>cn.sexycode</groupId>
             <artifactId>myjpa-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib</artifactId>
-            <version>2.2.2</version>
-        </dependency>
-        <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm</artifactId>
-            <version>3.3.1</version>
         </dependency>
     </dependencies>
 

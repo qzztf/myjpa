@@ -1,6 +1,7 @@
 package cn.sexycode.mybatis.jpa.plus.injector.methods;
 
 import cn.sexycode.mybatis.jpa.plus.injector.AbstractMethod;
+import cn.sexycode.mybatis.jpa.plus.injector.MyTableInfoHelper;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -43,7 +44,7 @@ public class Insert extends AbstractMethod {
                 keyColumn = tableInfo.getKeyColumn();
             } else {
                 if (null != tableInfo.getKeySequence()) {
-                    keyGenerator = TableInfoHelper.genKeyGenerator(tableInfo, builderAssistant, sqlMethod.getMethod(), languageDriver);
+                    keyGenerator = MyTableInfoHelper.genKeyGenerator(tableInfo, builderAssistant, sqlMethod.getMethod(), languageDriver);
                     keyProperty = tableInfo.getKeyProperty();
                     keyColumn = tableInfo.getKeyColumn();
                 }

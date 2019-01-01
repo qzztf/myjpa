@@ -7,6 +7,8 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -20,14 +22,15 @@ import java.io.InputStream;
  *
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = JPAConfig.class)
+@MapperScan("cn.sexycode.mybatis.jpa.samples.dao")
 public class UserDaoTest {
- /*   @Autowired
-    UserDao userDao;*/
+    @Autowired
+    UserDao userDao;
 
     @Test
     public void testFindByName() {
-//        System.out.println(userDao.findAll());
+        System.out.println(userDao.findAll());
     }
 
     @Test
@@ -45,7 +48,7 @@ public class UserDaoTest {
 
         User user = new User();
         user.setId("11");
-        ModelProxy persistModel = new ModelProxy<>(user, "cn.sexycode.mybatis.jpa.samples.dao.UserDao.insert");
+        ModelProxy persistModel = new ModelProxy<>(user, "cn.sexycode.mybatis.jpa.samples.dao.UserDao.save");
         entityManager.persist(persistModel);
 
         ModelProxy findModelProxy = new ModelProxy<>("11", "cn.sexycode.mybatis.jpa.samples.dao.UserDao.findById");

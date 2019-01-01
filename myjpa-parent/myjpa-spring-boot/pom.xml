@@ -3,21 +3,17 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>myjpa-dependencies</artifactId>
+        <artifactId>myjpa-parent</artifactId>
         <groupId>cn.sexycode</groupId>
         <version>0.0.1</version>
-        <relativePath>../myjpa-dependencies/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>myjpa-parent</artifactId>
+    <artifactId>myjpa-spring-boot</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>myjpa-core</module>
-        <module>myjpa-plus</module>
-        <module>spring-data-myjpa</module>
-        <module>spring-orm-myjpa</module>
-        <module>myjpa-spring-boot</module>
+        <module>myjpa-spring-boot-autoconfigure</module>
+        <module>myjpa-spring-boot-starter</module>
     </modules>
 
 

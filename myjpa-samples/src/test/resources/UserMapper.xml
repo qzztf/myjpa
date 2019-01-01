@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.sexycode.mybatis.jpa.samples.dao.UserDao">
-    <insert id="insert" parameterType="cn.sexycode.mybatis.jpa.samples.model.User">
+    <insert id="save" parameterType="cn.sexycode.mybatis.jpa.samples.model.User">
         insert into user(id,name) values (#{id},#{name})
     </insert>
     <select id="findByName" resultType="cn.sexycode.mybatis.jpa.samples.model.User">

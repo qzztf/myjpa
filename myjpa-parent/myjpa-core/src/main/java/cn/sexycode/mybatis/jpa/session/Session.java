@@ -5,11 +5,14 @@ import org.apache.ibatis.session.SqlSession;
 import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
 import java.io.Closeable;
+import java.util.logging.Logger;
 
 /**
  * @author qzz
  */
 public interface Session extends EntityManager, Closeable {
+    Logger LOGGER = Logger.getLogger(Session.class.getCanonicalName());
+
     /**
      * get mybatis sqlSession
      *
@@ -20,6 +23,7 @@ public interface Session extends EntityManager, Closeable {
 
     @Override
     default void flush() {
+        LOGGER.finer("flush method not support.");
     }
 
     @Override
@@ -34,15 +38,17 @@ public interface Session extends EntityManager, Closeable {
 
     @Override
     default void refresh(Object entity) {
+        LOGGER.finer("refresh method not support.");
     }
 
     @Override
     default void clear() {
+        getSession().clearCache();
     }
 
     @Override
     default void close() {
-
+        getSession().close();
     }
 
     @Override

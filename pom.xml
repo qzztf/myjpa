@@ -10,6 +10,7 @@
     <description>The plugin for mybatis to handle jpa.</description>
     <url>https://github.com/qzzsunly/my-jpa</url>
     <packaging>pom</packaging>
+    <name>myjpa-build</name>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>

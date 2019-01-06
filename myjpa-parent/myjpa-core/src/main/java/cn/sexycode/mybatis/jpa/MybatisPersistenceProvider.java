@@ -15,6 +15,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceException;
 import javax.persistence.spi.PersistenceProvider;
 import javax.persistence.spi.PersistenceUnitInfo;
+import javax.persistence.spi.ProviderUtil;
 import java.util.Collections;
 import java.util.Map;
 import java.util.logging.Level;
@@ -70,6 +71,21 @@ public class MybatisPersistenceProvider implements PersistenceProvider {
             log.finest(String.format("Starting createContainerEntityManagerFactory : %s", info.getPersistenceUnitName()));
         }
         return createEntityManagerFactory(info.getPersistenceUnitName(), properties);
+    }
+
+    @Override
+    public void generateSchema(PersistenceUnitInfo persistenceUnitInfo, Map map) {
+
+    }
+
+    @Override
+    public boolean generateSchema(String s, Map map) {
+        return false;
+    }
+
+    @Override
+    public ProviderUtil getProviderUtil() {
+        return null;
     }
 
 

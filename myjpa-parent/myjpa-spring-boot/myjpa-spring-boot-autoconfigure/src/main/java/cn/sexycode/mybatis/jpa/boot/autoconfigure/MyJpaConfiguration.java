@@ -18,7 +18,6 @@ package cn.sexycode.mybatis.jpa.boot.autoconfigure;
 
 import cn.sexycode.mybatis.jpa.orm.vendor.MyJpaVendorAdapter;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
@@ -43,7 +42,7 @@ import java.util.Map;
  * {@link JpaBaseConfiguration} implementation for MyJpa
  */
 @Configuration
-@ConditionalOnSingleCandidate(DataSource.class)
+//@ConditionalOnSingleCandidate(DataSource.class)
 class MyJpaConfiguration extends JpaBaseConfiguration {
 
 //	private static final Log logger = LogFactory.getLog(HibernateJpaConfiguration.class);

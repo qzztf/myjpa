@@ -1,0 +1,2 @@
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.sexycode.mybatis.jpa.boot.autoconfigure.MyJpaAutoConfiguration

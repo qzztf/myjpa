@@ -1,16 +1,16 @@
 package cn.sexycode.mybatis.jpa.samples.dao;
 
 import cn.sexycode.mybatis.jpa.orm.vendor.MyJpaVendorAdapter;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
 
 /**
  *
  */
 @Configuration
-@AutoConfigureDataJpa
+@EnableJpaRepositories
 public class JPAConfig {
     @Bean
     public AbstractJpaVendorAdapter createJpaVendorAdapter() {

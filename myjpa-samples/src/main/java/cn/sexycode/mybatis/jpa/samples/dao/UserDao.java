@@ -1,14 +1,14 @@
 package cn.sexycode.mybatis.jpa.samples.dao;
 
 import cn.sexycode.mybatis.jpa.samples.model.User;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
 /**
  *
  */
-public interface UserDao extends CrudRepository<User, String> {
+public interface UserDao extends JpaRepository<User, String> {
     List<User> findByName(String name);
 
 

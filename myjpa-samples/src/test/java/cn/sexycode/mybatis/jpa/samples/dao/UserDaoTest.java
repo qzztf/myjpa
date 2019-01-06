@@ -8,8 +8,8 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.EntityManager;
@@ -22,10 +22,11 @@ import java.io.InputStream;
  *
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = JPAConfig.class)
+@SpringBootTest
+@ContextConfiguration(classes = JPAConfig.class)
 @MapperScan("cn.sexycode.mybatis.jpa.samples.dao")
 public class UserDaoTest {
-    @Autowired
+//    @Autowired
     UserDao userDao;
 
     @Test

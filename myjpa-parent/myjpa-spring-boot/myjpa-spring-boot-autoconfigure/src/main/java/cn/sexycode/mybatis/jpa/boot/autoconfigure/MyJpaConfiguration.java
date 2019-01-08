@@ -126,12 +126,12 @@ class MyJpaConfiguration extends JpaBaseConfiguration {
     @Override
     protected void customizeVendorProperties(Map<String, Object> vendorProperties) {
         super.customizeVendorProperties(vendorProperties);
-        if (!vendorProperties.containsKey(JTA_PLATFORM)) {
+        /*if (!vendorProperties.containsKey(JTA_PLATFORM)) {
             configureJtaPlatform(vendorProperties);
         }
         if (!vendorProperties.containsKey(PROVIDER_DISABLES_AUTOCOMMIT)) {
             configureProviderDisablesAutocommit(vendorProperties);
-        }
+        }*/
     }
 
     private void configureJtaPlatform(Map<String, Object> vendorProperties)

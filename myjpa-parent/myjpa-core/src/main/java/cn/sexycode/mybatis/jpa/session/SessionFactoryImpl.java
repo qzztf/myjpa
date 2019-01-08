@@ -1,5 +1,6 @@
 package cn.sexycode.mybatis.jpa.session;
 
+import cn.sexycode.mybatis.jpa.metamodel.internal.MetamodelImpl;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import javax.naming.NamingException;
@@ -7,10 +8,10 @@ import javax.naming.Reference;
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.metamodel.Metamodel;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- *
  * @author qzz
  */
 public class SessionFactoryImpl implements SessionFactory {
@@ -53,7 +54,7 @@ public class SessionFactoryImpl implements SessionFactory {
 
     @Override
     public Metamodel getMetamodel() {
-        return null;
+        return new MetamodelImpl(this);
     }
 
     @Override
@@ -62,7 +63,7 @@ public class SessionFactoryImpl implements SessionFactory {
 
     @Override
     public Map<String, Object> getProperties() {
-        return null;
+        return new LinkedHashMap<>(5);
     }
 
     @Override

@@ -23,8 +23,8 @@ import java.io.InputStream;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ContextConfiguration(classes = JPAConfig.class)
-@MapperScan("cn.sexycode.mybatis.jpa.samples.dao")
+//@ContextConfiguration(classes = JPAConfig.class)
+//@MapperScan("cn.sexycode.mybatis.jpa.samples.dao")
 public class UserDaoTest {
 //    @Autowired
     UserDao userDao;

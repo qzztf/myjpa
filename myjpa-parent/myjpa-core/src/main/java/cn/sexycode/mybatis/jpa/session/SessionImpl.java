@@ -186,7 +186,7 @@ public class SessionImpl implements Session {
 
     @Override
     public Object getDelegate() {
-        return null;
+        return this;
     }
 
 

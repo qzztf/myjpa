@@ -41,7 +41,7 @@ public class MybatisPersistenceProvider implements PersistenceProvider {
         }
 
         try {
-            return new SessionFactoryImpl(new SqlSessionFactoryBuilder().build(Resources.getResourceAsStream(Consts.DEFAULT_CFG_FILE)));
+            return new SessionFactoryImpl(new SqlSessionFactoryBuilder().build(Resources.getResourceAsStream(ClassLoader.getSystemClassLoader(),Consts.DEFAULT_CFG_FILE)));
         } catch (PersistenceException pe) {
             throw pe;
         } catch (Exception e) {

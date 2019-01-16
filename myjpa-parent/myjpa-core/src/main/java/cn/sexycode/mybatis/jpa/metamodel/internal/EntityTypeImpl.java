@@ -23,10 +23,10 @@ public class EntityTypeImpl<X>  extends AbstractIdentifiableType<X> implements E
 	public EntityTypeImpl(Class javaType, AbstractIdentifiableType<? super X> superType) {
 		super(
 				javaType,
-				"",
+				javaType.getCanonicalName(),
 				superType,
 				false,
-				false,
+				true,
 				false
 		);/*super(
 				javaType,

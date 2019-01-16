@@ -59,16 +59,28 @@ public class MetamodelImpl implements Metamodel, Serializable {
             type = jpaEmbeddableTypeMap.get(cls);
         }
         if (type == null) {
-            throw new IllegalArgumentException("Not a managed type: " + cls);
+            EntityTypeImpl entityType = new EntityTypeImpl(
+                    cls,
+                    null
+            );
+            jpaEntityTypeMap.put(cls, entityType);
+            type = entityType;
+//            throw new IllegalArgumentException("Not a managed type: " + cls);
         }
         return (ManagedType<X>) type;
     }
 
     @Override
     public <X> EmbeddableType<X> embeddable(Class<X> cls) {
-        final EmbeddableType<?> embeddableType = jpaEmbeddableTypeMap.get(cls);
+        EmbeddableType<?> embeddableType = jpaEmbeddableTypeMap.get(cls);
         if (embeddableType == null) {
-            throw new IllegalArgumentException("Not an embeddable: " + cls);
+            EmbeddableTypeImpl type = new EmbeddableTypeImpl(
+                    cls,
+                    null
+            );
+            jpaEmbeddableTypeMap.put(cls, type);
+            embeddableType = type;
+//            throw new IllegalArgumentException("Not an embeddable: " + cls);
         }
         return (EmbeddableType<X>) embeddableType;
     }

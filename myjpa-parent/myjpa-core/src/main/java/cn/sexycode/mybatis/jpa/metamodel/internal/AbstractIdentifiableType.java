@@ -28,6 +28,7 @@ import java.util.Set;
 public abstract class AbstractIdentifiableType<X>
 		extends AbstractManagedType<X>
 		implements IdentifiableType<X>, Serializable {
+	private SingularAttributeImpl<X, ?> id;
 
 	private final boolean hasIdentifierProperty;
 	private final boolean hasIdClass;
@@ -47,6 +48,14 @@ public abstract class AbstractIdentifiableType<X>
 		this.hasIdClass = hasIdClass;
 		this.hasIdentifierProperty = hasIdentifierProperty;
 		this.isVersioned = versioned;
+		this.id =  new SingularAttributeImpl.Identifier(
+				"id",
+				getIdType().getJavaType(),
+				null,
+				null,
+				getIdType(),
+				Attribute.PersistentAttributeType.BASIC
+		);
 	}
 
 	public boolean hasIdClass() {
@@ -55,7 +64,8 @@ public abstract class AbstractIdentifiableType<X>
 
 	@Override
 	public boolean hasSingleIdAttribute() {
-		return !hasIdClass() && hasIdentifierProperty;
+//		return !hasIdClass() && hasIdentifierProperty;
+		return true;
 	}
 
 	@Override
@@ -69,12 +79,11 @@ public abstract class AbstractIdentifiableType<X>
 	@SuppressWarnings({ "unchecked" })
 	public <Y> SingularAttribute<? super X, Y> getId(Class<Y> javaType) {
 		ensureNoIdClass();
-		/*SingularAttributeImpl id = locateIdAttribute();
+		SingularAttributeImpl id = locateIdAttribute();
 		if ( id != null ) {
 			checkType( id, javaType );
 		}
-		return ( SingularAttribute<? super X, Y> ) id;*/
-		return null;
+		return ( SingularAttribute<? super X, Y> ) id;
 	}
 
 	private void ensureNoIdClass() {
@@ -85,7 +94,7 @@ public abstract class AbstractIdentifiableType<X>
 		}
 	}
 
-	/*private SingularAttributeImpl locateIdAttribute() {
+	private SingularAttributeImpl locateIdAttribute() {
 		if ( id != null ) {
 			return id;
 		}
@@ -128,7 +137,6 @@ public abstract class AbstractIdentifiableType<X>
 			);
 		}
 	}
-*/
 	@Override
 	@SuppressWarnings({ "unchecked" })
 	public <Y> SingularAttribute<X, Y> getDeclaredId(Class<Y> javaType) {
@@ -148,15 +156,15 @@ public abstract class AbstractIdentifiableType<X>
 		if ( id != null ) {
 			return id.getType();
 		}*/
-
-		Set<SingularAttribute<? super X, ?>> idClassAttributes = getIdClassAttributesSafely();
+		return new BasicTypeImpl<>(String.class, PersistenceType.BASIC);
+		/*Set<SingularAttribute<? super X, ?>> idClassAttributes = getIdClassAttributesSafely();
 		if ( idClassAttributes != null ) {
 			if ( idClassAttributes.size() == 1 ) {
 				return idClassAttributes.iterator().next().getType();
 			}
 		}
 
-		return null;
+		return null;*/
 	}
 
 	/**
@@ -188,7 +196,7 @@ public abstract class AbstractIdentifiableType<X>
 		internalCollectIdClassAttributes( attributes );
 
 		if ( attributes.isEmpty() ) {
-			throw new IllegalArgumentException( "Unable to locate IdClass attributes [" + getJavaType() + "]" );
+//			throw new IllegalArgumentException( "Unable to locate IdClass attributes [" + getJavaType() + "]" );
 		}
 
 		return attributes;

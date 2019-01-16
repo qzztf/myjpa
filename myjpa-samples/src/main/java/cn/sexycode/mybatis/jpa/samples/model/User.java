@@ -18,7 +18,7 @@ public class User {
     private String id;
 
     @Column
-    private String name;
+    private String fullName;
 
 //    private Integer age;
 }

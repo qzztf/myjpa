@@ -16,6 +16,7 @@
 
 package cn.sexycode.mybatis.jpa.boot.autoconfigure;
 
+import cn.sexycode.mybatis.jpa.data.repository.support.MyJpaRepositoryFactoryBean;
 import cn.sexycode.mybatis.jpa.orm.vendor.MyJpaVendorAdapter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
@@ -27,6 +28,7 @@ import org.springframework.boot.jdbc.metadata.CompositeDataSourcePoolMetadataPro
 import org.springframework.boot.jdbc.metadata.DataSourcePoolMetadata;
 import org.springframework.boot.jdbc.metadata.DataSourcePoolMetadataProvider;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jndi.JndiLocatorDelegate;
 import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
 import org.springframework.transaction.jta.JtaTransactionManager;
@@ -43,6 +45,7 @@ import java.util.Map;
  */
 @Configuration
 //@ConditionalOnSingleCandidate(DataSource.class)
+@EnableJpaRepositories(repositoryFactoryBeanClass = MyJpaRepositoryFactoryBean.class)
 class MyJpaConfiguration extends JpaBaseConfiguration {
 
 //	private static final Log logger = LogFactory.getLog(HibernateJpaConfiguration.class);

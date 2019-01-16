@@ -1,6 +1,7 @@
 package cn.sexycode.mybatis.jpa.samples.dao;
 
 import cn.sexycode.mybatis.jpa.binding.ModelProxy;
+import cn.sexycode.mybatis.jpa.data.repository.support.MyJpaRepositoryFactoryBean;
 import cn.sexycode.mybatis.jpa.samples.model.User;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -8,7 +9,10 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -23,10 +27,11 @@ import java.io.InputStream;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@EnableJpaRepositories(repositoryFactoryBeanClass = MyJpaRepositoryFactoryBean.class)
 //@ContextConfiguration(classes = JPAConfig.class)
 //@MapperScan("cn.sexycode.mybatis.jpa.samples.dao")
 public class UserDaoTest {
-//    @Autowired
+    @Autowired
     UserDao userDao;
 
     @Test
@@ -39,7 +44,7 @@ public class UserDaoTest {
         InputStream inputStream = Resources.getResourceAsStream("mybatis-config.xml");
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
         UserDao userDao = sqlSessionFactory.openSession().getMapper(UserDao.class);
-        userDao.findByName("111");
+        userDao.findByFullName("111");
     }
 
     @Test
@@ -55,7 +60,7 @@ public class UserDaoTest {
         ModelProxy findModelProxy = new ModelProxy<>("11", "cn.sexycode.mybatis.jpa.samples.dao.UserDao.findById");
         System.out.println("插入后查找: " + entityManager.find(User.class, findModelProxy));
 
-        user.setName("qzz");
+        user.setFullName("qzz");
         ModelProxy updateModel = new ModelProxy<>(user, "cn.sexycode.mybatis.jpa.samples.dao.UserDao.updateById");
         entityManager.merge(updateModel);
         System.out.println("更新后查找: " + entityManager.find(User.class, findModelProxy));

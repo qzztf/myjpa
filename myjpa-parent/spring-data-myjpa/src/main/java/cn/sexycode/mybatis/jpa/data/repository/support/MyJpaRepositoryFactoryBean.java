@@ -13,6 +13,7 @@ import java.io.Serializable;
  * @author qinzaizhen
  */
 public class MyJpaRepositoryFactoryBean extends JpaRepositoryFactoryBean {
+    private final Class repositoryInterface;
     /**
      * Creates a new {@link JpaRepositoryFactoryBean} for the given repository interface.
      *
@@ -20,6 +21,7 @@ public class MyJpaRepositoryFactoryBean extends JpaRepositoryFactoryBean {
      */
     public MyJpaRepositoryFactoryBean(Class repositoryInterface) {
         super(repositoryInterface);
+        this.repositoryInterface = repositoryInterface;
     }
 
     @Override
@@ -27,7 +29,7 @@ public class MyJpaRepositoryFactoryBean extends JpaRepositoryFactoryBean {
         return new MyJpaRepositoryFactory(entityManager);
     }
 
-    private static class MyJpaRepositoryFactory<T, I extends Serializable> extends JpaRepositoryFactory {
+    private class MyJpaRepositoryFactory<T, I extends Serializable> extends JpaRepositoryFactory {
 
         private final EntityManager em;
 
@@ -38,7 +40,7 @@ public class MyJpaRepositoryFactoryBean extends JpaRepositoryFactoryBean {
 
         @Override
         protected Object getTargetRepository(RepositoryInformation information) {
-            return new MyJpaRepositoryImpl<T, I>(information.getDomainType(), em);
+            return new MyJpaRepositoryImpl<T, I>((Class<T>) information.getDomainType(), em, repositoryInterface);
         }
 
         @Override

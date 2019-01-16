@@ -1,5 +1,6 @@
 package cn.sexycode.mybatis.jpa.data.repository.support;
 
+import cn.sexycode.mybatis.jpa.binding.ModelProxy;
 import cn.sexycode.mybatis.jpa.data.repository.MyJpaRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -19,11 +20,12 @@ import java.util.Optional;
 public class MyJpaRepositoryImpl<T, ID> implements JpaSpecificationExecutor<T>, MyJpaRepository<T, ID> {
     private final EntityManager em;
     private final PersistenceProvider provider;
-    private final Class domainClass;
-
-    public MyJpaRepositoryImpl(Class domainClass, EntityManager em) {
+    private final Class<T> domainClass;
+    private final Class repositoryInterface;
+    public MyJpaRepositoryImpl(Class<T> domainClass, EntityManager em, Class repositoryInterface) {
         this.em = em;
         this.domainClass = domainClass;
+        this.repositoryInterface = repositoryInterface;
         this.provider = PersistenceProvider.fromEntityManager(this.em);
     }
 
@@ -85,7 +87,8 @@ public class MyJpaRepositoryImpl<T, ID> implements JpaSpecificationExecutor<T>, 
 
     @Override
     public Optional<T> findById(ID id) {
-        return Optional.empty();
+        ModelProxy findModelProxy = new ModelProxy<>(id, repositoryInterface.getCanonicalName() + ".findById");
+        return Optional.ofNullable(em.find(domainClass, findModelProxy));
     }
 
     @Override
@@ -115,7 +118,7 @@ public class MyJpaRepositoryImpl<T, ID> implements JpaSpecificationExecutor<T>, 
 
     @Override
     public T getOne(ID id) {
-        return null;
+        return findById(id).orElse(null);
     }
 
     @Override

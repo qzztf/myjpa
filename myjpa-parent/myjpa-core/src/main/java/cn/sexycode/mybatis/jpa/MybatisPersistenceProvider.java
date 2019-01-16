@@ -1,9 +1,3 @@
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later.
- * See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
- */
 package cn.sexycode.mybatis.jpa;
 
 import cn.sexycode.mybatis.jpa.session.SessionFactoryImpl;
@@ -41,7 +35,7 @@ public class MybatisPersistenceProvider implements PersistenceProvider {
         }
 
         try {
-            return new SessionFactoryImpl(new SqlSessionFactoryBuilder().build(Resources.getResourceAsStream(ClassLoader.getSystemClassLoader(),Consts.DEFAULT_CFG_FILE)));
+            return new SessionFactoryImpl(new SqlSessionFactoryBuilder().build(Resources.getResourceAsStream(ClassLoader.getSystemClassLoader(), Consts.DEFAULT_CFG_FILE)));
         } catch (PersistenceException pe) {
             throw pe;
         } catch (Exception e) {

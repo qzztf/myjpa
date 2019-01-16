@@ -2,9 +2,9 @@ package cn.sexycode.mybatis.jpa.boot.autoconfigure;
 
 import cn.sexycode.mybatis.jpa.data.repository.support.MyJpaRepositoryFactoryBean;
 import cn.sexycode.mybatis.jpa.orm.vendor.MyJpaVendorAdapter;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
@@ -57,6 +57,7 @@ class MyJpaConfiguration extends JpaBaseConfiguration {
 
     private DataSourcePoolMetadataProvider poolMetadataProvider;
 
+    private SqlSessionFactory sessionFactory;
 //	private final List<HibernatePropertiesCustomizer> hibernatePropertiesCustomizers;
 
     MyJpaConfiguration(DataSource dataSource, JpaProperties jpaProperties,
@@ -66,13 +67,14 @@ class MyJpaConfiguration extends JpaBaseConfiguration {
                        ObjectProvider<List<SchemaManagementProvider>> providers,
 //                       ObjectProvider<PhysicalNamingStrategy> physicalNamingStrategy,
 //                       ObjectProvider<ImplicitNamingStrategy> implicitNamingStrategy,
-                       ObjectProvider<List<HibernatePropertiesCustomizer>> hibernatePropertiesCustomizers) {
+                       ObjectProvider<SqlSessionFactory> sessionFactories) {
         super(dataSource, jpaProperties, jtaTransactionManager,
                 transactionManagerCustomizers);
 		/*this.defaultDdlAutoProvider = new HibernateDefaultDdlAutoProvider(
 				providers.getIfAvailable(Collections::emptyList));*/
         this.poolMetadataProvider = new CompositeDataSourcePoolMetadataProvider(
                 metadataProviders.getIfAvailable());
+        this.sessionFactory = sessionFactories.getIfAvailable();
 	/*	this.hibernatePropertiesCustomizers = determineHibernatePropertiesCustomizers(
 				physicalNamingStrategy.getIfAvailable(),
 				implicitNamingStrategy.getIfAvailable(),
@@ -97,7 +99,7 @@ class MyJpaConfiguration extends JpaBaseConfiguration {
 
     @Override
     protected AbstractJpaVendorAdapter createJpaVendorAdapter() {
-        return new MyJpaVendorAdapter();
+        return new MyJpaVendorAdapter(sessionFactory);
     }
 
     @Override

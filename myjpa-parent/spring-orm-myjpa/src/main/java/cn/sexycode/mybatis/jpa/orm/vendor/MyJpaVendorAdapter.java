@@ -44,7 +44,18 @@ public class MyJpaVendorAdapter extends AbstractJpaVendorAdapter {
 
     private final MyJpaDialect jpaDialect = new MyJpaDialect();
 
-    private final PersistenceProvider persistenceProvider = new MybatisPersistenceProvider();
+    private SqlSessionFactory sessionFactory;
+
+    private final PersistenceProvider persistenceProvider;
+
+    public MyJpaVendorAdapter() {
+        persistenceProvider = null;
+    }
+
+    public MyJpaVendorAdapter(SqlSessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+        persistenceProvider = new MybatisPersistenceProvider(sessionFactory);
+    }
 
     @Override
     public PersistenceProvider getPersistenceProvider() {

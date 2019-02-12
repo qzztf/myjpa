@@ -13,7 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * @author qinzaizhen
  */
 @SpringBootApplication
-@EnableJpaRepositories(repositoryFactoryBeanClass = MyJpaRepositoryFactoryBean.class)
+//@EnableJpaRepositories(repositoryFactoryBeanClass = MyJpaRepositoryFactoryBean.class)
 //@MapperScan("cn.sexycode.mybatis.jpa.samples.dao")
 public class MyJpaSamplesApplication {
     public static void main(String[] args) {

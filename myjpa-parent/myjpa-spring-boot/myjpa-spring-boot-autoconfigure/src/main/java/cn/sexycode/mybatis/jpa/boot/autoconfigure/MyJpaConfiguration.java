@@ -27,11 +27,11 @@ import java.util.Map;
 
 /**
  * {@link JpaBaseConfiguration} implementation for MyJpa
+ * @author qinzaizhen
  */
 @Configuration
 @ConditionalOnSingleCandidate(DataSource.class)
-@EnableJpaRepositories(repositoryFactoryBeanClass = MyJpaRepositoryFactoryBean.class)
-class MyJpaConfiguration extends JpaBaseConfiguration {
+public class MyJpaConfiguration extends JpaBaseConfiguration {
 
 //	private static final Log logger = LogFactory.getLog(HibernateJpaConfiguration.class);
 

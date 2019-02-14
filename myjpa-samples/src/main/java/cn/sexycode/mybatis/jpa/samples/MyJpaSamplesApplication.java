@@ -1,12 +1,9 @@
 package cn.sexycode.mybatis.jpa.samples;
 
-import cn.sexycode.mybatis.jpa.data.repository.support.MyJpaRepositoryFactoryBean;
 import cn.sexycode.mybatis.jpa.samples.dao.UserDao;
 import cn.sexycode.mybatis.jpa.samples.model.User;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  *

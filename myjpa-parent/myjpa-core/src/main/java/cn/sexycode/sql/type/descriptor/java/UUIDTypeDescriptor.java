@@ -6,8 +6,9 @@
  */
 package cn.sexycode.sql.type.descriptor.java;
 
-import org.hibernate.internal.util.BytesHelper;
-import org.hibernate.type.descriptor.WrapperOptions;
+
+import cn.sexycode.sql.type.descriptor.WrapperOptions;
+import cn.sexycode.sql.util.BytesHelper;
 
 import java.io.Serializable;
 import java.util.UUID;

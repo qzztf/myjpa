@@ -6,8 +6,9 @@
  */
 package cn.sexycode.sql.type.descriptor.sql;
 
-import org.hibernate.mapping.Array;
-import org.jboss.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -26,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Steve Ebersole
  */
 public class JdbcTypeJavaClassMappings {
-    private static final Logger log = Logger.getLogger(JdbcTypeJavaClassMappings.class);
+    private static final Logger log = LoggerFactory.getLogger(JdbcTypeJavaClassMappings.class);
 
     public static final JdbcTypeJavaClassMappings INSTANCE = new JdbcTypeJavaClassMappings();
 
@@ -57,7 +58,7 @@ public class JdbcTypeJavaClassMappings {
             return cls;
         }
 
-        log.debugf(
+        log.debug(
                 "Java Class mapping not known for JDBC type code [%s]; using java.lang.Object",
                 typeCode
         );

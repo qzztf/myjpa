@@ -6,9 +6,9 @@
  */
 package cn.sexycode.sql.type.descriptor.java;
 
-import org.hibernate.cfg.Environment;
-import org.hibernate.internal.util.compare.CalendarComparator;
-import org.hibernate.type.descriptor.WrapperOptions;
+
+import cn.sexycode.sql.type.descriptor.WrapperOptions;
+import cn.sexycode.sql.util.CalendarComparator;
 
 import java.util.Calendar;
 import java.util.Comparator;
@@ -101,15 +101,9 @@ public class CalendarDateTypeDescriptor extends AbstractTypeDescriptor<Calendar>
         }
 
         Calendar cal = new GregorianCalendar();
-        if (Environment.jvmHasTimestampBug()) {
-            final long milliseconds = ((Date) value).getTime();
-            final long nanoseconds = java.sql.Timestamp.class.isInstance(value)
-                    ? ((java.sql.Timestamp) value).getNanos()
-                    : 0;
-            cal.setTime(new Date(milliseconds + nanoseconds / 1000000));
-        } else {
-            cal.setTime((Date) value);
-        }
+
+        cal.setTime((Date) value);
+
         return cal;
     }
 }

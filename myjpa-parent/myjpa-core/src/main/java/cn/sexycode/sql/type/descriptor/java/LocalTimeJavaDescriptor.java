@@ -6,8 +6,8 @@
  */
 package cn.sexycode.sql.type.descriptor.java;
 
-import org.hibernate.type.LocalTimeType;
-import org.hibernate.type.descriptor.WrapperOptions;
+import cn.sexycode.sql.type.LocalTimeType;
+import cn.sexycode.sql.type.descriptor.WrapperOptions;
 
 import java.sql.Time;
 import java.sql.Timestamp;

@@ -6,8 +6,9 @@
  */
 package cn.sexycode.sql.type.descriptor.java;
 
-import org.hibernate.HibernateException;
-import org.hibernate.type.descriptor.WrapperOptions;
+
+import cn.sexycode.sql.type.TypeException;
+import cn.sexycode.sql.type.descriptor.WrapperOptions;
 
 import java.sql.Time;
 import java.text.ParseException;
@@ -50,7 +51,7 @@ public class JdbcTimeTypeDescriptor extends AbstractTypeDescriptor<Date> {
         try {
             return new Time(new SimpleDateFormat(TIME_FORMAT).parse(string).getTime());
         } catch (ParseException pe) {
-            throw new HibernateException("could not parse time string" + string, pe);
+            throw new TypeException("could not parse time string" + string, pe);
         }
     }
 

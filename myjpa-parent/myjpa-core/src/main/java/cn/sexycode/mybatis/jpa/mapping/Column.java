@@ -9,6 +9,7 @@ package cn.sexycode.mybatis.jpa.mapping;
 
 import cn.sexycode.mybatis.jpa.binding.MappingException;
 import cn.sexycode.mybatis.jpa.util.StringHelper;
+import cn.sexycode.sql.dialect.Dialect;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
 
 import java.io.Serializable;

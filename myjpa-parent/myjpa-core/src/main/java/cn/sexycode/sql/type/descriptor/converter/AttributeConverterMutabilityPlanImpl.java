@@ -6,7 +6,8 @@
  */
 package cn.sexycode.sql.type.descriptor.converter;
 
-import org.hibernate.type.descriptor.java.MutableMutabilityPlan;
+
+import cn.sexycode.sql.type.descriptor.java.MutableMutabilityPlan;
 
 import javax.persistence.AttributeConverter;
 

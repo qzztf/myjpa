@@ -7,11 +7,9 @@
 package cn.sexycode.mybatis.jpa.mapping;
 
 import cn.sexycode.mybatis.jpa.binding.MyJpaException;
-import org.hibernate.MyJpaException;
-import org.hibernate.annotations.common.util.StringHelper;
-import org.hibernate.boot.model.relational.Exportable;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.engine.spi.Mapping;
+import cn.sexycode.mybatis.jpa.util.StringHelper;
+import cn.sexycode.sql.dialect.Dialect;
+import cn.sexycode.sql.type.Mapping;
 
 import java.io.Serializable;
 import java.math.BigInteger;

@@ -6,8 +6,9 @@
  */
 package cn.sexycode.sql.type.descriptor.java;
 
-import org.hibernate.HibernateException;
-import org.hibernate.type.descriptor.WrapperOptions;
+
+import cn.sexycode.sql.type.TypeException;
+import cn.sexycode.sql.type.descriptor.WrapperOptions;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -55,7 +56,7 @@ public class JdbcTimestampTypeDescriptor extends AbstractTypeDescriptor<Date> {
         try {
             return new Timestamp(new SimpleDateFormat(TIMESTAMP_FORMAT).parse(string).getTime());
         } catch (ParseException pe) {
-            throw new HibernateException("could not parse timestamp string" + string, pe);
+            throw new TypeException("could not parse timestamp string" + string, pe);
         }
     }
 

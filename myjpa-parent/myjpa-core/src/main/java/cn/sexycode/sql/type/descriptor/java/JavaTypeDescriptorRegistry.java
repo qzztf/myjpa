@@ -6,12 +6,13 @@
  */
 package cn.sexycode.sql.type.descriptor.java;
 
-import org.hibernate.HibernateException;
-import org.hibernate.annotations.Immutable;
-import org.hibernate.internal.CoreLogging;
-import org.hibernate.internal.CoreMessageLogger;
-import org.hibernate.internal.util.ReflectHelper;
-import org.hibernate.type.descriptor.WrapperOptions;
+
+import cn.sexycode.sql.type.TypeException;
+import cn.sexycode.sql.type.descriptor.WrapperOptions;
+import cn.sexycode.sql.util.ReflectHelper;
+import jdk.nashorn.internal.ir.annotations.Immutable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -23,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Steve Ebersole
  */
 public class JavaTypeDescriptorRegistry {
-    private static final CoreMessageLogger log = CoreLogging.messageLogger(JavaTypeDescriptorRegistry.class);
+    private static final Logger log = LoggerFactory.getLogger(JavaTypeDescriptorRegistry.class);
 
     public static final JavaTypeDescriptorRegistry INSTANCE = new JavaTypeDescriptorRegistry();
 
@@ -87,7 +88,7 @@ public class JavaTypeDescriptorRegistry {
     public void addDescriptor(JavaTypeDescriptor descriptor) {
         JavaTypeDescriptor old = addDescriptorInternal(descriptor);
         if (old != null) {
-            log.debugf(
+            log.debug(
                     "JavaTypeDescriptorRegistry entry replaced : %s -> %s (was %s)",
                     descriptor.getJavaTypeClass(),
                     descriptor,
@@ -116,7 +117,7 @@ public class JavaTypeDescriptorRegistry {
         // find the first "assignable" match
         for (Map.Entry<Class, JavaTypeDescriptor> entry : descriptorsByClass.entrySet()) {
             if (entry.getKey().isAssignableFrom(cls)) {
-                log.debugf("Using  cached JavaTypeDescriptor instance for Java class [%s]", cls.getName());
+                log.debug("Using  cached JavaTypeDescriptor instance for Java class [%s]", cls.getName());
                 return entry.getValue();
             }
         }
@@ -125,7 +126,7 @@ public class JavaTypeDescriptorRegistry {
             return new SerializableTypeDescriptor(cls);
         }
 
-        log.debugf(
+        log.debug(
                 "Could not find matching JavaTypeDescriptor for requested Java class [%s]; using fallback.  " +
                         "This means Hibernate does not know how to perform certain basic operations in relation to this Java type." +
                         "",
@@ -139,7 +140,7 @@ public class JavaTypeDescriptorRegistry {
     @SuppressWarnings("unchecked")
     private void checkEqualsAndHashCode(Class javaType) {
         if (!ReflectHelper.overridesEquals(javaType) || !ReflectHelper.overridesHashCode(javaType)) {
-            log.unknownJavaTypeNoEqualsHashCode(javaType);
+//            log.unknownJavaTypeNoEqualsHashCode(javaType);
         }
     }
 
@@ -158,7 +159,7 @@ public class JavaTypeDescriptorRegistry {
             return new MutableMutabilityPlan<T>() {
                 @Override
                 protected T deepCopyNotNull(T value) {
-                    throw new HibernateException(
+                    throw new TypeException(
                             "Not known how to deep copy value of type: [" + type
                                     .getName() + "]"
                     );
@@ -173,7 +174,7 @@ public class JavaTypeDescriptorRegistry {
 
         @Override
         public T fromString(String string) {
-            throw new HibernateException(
+            throw new TypeException(
                     "Not known how to convert String to given type [" + getJavaTypeClass().getName() + "]"
             );
         }

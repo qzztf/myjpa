@@ -6,8 +6,9 @@
  */
 package cn.sexycode.sql.type.descriptor.java;
 
-import org.hibernate.type.OffsetTimeType;
-import org.hibernate.type.descriptor.WrapperOptions;
+
+import cn.sexycode.sql.type.OffsetTimeType;
+import cn.sexycode.sql.type.descriptor.WrapperOptions;
 
 import java.sql.Time;
 import java.sql.Timestamp;

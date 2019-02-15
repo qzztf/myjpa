@@ -6,12 +6,14 @@
  */
 package cn.sexycode.sql.type.descriptor.sql;
 
-import org.hibernate.type.descriptor.JdbcTypeNameMapper;
-import org.hibernate.type.descriptor.ValueBinder;
-import org.hibernate.type.descriptor.ValueExtractor;
-import org.hibernate.type.descriptor.WrapperOptions;
-import org.hibernate.type.descriptor.java.JavaTypeDescriptor;
-import org.jboss.logging.Logger;
+
+import cn.sexycode.sql.type.descriptor.JdbcTypeNameMapper;
+import cn.sexycode.sql.type.descriptor.ValueBinder;
+import cn.sexycode.sql.type.descriptor.ValueExtractor;
+import cn.sexycode.sql.type.descriptor.WrapperOptions;
+import cn.sexycode.sql.type.descriptor.java.JavaTypeDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.sql.CallableStatement;
@@ -28,7 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SqlTypeDescriptorRegistry {
     public static final SqlTypeDescriptorRegistry INSTANCE = new SqlTypeDescriptorRegistry();
 
-    private static final Logger log = Logger.getLogger(SqlTypeDescriptorRegistry.class);
+    private static final Logger log = LoggerFactory.getLogger(SqlTypeDescriptorRegistry.class);
 
     private ConcurrentHashMap<Integer, SqlTypeDescriptor> descriptorMap = new ConcurrentHashMap<Integer, SqlTypeDescriptor>();
 
@@ -77,7 +79,7 @@ public class SqlTypeDescriptorRegistry {
         }
 
         if (JdbcTypeNameMapper.isStandardTypeCode(jdbcTypeCode)) {
-            log.debugf(
+            log.debug(
                     "A standard JDBC type code [%s] was not defined in SqlTypeDescriptorRegistry",
                     jdbcTypeCode
             );
@@ -95,7 +97,7 @@ public class SqlTypeDescriptorRegistry {
                     }
 
                     if (JdbcTypeNameMapper.isStandardTypeCode(potentialAlternateTypeCode)) {
-                        log.debugf(
+                        log.debug(
                                 "A standard JDBC type code [%s] was not defined in SqlTypeDescriptorRegistry",
                                 potentialAlternateTypeCode
                         );

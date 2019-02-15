@@ -6,7 +6,7 @@
  */
 package cn.sexycode.sql.type;
 
-import cn.sexycode.mybatis.jpa.mapping.Dialect;
+import cn.sexycode.sql.dialect.Dialect;
 import cn.sexycode.sql.type.descriptor.java.StringTypeDescriptor;
 import cn.sexycode.sql.type.descriptor.sql.VarcharTypeDescriptor;
 

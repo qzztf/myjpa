@@ -6,13 +6,12 @@
  */
 package cn.sexycode.sql.type.descriptor.java;
 
-import org.hibernate.HibernateException;
-import org.hibernate.engine.jdbc.CharacterStream;
-import org.hibernate.engine.jdbc.NClobImplementer;
-import org.hibernate.engine.jdbc.NClobProxy;
-import org.hibernate.engine.jdbc.WrappedNClob;
-import org.hibernate.engine.jdbc.internal.CharacterStreamImpl;
-import org.hibernate.type.descriptor.WrapperOptions;
+
+import cn.sexycode.sql.CharacterStream;
+import cn.sexycode.sql.CharacterStreamImpl;
+import cn.sexycode.sql.type.TypeException;
+import cn.sexycode.sql.type.descriptor.WrapperOptions;
+import cn.sexycode.sql.util.NClobProxy;
 
 import java.io.Reader;
 import java.io.Serializable;
@@ -92,21 +91,13 @@ public class NClobTypeDescriptor extends AbstractTypeDescriptor<NClob> {
 
         try {
             if (CharacterStream.class.isAssignableFrom(type)) {
-                if (NClobImplementer.class.isInstance(value)) {
-                    // if the incoming NClob is a wrapper, just pass along its BinaryStream
-                    return (X) ((NClobImplementer) value).getUnderlyingStream();
-                } else {
+
                     // otherwise we need to build a BinaryStream...
                     return (X) new CharacterStreamImpl(DataHelper.extractString(value.getCharacterStream()));
-                }
-            } else if (NClob.class.isAssignableFrom(type)) {
-                final NClob nclob = WrappedNClob.class.isInstance(value)
-                        ? ((WrappedNClob) value).getWrappedNClob()
-                        : value;
-                return (X) nclob;
+
             }
         } catch (SQLException e) {
-            throw new HibernateException("Unable to access nclob stream", e);
+            throw new TypeException("Unable to access nclob stream", e);
         }
 
         throw unknownUnwrap(type);
@@ -117,14 +108,6 @@ public class NClobTypeDescriptor extends AbstractTypeDescriptor<NClob> {
             return null;
         }
 
-        // Support multiple return types from
-        // org.hibernate.type.descriptor.sql.ClobTypeDescriptor
-        if (NClob.class.isAssignableFrom(value.getClass())) {
-            return options.getLobCreator().wrap((NClob) value);
-        } else if (Reader.class.isAssignableFrom(value.getClass())) {
-            Reader reader = (Reader) value;
-            return options.getLobCreator().createNClob(DataHelper.extractString(reader));
-        }
 
         throw unknownWrap(value.getClass());
     }

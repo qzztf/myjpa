@@ -4,62 +4,32 @@
  * License: GNU Lesser General Public License (LGPL), version 2.1 or later.
  * See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
  */
-package cn.sexycode.mybatis.jpa.mapping;
+package cn.sexycode.sql.dialect;
 
 import cn.sexycode.mybatis.jpa.binding.MappingException;
+import cn.sexycode.mybatis.jpa.mapping.Column;
+import cn.sexycode.mybatis.jpa.mapping.Constraint;
+import cn.sexycode.mybatis.jpa.mapping.Table;
+import cn.sexycode.mybatis.jpa.util.ArrayHelper;
+import cn.sexycode.mybatis.jpa.util.StringHelper;
+import cn.sexycode.sql.dialect.*;
+import cn.sexycode.sql.dialect.function.*;
+import cn.sexycode.sql.dialect.identity.IdentityColumnSupport;
+import cn.sexycode.sql.dialect.identity.IdentityColumnSupportImpl;
+import cn.sexycode.sql.dialect.lock.*;
+import cn.sexycode.sql.dialect.pagination.LegacyLimitHandler;
+import cn.sexycode.sql.dialect.pagination.LimitHandler;
+import cn.sexycode.sql.dialect.unique.DefaultUniqueDelegate;
+import cn.sexycode.sql.dialect.unique.UniqueDelegate;
+import cn.sexycode.sql.type.StandardBasicTypes;
+import cn.sexycode.sql.type.descriptor.sql.ClobTypeDescriptor;
+import cn.sexycode.sql.type.descriptor.sql.SqlTypeDescriptor;
+import cn.sexycode.sql.util.ReflectHelper;
 import org.hibernate.*;
-import org.hibernate.boot.model.TypeContributions;
-import org.hibernate.boot.model.relational.AuxiliaryDatabaseObject;
-import org.hibernate.boot.model.relational.Sequence;
-import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.cfg.Environment;
-import org.hibernate.dialect.function.*;
-import org.hibernate.dialect.identity.IdentityColumnSupport;
-import org.hibernate.dialect.identity.IdentityColumnSupportImpl;
-import org.hibernate.dialect.lock.*;
-import org.hibernate.dialect.pagination.LegacyLimitHandler;
-import org.hibernate.dialect.pagination.LimitHandler;
-import org.hibernate.dialect.unique.DefaultUniqueDelegate;
-import org.hibernate.dialect.unique.UniqueDelegate;
-import org.hibernate.engine.config.spi.ConfigurationService;
-import org.hibernate.engine.config.spi.StandardConverters;
-import org.hibernate.engine.jdbc.LobCreator;
-import org.hibernate.engine.jdbc.env.internal.DefaultSchemaNameResolver;
-import org.hibernate.engine.jdbc.env.spi.*;
-import org.hibernate.engine.jdbc.spi.JdbcServices;
-import org.hibernate.engine.spi.QueryParameters;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
-import org.hibernate.exception.spi.ConversionContext;
-import org.hibernate.exception.spi.SQLExceptionConversionDelegate;
-import org.hibernate.exception.spi.SQLExceptionConverter;
-import org.hibernate.exception.spi.ViolatedConstraintNameExtracter;
-import org.hibernate.hql.spi.id.MultiTableBulkIdStrategy;
-import org.hibernate.hql.spi.id.persistent.PersistentTableBulkIdStrategy;
-import org.hibernate.id.IdentityGenerator;
-import org.hibernate.id.enhanced.SequenceStyleGenerator;
-import org.hibernate.internal.CoreLogging;
-import org.hibernate.internal.CoreMessageLogger;
-import org.hibernate.internal.util.ReflectHelper;
-import org.hibernate.internal.util.StringHelper;
-import org.hibernate.internal.util.collections.ArrayHelper;
-import org.hibernate.internal.util.io.StreamCopier;
-import org.hibernate.loader.BatchLoadSizingStrategy;
-import org.hibernate.mapping.ForeignKey;
-import org.hibernate.mapping.Index;
-import org.hibernate.persister.entity.Lockable;
-import org.hibernate.procedure.internal.StandardCallableStatementSupport;
-import org.hibernate.procedure.spi.CallableStatementSupport;
-import org.hibernate.service.ServiceRegistry;
-import org.hibernate.sql.*;
-import org.hibernate.tool.schema.extract.internal.SequenceInformationExtractorLegacyImpl;
-import org.hibernate.tool.schema.extract.internal.SequenceInformationExtractorNoOpImpl;
-import org.hibernate.tool.schema.extract.spi.SequenceInformationExtractor;
-import org.hibernate.tool.schema.internal.*;
-import org.hibernate.tool.schema.spi.Exporter;
-import org.hibernate.type.StandardBasicTypes;
-import org.hibernate.type.descriptor.sql.ClobTypeDescriptor;
-import org.hibernate.type.descriptor.sql.SqlTypeDescriptor;
 
+import javax.imageio.spi.ServiceRegistry;
+import javax.persistence.ForeignKey;
+import javax.sound.midi.Sequence;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.*;
@@ -109,7 +79,7 @@ public abstract class AbstractDialect implements Dialect {
     // constructors and factory methods ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     protected AbstractDialect() {
-        LOG.usingDialect(this);
+//        LOG.usingDialect(this);
         StandardAnsiSqlAggregationFunctions.primeFunctionMap(sqlFunctions);
 
         // standard sql92 functions (can be overridden by subclasses)
@@ -205,9 +175,9 @@ public abstract class AbstractDialect implements Dialect {
      * Get an instance of the dialect specified by the current <tt>System</tt> properties.
      *
      * @return The specified Dialect
-     * @throws HibernateException If no dialect was specified, or if it could not be instantiated.
+     * @throws DialectException If no dialect was specified, or if it could not be instantiated.
      */
-    public static Dialect getDialect() throws HibernateException {
+    public static Dialect getDialect() throws DialectException {
         return instantiateDialect(Environment.getProperties().getProperty(Environment.DIALECT));
     }
 
@@ -217,9 +187,9 @@ public abstract class AbstractDialect implements Dialect {
      *
      * @param props The properties to use for finding the dialect class to use.
      * @return The specified Dialect
-     * @throws HibernateException If no dialect was specified, or if it could not be instantiated.
+     * @throws DialectException If no dialect was specified, or if it could not be instantiated.
      */
-    public static Dialect getDialect(Properties props) throws HibernateException {
+    public static Dialect getDialect(Properties props) throws DialectException {
         final String dialectName = props.getProperty(Environment.DIALECT);
         if (dialectName == null) {
             return getDialect();
@@ -227,16 +197,16 @@ public abstract class AbstractDialect implements Dialect {
         return instantiateDialect(dialectName);
     }
 
-    private static Dialect instantiateDialect(String dialectName) throws HibernateException {
+    private static Dialect instantiateDialect(String dialectName) throws DialectException {
         if (dialectName == null) {
-            throw new HibernateException("The dialect was not set. Set the property hibernate.dialect.");
+            throw new DialectException("The dialect was not set. Set the property hibernate.dialect.");
         }
         try {
             return (Dialect) ReflectHelper.classForName(dialectName).newInstance();
         } catch (ClassNotFoundException cnfe) {
-            throw new HibernateException("Dialect class not found: " + dialectName);
+            throw new DialectException("Dialect class not found: " + dialectName);
         } catch (Exception e) {
-            throw new HibernateException("Could not instantiate given dialect class: " + dialectName, e);
+            throw new DialectException("Could not instantiate given dialect class: " + dialectName, e);
         }
     }
 
@@ -255,17 +225,7 @@ public abstract class AbstractDialect implements Dialect {
     }
 
 
-    // database type mapping support ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    /**
-     * Allows the Dialect to contribute additional types
-     *
-     * @param typeContributions Callback to contribute the types
-     * @param serviceRegistry   The service registry
-     */
-    public void contributeTypes(TypeContributions typeContributions, ServiceRegistry serviceRegistry) {
-        resolveLegacyLimitHandlerBehavior(serviceRegistry);
-    }
 
     /**
      * Get the name of the database type associated with the given
@@ -273,12 +233,12 @@ public abstract class AbstractDialect implements Dialect {
      *
      * @param code The {@link Types} typecode
      * @return the database type name
-     * @throws HibernateException If no mapping was specified for that type.
+     * @throws DialectException If no mapping was specified for that type.
      */
-    public String getTypeName(int code) throws HibernateException {
+    public String getTypeName(int code) throws DialectException {
         final String result = typeNames.get(code);
         if (result == null) {
-            throw new HibernateException("No default type mapping for (java.sql.Types) " + code);
+            throw new DialectException("No default type mapping for (java.sql.Types) " + code);
         }
         return result;
     }
@@ -293,12 +253,12 @@ public abstract class AbstractDialect implements Dialect {
      * @param precision The datatype precision
      * @param scale     The datatype scale
      * @return the database type name
-     * @throws HibernateException If no mapping was specified for that type.
+     * @throws DialectException If no mapping was specified for that type.
      */
-    public String getTypeName(int code, long length, int precision, int scale) throws HibernateException {
+    public String getTypeName(int code, long length, int precision, int scale) throws DialectException {
         final String result = typeNames.get(code, length, precision, scale);
         if (result == null) {
-            throw new HibernateException(
+            throw new DialectException(
                     String.format("No type mapping for java.sql.Types code: %s, length: %s", code, length)
             );
         }
@@ -583,13 +543,13 @@ public abstract class AbstractDialect implements Dialect {
      *
      * @param code The {@link Types} type code
      * @return The Hibernate {@link org.hibernate.type.Type} name.
-     * @throws HibernateException If no mapping was specified for that type.
+     * @throws DialectException If no mapping was specified for that type.
      */
     @SuppressWarnings({"UnusedDeclaration"})
-    public String getHibernateTypeName(int code) throws HibernateException {
+    public String getHibernateTypeName(int code) throws DialectException {
         final String result = hibernateTypeNames.get(code);
         if (result == null) {
-            throw new HibernateException("No Hibernate type mapping for java.sql.Types code: " + code);
+            throw new DialectException("No Hibernate type mapping for java.sql.Types code: " + code);
         }
         return result;
     }
@@ -615,12 +575,12 @@ public abstract class AbstractDialect implements Dialect {
      * @param precision The datatype precision
      * @param scale     The datatype scale
      * @return The Hibernate {@link org.hibernate.type.Type} name.
-     * @throws HibernateException If no mapping was specified for that type.
+     * @throws DialectException If no mapping was specified for that type.
      */
-    public String getHibernateTypeName(int code, int length, int precision, int scale) throws HibernateException {
+    public String getHibernateTypeName(int code, int length, int precision, int scale) throws DialectException {
         final String result = hibernateTypeNames.get(code, length, precision, scale);
         if (result == null) {
-            throw new HibernateException(
+            throw new DialectException(
                     String.format(
                             "No Hibernate type mapping for type [code=%s, length=%s]",
                             code,
@@ -669,6 +629,7 @@ public abstract class AbstractDialect implements Dialect {
      *
      * @return The map of registered functions.
      */
+    @Override
     public final Map<String, SQLFunction> getFunctions() {
         return sqlFunctions;
     }
@@ -1829,6 +1790,7 @@ public abstract class AbstractDialect implements Dialect {
      * @see #openQuote()
      * @see #closeQuote()
      */
+    @Override
     public final String quote(String name) {
         if (name == null) {
             return null;

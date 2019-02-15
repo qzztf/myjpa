@@ -6,12 +6,13 @@
  */
 package cn.sexycode.sql.type.descriptor.java;
 
-import org.hibernate.HibernateException;
-import org.hibernate.annotations.Immutable;
-import org.hibernate.engine.jdbc.BinaryStream;
-import org.hibernate.engine.jdbc.internal.BinaryStreamImpl;
-import org.hibernate.internal.util.SerializationHelper;
-import org.hibernate.type.descriptor.WrapperOptions;
+
+import cn.sexycode.sql.BinaryStream;
+import cn.sexycode.sql.BinaryStreamImpl;
+import cn.sexycode.sql.type.TypeException;
+import cn.sexycode.sql.type.descriptor.WrapperOptions;
+import cn.sexycode.sql.util.SerializationHelper;
+import jdk.nashorn.internal.ir.annotations.Immutable;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -93,9 +94,7 @@ public class SerializableTypeDescriptor<T extends Serializable> extends Abstract
             return (X) new ByteArrayInputStream(toBytes(value));
         } else if (BinaryStream.class.isAssignableFrom(type)) {
             return (X) new BinaryStreamImpl(toBytes(value));
-        } else if (Blob.class.isAssignableFrom(type)) {
-            return (X) options.getLobCreator().createBlob(toBytes(value));
-        }
+        } 
 
         throw unknownUnwrap(type);
     }
@@ -112,7 +111,7 @@ public class SerializableTypeDescriptor<T extends Serializable> extends Abstract
             try {
                 return fromBytes(DataHelper.extractBytes(((Blob) value).getBinaryStream()));
             } catch (SQLException e) {
-                throw new HibernateException(e);
+                throw new TypeException(e);
             }
         } else if (getJavaTypeClass().isInstance(value)) {
             return (T) value;

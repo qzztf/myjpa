@@ -6,9 +6,10 @@
  */
 package cn.sexycode.sql.type.descriptor.java;
 
-import org.hibernate.engine.jdbc.CharacterStream;
-import org.hibernate.engine.jdbc.internal.CharacterStreamImpl;
-import org.hibernate.type.descriptor.WrapperOptions;
+
+import cn.sexycode.sql.CharacterStream;
+import cn.sexycode.sql.CharacterStreamImpl;
+import cn.sexycode.sql.type.descriptor.WrapperOptions;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -48,12 +49,7 @@ public class StringTypeDescriptor extends AbstractTypeDescriptor<String> {
         if (CharacterStream.class.isAssignableFrom(type)) {
             return (X) new CharacterStreamImpl(value);
         }
-        if (Clob.class.isAssignableFrom(type)) {
-            return (X) options.getLobCreator().createClob(value);
-        }
-        if (DataHelper.isNClob(type)) {
-            return (X) options.getLobCreator().createNClob(value);
-        }
+
 
         throw unknownUnwrap(type);
     }

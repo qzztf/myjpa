@@ -6,8 +6,9 @@
  */
 package cn.sexycode.sql.type.descriptor.java;
 
-import org.hibernate.HibernateException;
-import org.hibernate.type.descriptor.WrapperOptions;
+
+import cn.sexycode.sql.type.TypeException;
+import cn.sexycode.sql.type.descriptor.WrapperOptions;
 
 /**
  * Descriptor for {@link Character} handling.
@@ -29,7 +30,7 @@ public class CharacterTypeDescriptor extends AbstractTypeDescriptor<Character> {
     @Override
     public Character fromString(String string) {
         if (string.length() != 1) {
-            throw new HibernateException("multiple or zero characters found parsing string");
+            throw new TypeException("multiple or zero characters found parsing string");
         }
         return string.charAt(0);
     }

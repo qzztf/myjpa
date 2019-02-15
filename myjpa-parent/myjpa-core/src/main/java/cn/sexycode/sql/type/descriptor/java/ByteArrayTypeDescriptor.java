@@ -6,10 +6,9 @@
  */
 package cn.sexycode.sql.type.descriptor.java;
 
-import org.hibernate.HibernateException;
-import org.hibernate.engine.jdbc.BinaryStream;
-import org.hibernate.engine.jdbc.internal.BinaryStreamImpl;
-import org.hibernate.type.descriptor.WrapperOptions;
+import cn.sexycode.sql.BinaryStream;
+import cn.sexycode.sql.type.TypeException;
+import cn.sexycode.sql.type.descriptor.WrapperOptions;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -96,12 +95,7 @@ public class ByteArrayTypeDescriptor extends AbstractTypeDescriptor<Byte[]> {
         if (InputStream.class.isAssignableFrom(type)) {
             return (X) new ByteArrayInputStream(unwrapBytes(value));
         }
-        if (BinaryStream.class.isAssignableFrom(type)) {
-            return (X) new BinaryStreamImpl(unwrapBytes(value));
-        }
-        if (Blob.class.isAssignableFrom(type)) {
-            return (X) options.getLobCreator().createBlob(unwrapBytes(value));
-        }
+
 
         throw unknownUnwrap(type);
     }
@@ -124,7 +118,7 @@ public class ByteArrayTypeDescriptor extends AbstractTypeDescriptor<Byte[]> {
             try {
                 return wrapBytes(DataHelper.extractBytes(((Blob) value).getBinaryStream()));
             } catch (SQLException e) {
-                throw new HibernateException("Unable to access lob stream", e);
+                throw new TypeException("Unable to access lob stream", e);
             }
         }
 

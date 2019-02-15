@@ -6,13 +6,12 @@
  */
 package cn.sexycode.sql.type.descriptor.java;
 
-import org.hibernate.HibernateException;
-import org.hibernate.engine.jdbc.CharacterStream;
-import org.hibernate.engine.jdbc.ClobImplementer;
-import org.hibernate.engine.jdbc.ClobProxy;
-import org.hibernate.engine.jdbc.WrappedClob;
-import org.hibernate.engine.jdbc.internal.CharacterStreamImpl;
-import org.hibernate.type.descriptor.WrapperOptions;
+
+import cn.sexycode.sql.CharacterStream;
+import cn.sexycode.sql.CharacterStreamImpl;
+import cn.sexycode.sql.type.TypeException;
+import cn.sexycode.sql.type.descriptor.WrapperOptions;
+import cn.sexycode.sql.util.ClobProxy;
 
 import java.io.Reader;
 import java.io.Serializable;
@@ -91,24 +90,12 @@ public class ClobTypeDescriptor extends AbstractTypeDescriptor<Clob> {
         }
 
         try {
-            if (CharacterStream.class.isAssignableFrom(type)) {
-                if (ClobImplementer.class.isInstance(value)) {
-                    // if the incoming Clob is a wrapper, just pass along its CharacterStream
-                    return (X) ((ClobImplementer) value).getUnderlyingStream();
-                } else {
-                    // otherwise we need to build a CharacterStream...
-                    return (X) new CharacterStreamImpl(DataHelper.extractString(value.getCharacterStream()));
-                }
-            } else if (Clob.class.isAssignableFrom(type)) {
-                final Clob clob = WrappedClob.class.isInstance(value)
-                        ? ((WrappedClob) value).getWrappedClob()
-                        : value;
-                return (X) clob;
-            } else if (String.class.isAssignableFrom(type)) {
+
+            if (String.class.isAssignableFrom(type)) {
                 return (X) DataHelper.extractString(value.getCharacterStream());
             }
         } catch (SQLException e) {
-            throw new HibernateException("Unable to access clob stream", e);
+            throw new TypeException("Unable to access clob stream", e);
         }
 
         throw unknownUnwrap(type);
@@ -117,17 +104,6 @@ public class ClobTypeDescriptor extends AbstractTypeDescriptor<Clob> {
     public <X> Clob wrap(X value, WrapperOptions options) {
         if (value == null) {
             return null;
-        }
-
-        // Support multiple return types from
-        // org.hibernate.type.descriptor.sql.ClobTypeDescriptor
-        if (Clob.class.isAssignableFrom(value.getClass())) {
-            return options.getLobCreator().wrap((Clob) value);
-        } else if (Reader.class.isAssignableFrom(value.getClass())) {
-            Reader reader = (Reader) value;
-            return options.getLobCreator().createClob(DataHelper.extractString(reader));
-        } else if (String.class.isAssignableFrom(value.getClass())) {
-            return options.getLobCreator().createClob((String) value);
         }
 
         throw unknownWrap(value.getClass());

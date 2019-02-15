@@ -6,7 +6,7 @@
  */
 package cn.sexycode.sql.type;
 
-import cn.sexycode.mybatis.jpa.mapping.Dialect;
+import cn.sexycode.sql.dialect.Dialect;
 
 /**
  * Additional contract for a {@link Type} that may appear as an SQL literal

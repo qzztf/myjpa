@@ -9,6 +9,7 @@ package cn.sexycode.mybatis.jpa.mapping;
 import cn.sexycode.mybatis.jpa.binding.Identifier;
 import cn.sexycode.mybatis.jpa.binding.MappingException;
 import cn.sexycode.mybatis.jpa.binding.Metadata;
+import cn.sexycode.sql.dialect.Dialect;
 import org.hibernate.HibernateException;
 import org.hibernate.boot.model.relational.Exportable;
 import org.hibernate.boot.model.relational.InitCommand;
@@ -24,6 +25,8 @@ import org.hibernate.tool.hbm2ddl.TableMetadata;
 import org.hibernate.tool.schema.extract.spi.ColumnInformation;
 import org.hibernate.tool.schema.extract.spi.TableInformation;
 import org.jboss.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.Column;
 import javax.persistence.ForeignKey;
@@ -37,7 +40,7 @@ import java.util.*;
  */
 @SuppressWarnings("unchecked")
 public class Table implements Serializable, Exportable {
-    private static final Logger log = Logger.getLogger(Table.class);
+    private static final Logger log = LoggerFactory.getLogger(Table.class);
 
     private Identifier catalog;
     private Identifier schema;

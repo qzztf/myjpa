@@ -23,21 +23,21 @@ public interface JavaTypeDescriptor<T> extends Serializable {
      *
      * @return The Java type.
      */
-    public Class<T> getJavaTypeClass();
+    Class<T> getJavaTypeClass();
 
     /**
      * Retrieve the mutability plan for this Java type.
      *
      * @return The mutability plan
      */
-    public MutabilityPlan<T> getMutabilityPlan();
+    MutabilityPlan<T> getMutabilityPlan();
 
     /**
      * Retrieve the natural comparator for this type.
      *
      * @return The natural comparator.
      */
-    public Comparator<T> getComparator();
+    Comparator<T> getComparator();
 
     /**
      * Extract a proper hash code for this value.
@@ -45,7 +45,7 @@ public interface JavaTypeDescriptor<T> extends Serializable {
      * @param value The value for which to extract a hash code.
      * @return The extracted hash code.
      */
-    public int extractHashCode(T value);
+    int extractHashCode(T value);
 
     /**
      * Determine if two instances are equal
@@ -54,7 +54,7 @@ public interface JavaTypeDescriptor<T> extends Serializable {
      * @param another The other instance
      * @return True if the two are considered equal; false otherwise.
      */
-    public boolean areEqual(T one, T another);
+    boolean areEqual(T one, T another);
 
     /**
      * Extract a loggable representation of the value.
@@ -62,11 +62,11 @@ public interface JavaTypeDescriptor<T> extends Serializable {
      * @param value The value for which to extract a loggable representation.
      * @return The loggable representation
      */
-    public String extractLoggableRepresentation(T value);
+    String extractLoggableRepresentation(T value);
 
-    public String toString(T value);
+    String toString(T value);
 
-    public T fromString(String string);
+    T fromString(String string);
 
     /**
      * Unwrap an instance of our handled Java type into the requested type.
@@ -83,7 +83,7 @@ public interface JavaTypeDescriptor<T> extends Serializable {
      * @param <X>     The conversion type.
      * @return The unwrapped value.
      */
-    public <X> X unwrap(T value, Class<X> type, WrapperOptions options);
+    <X> X unwrap(T value, Class<X> type, WrapperOptions options);
 
     /**
      * Wrap a value as our handled Java type.
@@ -95,5 +95,5 @@ public interface JavaTypeDescriptor<T> extends Serializable {
      * @param <X>     The conversion type.
      * @return The wrapped value.
      */
-    public <X> T wrap(X value, WrapperOptions options);
+    <X> T wrap(X value, WrapperOptions options);
 }

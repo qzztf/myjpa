@@ -6,19 +6,21 @@
  */
 package cn.sexycode.sql.type.descriptor.sql;
 
-import org.hibernate.internal.util.collections.BoundedConcurrentHashMap;
-import org.hibernate.type.descriptor.JdbcTypeNameMapper;
-import org.jboss.logging.Logger;
+
+import cn.sexycode.sql.type.descriptor.JdbcTypeNameMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Types;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Steve Ebersole
  */
 public class LobTypeMappings {
-    private static final Logger log = Logger.getLogger(LobTypeMappings.class);
+    private static final Logger log = LoggerFactory.getLogger(LobTypeMappings.class);
 
     /**
      * Singleton access
@@ -28,7 +30,7 @@ public class LobTypeMappings {
     private final Map<Integer, Integer> lobCodeByNonLobCode;
 
     private LobTypeMappings() {
-        this.lobCodeByNonLobCode = new BoundedConcurrentHashMap<Integer, Integer>();
+        this.lobCodeByNonLobCode = new ConcurrentHashMap<>();
 
         // BLOB mappings
         this.lobCodeByNonLobCode.put(Types.BLOB, Types.BLOB);

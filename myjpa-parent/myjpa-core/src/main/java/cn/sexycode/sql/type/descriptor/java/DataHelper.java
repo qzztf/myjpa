@@ -6,11 +6,10 @@
  */
 package cn.sexycode.sql.type.descriptor.java;
 
-import org.hibernate.HibernateException;
-import org.hibernate.engine.jdbc.BinaryStream;
-import org.hibernate.engine.jdbc.internal.BinaryStreamImpl;
-import org.hibernate.internal.CoreMessageLogger;
-import org.jboss.logging.Logger;
+
+import cn.sexycode.sql.BinaryStream;
+import cn.sexycode.sql.BinaryStreamImpl;
+import cn.sexycode.sql.type.TypeException;
 
 import java.io.*;
 import java.sql.Clob;
@@ -31,7 +30,6 @@ public final class DataHelper {
      */
     private static final int BUFFER_SIZE = 1024 * 4;
 
-    private static final CoreMessageLogger LOG = Logger.getMessageLogger(CoreMessageLogger.class, DataHelper.class.getName());
 
     public static boolean isNClob(final Class type) {
         return java.sql.NClob.class.isAssignableFrom(type);
@@ -70,12 +68,12 @@ public final class DataHelper {
                 stringBuilder.append(buffer, 0, amountRead);
             }
         } catch (IOException ioe) {
-            throw new HibernateException("IOException occurred reading text", ioe);
+            throw new TypeException("IOException occurred reading text", ioe);
         } finally {
             try {
                 reader.close();
             } catch (IOException e) {
-                LOG.unableToCloseStream(e);
+//                LOG.unableToCloseStream(e);
             }
         }
         return stringBuilder.toString();
@@ -97,7 +95,7 @@ public final class DataHelper {
         try {
             long skipped = characterStream.skip(start);
             if (skipped != start) {
-                throw new HibernateException("Unable to skip needed bytes");
+                throw new TypeException("Unable to skip needed bytes");
             }
             final int bufferSize = getSuggestedBufferSize(length);
             char[] buffer = new char[bufferSize];
@@ -118,7 +116,7 @@ public final class DataHelper {
                 }
             }
         } catch (IOException ioe) {
-            throw new HibernateException("IOException occurred reading a binary value", ioe);
+            throw new TypeException("IOException occurred reading a binary value", ioe);
         }
         return stringBuilder.toString();
     }
@@ -158,17 +156,17 @@ public final class DataHelper {
                 outputStream.write(buffer, 0, amountRead);
             }
         } catch (IOException ioe) {
-            throw new HibernateException("IOException occurred reading a binary value", ioe);
+            throw new TypeException("IOException occurred reading a binary value", ioe);
         } finally {
             try {
                 inputStream.close();
             } catch (IOException e) {
-                LOG.unableToCloseInputStream(e);
+//                LOG.unableToCloseInputStream(e);
             }
             try {
                 outputStream.close();
             } catch (IOException e) {
-                LOG.unableToCloseOutputStream(e);
+//                LOG.unableToCloseOutputStream(e);
             }
         }
         return outputStream.toByteArray();
@@ -195,7 +193,7 @@ public final class DataHelper {
         try {
             long skipped = inputStream.skip(start);
             if (skipped != start) {
-                throw new HibernateException("Unable to skip needed bytes");
+                throw new TypeException("Unable to skip needed bytes");
             }
             byte[] buffer = new byte[BUFFER_SIZE];
             int bytesRead = 0;
@@ -215,7 +213,7 @@ public final class DataHelper {
                 }
             }
         } catch (IOException ioe) {
-            throw new HibernateException("IOException occurred reading a binary value", ioe);
+            throw new TypeException("IOException occurred reading a binary value", ioe);
         }
         return outputStream.toByteArray();
     }
@@ -246,7 +244,7 @@ public final class DataHelper {
                     ? extractString(characterStream, Integer.MAX_VALUE)
                     : extractString(characterStream, (int) length);
         } catch (SQLException e) {
-            throw new HibernateException("Unable to access lob stream", e);
+            throw new TypeException("Unable to access lob stream", e);
         }
     }
 

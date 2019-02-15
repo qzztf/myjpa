@@ -6,8 +6,9 @@
  */
 package cn.sexycode.mybatis.jpa.mapping;
 
-import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.function.SQLFunctionRegistry;
+
+import cn.sexycode.sql.dialect.Dialect;
+import cn.sexycode.sql.dialect.function.SQLFunctionRegistry;
 
 /**
  * Models the commonality between a column and a formula (computed value).

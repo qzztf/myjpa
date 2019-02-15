@@ -6,12 +6,14 @@
  */
 package cn.sexycode.sql.type.descriptor.converter;
 
-import org.hibernate.type.AbstractSingleColumnStandardBasicType;
-import org.hibernate.type.descriptor.java.ImmutableMutabilityPlan;
-import org.hibernate.type.descriptor.java.JavaTypeDescriptor;
-import org.hibernate.type.descriptor.java.MutabilityPlan;
-import org.hibernate.type.descriptor.sql.SqlTypeDescriptor;
-import org.jboss.logging.Logger;
+
+import cn.sexycode.sql.type.AbstractSingleColumnStandardBasicType;
+import cn.sexycode.sql.type.descriptor.java.ImmutableMutabilityPlan;
+import cn.sexycode.sql.type.descriptor.java.JavaTypeDescriptor;
+import cn.sexycode.sql.type.descriptor.java.MutabilityPlan;
+import cn.sexycode.sql.type.descriptor.sql.SqlTypeDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.AttributeConverter;
 
@@ -21,7 +23,7 @@ import javax.persistence.AttributeConverter;
  * @author Steve Ebersole
  */
 public class AttributeConverterTypeAdapter<T> extends AbstractSingleColumnStandardBasicType<T> {
-    private static final Logger log = Logger.getLogger(AttributeConverterTypeAdapter.class);
+    private static final Logger log = LoggerFactory.getLogger(AttributeConverterTypeAdapter.class);
 
     public static final String NAME_PREFIX = "converted::";
 

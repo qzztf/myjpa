@@ -6,15 +6,13 @@
  */
 package cn.sexycode.sql.type.descriptor;
 
-import org.hibernate.HibernateException;
-import org.hibernate.internal.CoreMessageLogger;
+
+import cn.sexycode.sql.type.TypeException;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.hibernate.internal.CoreLogging.messageLogger;
 
 /**
  * (Badly named) helper for dealing with standard JDBC types as defined by {@link java.sql.Types}
@@ -22,7 +20,6 @@ import static org.hibernate.internal.CoreLogging.messageLogger;
  * @author Steve Ebersole
  */
 public final class JdbcTypeNameMapper {
-    private static final CoreMessageLogger LOG = messageLogger(JdbcTypeNameMapper.class);
 
     private static Map<Integer, String> JDBC_TYPE_MAP = buildJdbcTypeMap();
 
@@ -30,17 +27,17 @@ public final class JdbcTypeNameMapper {
         HashMap<Integer, String> map = new HashMap<Integer, String>();
         Field[] fields = java.sql.Types.class.getFields();
         if (fields == null) {
-            throw new HibernateException("Unexpected problem extracting JDBC type mapping codes from java.sql.Types");
+            throw new TypeException("Unexpected problem extracting JDBC type mapping codes from java.sql.Types");
         }
         for (Field field : fields) {
             try {
                 final int code = field.getInt(null);
                 String old = map.put(code, field.getName());
                 if (old != null) {
-                    LOG.JavaSqlTypesMappedSameCodeMultipleTimes(code, old, field.getName());
+//                    LOG.JavaSqlTypesMappedSameCodeMultipleTimes(code, old, field.getName());
                 }
             } catch (IllegalAccessException e) {
-                throw new HibernateException("Unable to access JDBC type mapping [" + field.getName() + "]", e);
+                throw new TypeException("Unable to access JDBC type mapping [" + field.getName() + "]", e);
             }
         }
         return Collections.unmodifiableMap(map);

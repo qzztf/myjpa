@@ -6,11 +6,12 @@
  */
 package cn.sexycode.sql.type.descriptor.sql;
 
-import org.hibernate.internal.util.collections.BoundedConcurrentHashMap;
-import org.jboss.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Types;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Manages a mapping between nationalized and non-nationalized variants of JDBC types.
@@ -21,7 +22,7 @@ import java.util.Map;
  * @author Steve Ebersole
  */
 public class NationalizedTypeMappings {
-    private static final Logger log = Logger.getLogger(NationalizedTypeMappings.class);
+    private static final Logger log = LoggerFactory.getLogger(NationalizedTypeMappings.class);
 
     /**
      * Singleton access
@@ -31,7 +32,7 @@ public class NationalizedTypeMappings {
     private final Map<Integer, Integer> nationalizedCodeByNonNationalized;
 
     public NationalizedTypeMappings() {
-        this.nationalizedCodeByNonNationalized = new BoundedConcurrentHashMap<Integer, Integer>();
+        this.nationalizedCodeByNonNationalized = new ConcurrentHashMap<Integer, Integer>();
         map(Types.CHAR, Types.NCHAR);
         map(Types.CLOB, Types.NCLOB);
         map(Types.LONGVARCHAR, Types.LONGNVARCHAR);

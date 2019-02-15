@@ -6,11 +6,12 @@
  */
 package cn.sexycode.sql.type.descriptor.sql;
 
-import org.hibernate.engine.jdbc.CharacterStream;
-import org.hibernate.type.descriptor.ValueBinder;
-import org.hibernate.type.descriptor.ValueExtractor;
-import org.hibernate.type.descriptor.WrapperOptions;
-import org.hibernate.type.descriptor.java.JavaTypeDescriptor;
+
+import cn.sexycode.sql.CharacterStream;
+import cn.sexycode.sql.type.descriptor.ValueBinder;
+import cn.sexycode.sql.type.descriptor.ValueExtractor;
+import cn.sexycode.sql.type.descriptor.WrapperOptions;
+import cn.sexycode.sql.type.descriptor.java.JavaTypeDescriptor;
 
 import java.sql.*;
 

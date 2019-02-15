@@ -6,12 +6,14 @@
  */
 package cn.sexycode.sql.type.descriptor.converter;
 
-import org.hibernate.type.descriptor.ValueBinder;
-import org.hibernate.type.descriptor.ValueExtractor;
-import org.hibernate.type.descriptor.WrapperOptions;
-import org.hibernate.type.descriptor.java.JavaTypeDescriptor;
-import org.hibernate.type.descriptor.sql.SqlTypeDescriptor;
-import org.jboss.logging.Logger;
+
+import cn.sexycode.sql.type.descriptor.ValueBinder;
+import cn.sexycode.sql.type.descriptor.ValueExtractor;
+import cn.sexycode.sql.type.descriptor.WrapperOptions;
+import cn.sexycode.sql.type.descriptor.java.JavaTypeDescriptor;
+import cn.sexycode.sql.type.descriptor.sql.SqlTypeDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.PersistenceException;
@@ -32,7 +34,7 @@ import java.sql.SQLException;
  * @author Steve Ebersole
  */
 public class AttributeConverterSqlTypeDescriptorAdapter implements SqlTypeDescriptor {
-    private static final Logger log = Logger.getLogger(AttributeConverterSqlTypeDescriptorAdapter.class);
+    private static final Logger log = LoggerFactory.getLogger(AttributeConverterSqlTypeDescriptorAdapter.class);
 
     private final AttributeConverter converter;
     private final SqlTypeDescriptor delegate;
@@ -80,7 +82,7 @@ public class AttributeConverterSqlTypeDescriptorAdapter implements SqlTypeDescri
                     throw new PersistenceException("Error attempting to apply AttributeConverter", re);
                 }
 
-                log.debugf("Converted value on binding : %s -> %s", value, convertedValue);
+                log.debug("Converted value on binding : %s -> %s", value, convertedValue);
                 realBinder.bind(st, convertedValue, index, options);
             }
 
@@ -95,7 +97,7 @@ public class AttributeConverterSqlTypeDescriptorAdapter implements SqlTypeDescri
                     throw new PersistenceException("Error attempting to apply AttributeConverter", re);
                 }
 
-                log.debugf("Converted value on binding : %s -> %s", value, convertedValue);
+                log.debug("Converted value on binding : %s -> %s", value, convertedValue);
                 realBinder.bind(st, convertedValue, name, options);
             }
         };
@@ -132,7 +134,7 @@ public class AttributeConverterSqlTypeDescriptorAdapter implements SqlTypeDescri
             private X doConversion(Object extractedValue) {
                 try {
                     X convertedValue = (X) converter.convertToEntityAttribute(extractedValue);
-                    log.debugf("Converted value on extraction: %s -> %s", extractedValue, convertedValue);
+                    log.debug("Converted value on extraction: %s -> %s", extractedValue, convertedValue);
                     return convertedValue;
                 } catch (PersistenceException pe) {
                     throw pe;

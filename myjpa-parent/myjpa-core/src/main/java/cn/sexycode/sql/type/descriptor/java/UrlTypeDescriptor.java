@@ -6,8 +6,9 @@
  */
 package cn.sexycode.sql.type.descriptor.java;
 
-import org.hibernate.HibernateException;
-import org.hibernate.type.descriptor.WrapperOptions;
+
+import cn.sexycode.sql.type.TypeException;
+import cn.sexycode.sql.type.descriptor.WrapperOptions;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,7 +33,7 @@ public class UrlTypeDescriptor extends AbstractTypeDescriptor<URL> {
         try {
             return new URL(string);
         } catch (MalformedURLException e) {
-            throw new HibernateException("Unable to convert string [" + string + "] to URL : " + e);
+            throw new TypeException("Unable to convert string [" + string + "] to URL : " + e);
         }
     }
 

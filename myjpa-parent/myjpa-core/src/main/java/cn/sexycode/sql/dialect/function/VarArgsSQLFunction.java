@@ -6,12 +6,11 @@
  */
 package cn.sexycode.sql.dialect.function;
 
-import java.util.List;
+import cn.sexycode.sql.QueryException;
+import cn.sexycode.sql.type.Mapping;
+import cn.sexycode.sql.type.Type;
 
-import org.hibernate.QueryException;
-import org.hibernate.engine.spi.Mapping;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.type.Type;
+import java.util.List;
 
 /**
  * Support for slightly more general templating than {@link StandardSQLFunction}, with an unlimited number of arguments.
@@ -72,7 +71,7 @@ public class VarArgsSQLFunction implements SQLFunction {
     }
 
     @Override
-    public String render(Type firstArgumentType, List arguments, SessionFactoryImplementor factory) {
+    public String render(Type firstArgumentType, List arguments) {
         final StringBuilder buf = new StringBuilder().append(begin);
         for (int i = 0; i < arguments.size(); i++) {
             buf.append(transformArgument((String) arguments.get(i)));

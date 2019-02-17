@@ -6,14 +6,14 @@
  */
 package cn.sexycode.mybatis.jpa.binding;
 
+import cn.sexycode.mybatis.jpa.mapping.Column;
+import cn.sexycode.mybatis.jpa.mapping.Identifier;
 import cn.sexycode.mybatis.jpa.mapping.PersistentClass;
+import cn.sexycode.mybatis.jpa.mapping.Table;
 
-import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Table;
 import javax.persistence.criteria.Join;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -39,25 +39,6 @@ public interface InFlightMetadataCollector extends Metadata {
      * Needed for SecondPass handling
      */
     Map<String, PersistentClass> getEntityBindingMap();
-
-    /**
-     * Adds an import (HQL entity rename).
-     *
-     * @param entityName The entity name being renamed.
-     * @param rename     The rename
-     * @throws DuplicateMappingException If rename already is mapped to another
-     *                                   entity name in this repository.
-     */
-    void addImport(String entityName, String rename) throws DuplicateMappingException;
-
-    /**
-     * Add collection mapping metadata to this repository.
-     *
-     * @param collection The collection metadata
-     * @throws DuplicateMappingException Indicates there was already an entry
-     *                                   corresponding to the given collection role
-     */
-    void addCollectionBinding(Collection collection) throws DuplicateMappingException;
 
     /**
      * Adds table metadata to this repository returning the created

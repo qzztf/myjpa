@@ -6,36 +6,25 @@
  */
 package cn.sexycode.sql.dialect;
 
+import cn.sexycode.sql.Environment;
+import cn.sexycode.sql.LockMode;
+import cn.sexycode.sql.LockOptions;
+import cn.sexycode.sql.dialect.function.*;
+import cn.sexycode.sql.dialect.identity.AbstractTransactSQLIdentityColumnSupport;
+import cn.sexycode.sql.dialect.identity.IdentityColumnSupport;
+import cn.sexycode.sql.type.StandardBasicTypes;
+
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.hibernate.LockMode;
-import org.hibernate.LockOptions;
-import org.hibernate.boot.TempTableDdlTransactionHandling;
-import org.hibernate.cfg.Environment;
-import org.hibernate.dialect.function.CharIndexFunction;
-import org.hibernate.dialect.function.NoArgSQLFunction;
-import org.hibernate.dialect.function.SQLFunctionTemplate;
-import org.hibernate.dialect.function.StandardSQLFunction;
-import org.hibernate.dialect.function.VarArgsSQLFunction;
-import org.hibernate.dialect.identity.AbstractTransactSQLIdentityColumnSupport;
-import org.hibernate.dialect.identity.IdentityColumnSupport;
-import org.hibernate.hql.spi.id.IdTableSupportStandardImpl;
-import org.hibernate.hql.spi.id.MultiTableBulkIdStrategy;
-import org.hibernate.hql.spi.id.local.AfterUseAction;
-import org.hibernate.hql.spi.id.local.LocalTemporaryTableBulkIdStrategy;
-import org.hibernate.type.StandardBasicTypes;
 
 /**
  * An abstract base class for Sybase and MS SQL Server dialects.
  *
  * @author Gavin King
  */
-abstract class AbstractTransactSQLDialect extends Dialect {
+abstract class AbstractTransactSQLDialect extends AbstractDialect {
     public AbstractTransactSQLDialect() {
         super();
         registerColumnType(Types.BINARY, "binary($l)");
@@ -141,41 +130,6 @@ abstract class AbstractTransactSQLDialect extends Dialect {
         return lockOptions.getLockMode().greaterThan(LockMode.READ) ? tableName + " holdlock" : tableName;
     }
 
-    @Override
-    public String applyLocksToSql(String sql, LockOptions aliasedLockOptions, Map<String, String[]> keyColumnNames) {
-        // TODO:  merge additional lockoptions support in Dialect.applyLocksToSql
-        final Iterator itr = aliasedLockOptions.getAliasLockIterator();
-        final StringBuilder buffer = new StringBuilder(sql);
-
-        while (itr.hasNext()) {
-            final Map.Entry entry = (Map.Entry) itr.next();
-            final LockMode lockMode = (LockMode) entry.getValue();
-            if (lockMode.greaterThan(LockMode.READ)) {
-                final String alias = (String) entry.getKey();
-                int start = -1;
-                int end = -1;
-                if (sql.endsWith(" " + alias)) {
-                    start = (buffer.length() - alias.length());
-                    end = start + alias.length();
-                } else {
-                    int position = buffer.indexOf(" " + alias + " ");
-                    if (position <= -1) {
-                        position = buffer.indexOf(" " + alias + ",");
-                    }
-                    if (position > -1) {
-                        start = position + 1;
-                        end = start + alias.length();
-                    }
-                }
-
-                if (start > -1) {
-                    final String lockHint = appendLockHint(aliasedLockOptions, alias);
-                    buffer.replace(start, end, lockHint);
-                }
-            }
-        }
-        return buffer.toString();
-    }
 
     @Override
     public int registerResultSetOutParameter(CallableStatement statement, int col) throws SQLException {
@@ -211,20 +165,6 @@ abstract class AbstractTransactSQLDialect extends Dialect {
         return "select getdate()";
     }
 
-    @Override
-    public MultiTableBulkIdStrategy getDefaultMultiTableBulkIdStrategy() {
-        return new LocalTemporaryTableBulkIdStrategy(
-                new IdTableSupportStandardImpl() {
-                    @Override
-                    public String generateIdTableName(String baseName) {
-                        return "#" + baseName;
-                    }
-                },
-                // sql-server, at least needed this dropped after use; strange!
-                AfterUseAction.DROP,
-                TempTableDdlTransactionHandling.NONE
-        );
-    }
 
     @Override
     public String getSelectGUIDString() {
@@ -260,11 +200,6 @@ abstract class AbstractTransactSQLDialect extends Dialect {
 
     @Override
     public boolean supportsTupleDistinctCounts() {
-        return false;
-    }
-
-    @Override
-    public boolean supportsTuplesInSubqueries() {
         return false;
     }
 

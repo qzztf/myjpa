@@ -10,7 +10,10 @@ package cn.sexycode.mybatis.jpa.mapping;
 import cn.sexycode.mybatis.jpa.binding.MappingException;
 import cn.sexycode.mybatis.jpa.util.StringHelper;
 import cn.sexycode.sql.dialect.Dialect;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
+import cn.sexycode.sql.dialect.function.SQLFunctionRegistry;
+import cn.sexycode.sql.sql.Template;
+import cn.sexycode.sql.type.Mapping;
+import cn.sexycode.sql.type.Type;
 
 import java.io.Serializable;
 import java.util.Locale;
@@ -29,7 +32,7 @@ public class Column implements Selectable, Serializable, Cloneable {
     private int length = DEFAULT_LENGTH;
     private int precision = DEFAULT_PRECISION;
     private int scale = DEFAULT_SCALE;
-    private Object value;
+    private Value value;
     private int typeIndex;
     private String name;
     private boolean nullable = true;
@@ -59,11 +62,11 @@ public class Column implements Selectable, Serializable, Cloneable {
         this.length = length;
     }
 
-    public Object getValue() {
+    public Value getValue() {
         return value;
     }
 
-    public void setValue(Object value) {
+    public void setValue(Value value) {
         this.value = value;
     }
 
@@ -184,7 +187,7 @@ public class Column implements Selectable, Serializable, Cloneable {
     }
 
     public int getSqlTypeCode(Mapping mapping) throws MappingException {
-        org.hibernate.type.Type type = getValue().getType();
+        Type type = getValue().getType();
         try {
             int sqlTypeCode = type.sqlTypes(mapping)[getTypeIndex()];
             if (getSqlTypeCode() != null && getSqlTypeCode() != sqlTypeCode) {
@@ -221,7 +224,7 @@ public class Column implements Selectable, Serializable, Cloneable {
         sqlTypeCode = typeCode;
     }
 
-    public String getSqlType(Dialect dialect, Mapping mapping) throws HibernateException {
+    public String getSqlType(Dialect dialect, Mapping mapping) throws MappingException {
         if (sqlType == null) {
             sqlType = dialect.getTypeName(getSqlTypeCode(mapping), getLength(), getPrecision(), getScale());
         }

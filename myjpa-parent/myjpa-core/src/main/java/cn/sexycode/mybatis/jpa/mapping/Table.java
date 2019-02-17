@@ -6,30 +6,13 @@
  */
 package cn.sexycode.mybatis.jpa.mapping;
 
-import cn.sexycode.mybatis.jpa.binding.Identifier;
+
 import cn.sexycode.mybatis.jpa.binding.MappingException;
-import cn.sexycode.mybatis.jpa.binding.Metadata;
+import cn.sexycode.mybatis.jpa.util.StringHelper;
 import cn.sexycode.sql.dialect.Dialect;
-import org.hibernate.HibernateException;
-import org.hibernate.boot.model.relational.Exportable;
-import org.hibernate.boot.model.relational.InitCommand;
-import org.hibernate.boot.model.relational.Namespace;
-import org.hibernate.boot.model.relational.QualifiedTableName;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
-import org.hibernate.engine.jdbc.env.spi.QualifiedObjectNameFormatter;
-import org.hibernate.engine.spi.Mapping;
-import org.hibernate.internal.util.StringHelper;
-import org.hibernate.tool.hbm2ddl.ColumnMetadata;
-import org.hibernate.tool.hbm2ddl.TableMetadata;
-import org.hibernate.tool.schema.extract.spi.ColumnInformation;
-import org.hibernate.tool.schema.extract.spi.TableInformation;
-import org.jboss.logging.Logger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.Column;
-import javax.persistence.ForeignKey;
 import java.io.Serializable;
 import java.util.*;
 
@@ -63,8 +46,6 @@ public class Table implements Serializable, Exportable {
     private boolean hasDenormalizedTables;
     private String comment;
 
-    private List<InitCommand> initCommands;
-
     public Table() {
     }
 
@@ -93,42 +74,6 @@ public class Table implements Serializable, Exportable {
         this.isAbstract = isAbstract;
     }
 
-
-    /**
-     * @deprecated Should use {@link QualifiedObjectNameFormatter#format} on QualifiedObjectNameFormatter
-     * obtained from {@link org.hibernate.engine.jdbc.env.spi.JdbcEnvironment}
-     */
-    @Deprecated
-    public String getQualifiedName(Dialect dialect, String defaultCatalog, String defaultSchema) {
-        if (subselect != null) {
-            return "( " + subselect + " )";
-        }
-        String quotedName = getQuotedName(dialect);
-        String usedSchema = schema == null ?
-                defaultSchema :
-                getQuotedSchema(dialect);
-        String usedCatalog = catalog == null ?
-                defaultCatalog :
-                getQuotedCatalog(dialect);
-        return qualify(usedCatalog, usedSchema, quotedName);
-    }
-
-    /**
-     * @deprecated Should use {@link QualifiedObjectNameFormatter#format} on QualifiedObjectNameFormatter
-     * obtained from {@link org.hibernate.engine.jdbc.env.spi.JdbcEnvironment}
-     */
-    @Deprecated
-    public static String qualify(String catalog, String schema, String table) {
-        StringBuilder qualifiedName = new StringBuilder();
-        if (catalog != null) {
-            qualifiedName.append(catalog).append('.');
-        }
-        if (schema != null) {
-            qualifiedName.append(schema).append('.');
-        }
-        return qualifiedName.append(table).toString();
-    }
-
     public void setName(String name) {
         this.name = Identifier.toIdentifier(name);
     }
@@ -146,7 +91,7 @@ public class Table implements Serializable, Exportable {
     }
 
     public String getQuotedName(Dialect dialect) {
-        return name == null ? null : name.render(dialect);
+        return name == null ? null : name.render();
     }
 
     public QualifiedTableName getQualifiedTableName() {
@@ -177,7 +122,7 @@ public class Table implements Serializable, Exportable {
     }
 
     public String getQuotedSchema(Dialect dialect) {
-        return schema == null ? null : schema.render(dialect);
+        return schema == null ? null : schema.render();
     }
 
     public boolean isSchemaQuoted() {
@@ -197,7 +142,7 @@ public class Table implements Serializable, Exportable {
     }
 
     public String getQuotedCatalog(Dialect dialect) {
-        return catalog == null ? null : catalog.render(dialect);
+        return catalog == null ? null : catalog.render();
     }
 
     public boolean isCatalogQuoted() {
@@ -245,7 +190,7 @@ public class Table implements Serializable, Exportable {
                 for (Column c : primaryKey.getColumns()) {
                     if (c.getCanonicalName().equals(column.getCanonicalName())) {
                         column.setNullable(false);
-                        log.debugf(
+                        log.debug(
                                 "Forcing column [%s] to be non-null as it is part of the primary key for table [%s]",
                                 column.getCanonicalName(),
                                 getNameIdentifier().getCanonicalName()
@@ -391,211 +336,11 @@ public class Table implements Serializable, Exportable {
                 && Identifier.areEqual(catalog, table.catalog);
     }
 
-    public void validateColumns(Dialect dialect, Mapping mapping, TableMetadata tableInfo) {
-        Iterator iter = getColumnIterator();
-        while (iter.hasNext()) {
-            Column col = (Column) iter.next();
-
-            ColumnMetadata columnInfo = tableInfo.getColumnMetadata(col.getName());
-
-            if (columnInfo == null) {
-                throw new HibernateException("Missing column: " + col.getName() + " in " + Table.qualify(tableInfo.getCatalog(), tableInfo.getSchema(), tableInfo.getName()));
-            } else {
-                final boolean typesMatch = col.getSqlType(dialect, mapping).toLowerCase(Locale.ROOT)
-                        .startsWith(columnInfo.getTypeName().toLowerCase(Locale.ROOT))
-                        || columnInfo.getTypeCode() == col.getSqlTypeCode(mapping);
-                if (!typesMatch) {
-                    throw new HibernateException(
-                            "Wrong column type in " +
-                                    Table.qualify(tableInfo.getCatalog(), tableInfo.getSchema(), tableInfo.getName()) +
-                                    " for column " + col.getName() +
-                                    ". Found: " + columnInfo.getTypeName().toLowerCase(Locale.ROOT) +
-                                    ", expected: " + col.getSqlType(dialect, mapping)
-                    );
-                }
-            }
-        }
-
-    }
-
-    public Iterator sqlAlterStrings(
-            Dialect dialect,
-            Metadata metadata,
-            TableInformation tableInfo,
-            String defaultCatalog,
-            String defaultSchema) throws HibernateException {
-
-        final JdbcEnvironment jdbcEnvironment = metadata.getDatabase().getJdbcEnvironment();
-
-        StringBuilder root = new StringBuilder("alter table ")
-                .append(
-                        jdbcEnvironment.getQualifiedObjectNameFormatter().format(
-                                tableInfo.getName(),
-                                dialect
-                        )
-                )
-                .append(' ')
-                .append(dialect.getAddColumnString());
-
-        Iterator iter = getColumnIterator();
-        List results = new ArrayList();
-
-        while (iter.hasNext()) {
-            final Column column = (Column) iter.next();
-            final ColumnInformation columnInfo = tableInfo.getColumn(Identifier.toIdentifier(column.getName(), column.isQuoted()));
-
-            if (columnInfo == null) {
-                // the column doesnt exist at all.
-                StringBuilder alter = new StringBuilder(root.toString())
-                        .append(' ')
-                        .append(column.getQuotedName(dialect))
-                        .append(' ')
-                        .append(column.getSqlType(dialect, metadata));
-
-                String defaultValue = column.getDefaultValue();
-                if (defaultValue != null) {
-                    alter.append(" default ").append(defaultValue);
-                }
-
-                if (column.isNullable()) {
-                    alter.append(dialect.getNullColumnString());
-                } else {
-                    alter.append(" not null");
-                }
-
-                if (column.isUnique()) {
-                    String keyName = Constraint.generateName("UK_", this, column);
-                    UniqueKey uk = getOrCreateUniqueKey(keyName);
-                    uk.addColumn(column);
-                    alter.append(dialect.getUniqueDelegate()
-                            .getColumnDefinitionUniquenessFragment(column));
-                }
-
-                if (column.hasCheckConstraint() && dialect.supportsColumnCheck()) {
-                    alter.append(" check(")
-                            .append(column.getCheckConstraint())
-                            .append(")");
-                }
-
-                String columnComment = column.getComment();
-                if (columnComment != null) {
-                    alter.append(dialect.getColumnComment(columnComment));
-                }
-
-                alter.append(dialect.getAddColumnSuffixString());
-
-                results.add(alter.toString());
-            }
-
-        }
-
-        if (results.isEmpty()) {
-            log.debugf("No alter strings for table : %s", getQuotedName());
-        }
-
-        return results.iterator();
-    }
 
     public boolean hasPrimaryKey() {
         return getPrimaryKey() != null;
     }
 
-    public String sqlCreateString(Dialect dialect, Mapping p, String defaultCatalog, String defaultSchema) {
-        StringBuilder buf = new StringBuilder(hasPrimaryKey() ? dialect.getCreateTableString() : dialect.getCreateMultisetTableString())
-                .append(' ')
-                .append(getQualifiedName(dialect, defaultCatalog, defaultSchema))
-                .append(" (");
-
-        boolean identityColumn = idValue != null && idValue.isIdentityColumn(p.getIdentifierGeneratorFactory(), dialect);
-
-        // Try to find out the name of the primary key to create it as identity if the IdentityGenerator is used
-        String pkname = null;
-        if (hasPrimaryKey() && identityColumn) {
-            pkname = ((Column) getPrimaryKey().getColumnIterator().next()).getQuotedName(dialect);
-        }
-
-        Iterator iter = getColumnIterator();
-        while (iter.hasNext()) {
-            Column col = (Column) iter.next();
-
-            buf.append(col.getQuotedName(dialect))
-                    .append(' ');
-
-            if (identityColumn && col.getQuotedName(dialect).equals(pkname)) {
-                // to support dialects that have their own identity data type
-                if (dialect.getIdentityColumnSupport().hasDataTypeInIdentityColumn()) {
-                    buf.append(col.getSqlType(dialect, p));
-                }
-                buf.append(' ')
-                        .append(dialect.getIdentityColumnSupport().getIdentityColumnString(col.getSqlTypeCode(p)));
-            } else {
-
-                buf.append(col.getSqlType(dialect, p));
-
-                String defaultValue = col.getDefaultValue();
-                if (defaultValue != null) {
-                    buf.append(" default ").append(defaultValue);
-                }
-
-                if (col.isNullable()) {
-                    buf.append(dialect.getNullColumnString());
-                } else {
-                    buf.append(" not null");
-                }
-
-            }
-
-            if (col.isUnique()) {
-                String keyName = Constraint.generateName("UK_", this, col);
-                UniqueKey uk = getOrCreateUniqueKey(keyName);
-                uk.addColumn(col);
-                buf.append(dialect.getUniqueDelegate()
-                        .getColumnDefinitionUniquenessFragment(col));
-            }
-
-            if (col.hasCheckConstraint() && dialect.supportsColumnCheck()) {
-                buf.append(" check (")
-                        .append(col.getCheckConstraint())
-                        .append(")");
-            }
-
-            String columnComment = col.getComment();
-            if (columnComment != null) {
-                buf.append(dialect.getColumnComment(columnComment));
-            }
-
-            if (iter.hasNext()) {
-                buf.append(", ");
-            }
-
-        }
-        if (hasPrimaryKey()) {
-            buf.append(", ")
-                    .append(getPrimaryKey().sqlConstraintString(dialect));
-        }
-
-        buf.append(dialect.getUniqueDelegate().getTableCreationUniqueConstraintsFragment(this));
-
-        if (dialect.supportsTableCheck()) {
-            for (String checkConstraint : checkConstraints) {
-                buf.append(", check (")
-                        .append(checkConstraint)
-                        .append(')');
-            }
-        }
-
-        buf.append(')');
-
-        if (comment != null) {
-            buf.append(dialect.getTableComment(comment));
-        }
-
-        return buf.append(dialect.getTableTypeString()).toString();
-    }
-
-    public String sqlDropString(Dialect dialect, String defaultCatalog, String defaultSchema) {
-        return dialect.getDropTableString(getQualifiedName(dialect, defaultCatalog, defaultSchema));
-    }
 
     public PrimaryKey getPrimaryKey() {
         return primaryKey;
@@ -800,32 +545,9 @@ public class Table implements Serializable, Exportable {
         return checkConstraints.iterator();
     }
 
-    public Iterator sqlCommentStrings(Dialect dialect, String defaultCatalog, String defaultSchema) {
-        List comments = new ArrayList();
-        if (dialect.supportsCommentOn()) {
-            String tableName = getQualifiedName(dialect, defaultCatalog, defaultSchema);
-            if (comment != null) {
-                comments.add("comment on table " + tableName + " is '" + comment + "'");
-            }
-            Iterator iter = getColumnIterator();
-            while (iter.hasNext()) {
-                Column column = (Column) iter.next();
-                String columnComment = column.getComment();
-                if (columnComment != null) {
-                    comments.add("comment on column " + tableName + '.' + column.getQuotedName(dialect) + " is '" + columnComment + "'");
-                }
-            }
-        }
-        return comments.iterator();
-    }
-
     @Override
     public String getExportIdentifier() {
-        return Table.qualify(
-                render(catalog),
-                render(schema),
-                name.render()
-        );
+        return null;
     }
 
     private String render(Identifier identifier) {
@@ -869,18 +591,4 @@ public class Table implements Serializable, Exportable {
         }
     }
 
-    public void addInitCommand(InitCommand command) {
-        if (initCommands == null) {
-            initCommands = new ArrayList<InitCommand>();
-        }
-        initCommands.add(command);
-    }
-
-    public List<InitCommand> getInitCommands() {
-        if (initCommands == null) {
-            return Collections.emptyList();
-        } else {
-            return Collections.unmodifiableList(initCommands);
-        }
-    }
 }

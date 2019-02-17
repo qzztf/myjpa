@@ -6,12 +6,12 @@
  */
 package cn.sexycode.sql.dialect.unique;
 
-import java.util.Iterator;
-
+import cn.sexycode.sql.dialect.Dialect;
 import org.hibernate.boot.Metadata;
-import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 import org.hibernate.mapping.UniqueKey;
+
+import java.util.Iterator;
 
 /**
  * The default UniqueDelegate implementation for most dialects.  Uses

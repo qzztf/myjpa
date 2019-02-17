@@ -7,8 +7,6 @@
 package cn.sexycode.mybatis.jpa.mapping;
 
 
-import cn.sexycode.mybatis.jpa.binding.MappingException;
-
 /**
  * Represents an identifying key of a table: the value for primary key
  * of an entity, or a foreign key of a collection or join table or

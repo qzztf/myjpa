@@ -6,12 +6,11 @@
  */
 package cn.sexycode.sql.dialect.function;
 
-import java.util.List;
+import cn.sexycode.sql.QueryException;
+import cn.sexycode.sql.type.Mapping;
+import cn.sexycode.sql.type.Type;
 
-import org.hibernate.QueryException;
-import org.hibernate.engine.spi.Mapping;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.type.Type;
+import java.util.List;
 
 /**
  * A function which takes no arguments
@@ -62,7 +61,7 @@ public class NoArgSQLFunction implements SQLFunction {
     }
 
     @Override
-    public String render(Type argumentType, List args, SessionFactoryImplementor factory) throws QueryException {
+    public String render(Type argumentType, List args) throws QueryException {
         if (args.size() > 0) {
             throw new QueryException("function takes no arguments: " + name);
         }

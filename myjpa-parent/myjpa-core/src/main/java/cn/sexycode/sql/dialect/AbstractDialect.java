@@ -8,28 +8,29 @@ package cn.sexycode.sql.dialect;
 
 import cn.sexycode.mybatis.jpa.binding.MappingException;
 import cn.sexycode.mybatis.jpa.mapping.Column;
-import cn.sexycode.mybatis.jpa.mapping.Constraint;
-import cn.sexycode.mybatis.jpa.mapping.Table;
 import cn.sexycode.mybatis.jpa.util.ArrayHelper;
 import cn.sexycode.mybatis.jpa.util.StringHelper;
-import cn.sexycode.sql.dialect.*;
+import cn.sexycode.sql.DefaultSchemaNameResolver;
+import cn.sexycode.sql.Environment;
+import cn.sexycode.sql.SchemaNameResolver;
 import cn.sexycode.sql.dialect.function.*;
 import cn.sexycode.sql.dialect.identity.IdentityColumnSupport;
 import cn.sexycode.sql.dialect.identity.IdentityColumnSupportImpl;
-import cn.sexycode.sql.dialect.lock.*;
 import cn.sexycode.sql.dialect.pagination.LegacyLimitHandler;
 import cn.sexycode.sql.dialect.pagination.LimitHandler;
 import cn.sexycode.sql.dialect.unique.DefaultUniqueDelegate;
 import cn.sexycode.sql.dialect.unique.UniqueDelegate;
+import cn.sexycode.sql.sql.ANSICaseFragment;
+import cn.sexycode.sql.sql.ANSIJoinFragment;
+import cn.sexycode.sql.sql.CaseFragment;
+import cn.sexycode.sql.sql.JoinFragment;
 import cn.sexycode.sql.type.StandardBasicTypes;
 import cn.sexycode.sql.type.descriptor.sql.ClobTypeDescriptor;
 import cn.sexycode.sql.type.descriptor.sql.SqlTypeDescriptor;
+import cn.sexycode.sql.util.LobCreator;
 import cn.sexycode.sql.util.ReflectHelper;
-import org.hibernate.*;
+import cn.sexycode.sql.util.StreamCopier;
 
-import javax.imageio.spi.ServiceRegistry;
-import javax.persistence.ForeignKey;
-import javax.sound.midi.Sequence;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.*;
@@ -43,7 +44,6 @@ import java.util.*;
  * @author Gavin King, David Channon
  */
 public abstract class AbstractDialect implements Dialect {
-    private static final CoreMessageLogger LOG = CoreLogging.messageLogger(Dialect.class);
 
     /**
      * Defines a default batch size constant
@@ -225,8 +225,6 @@ public abstract class AbstractDialect implements Dialect {
     }
 
 
-
-
     /**
      * Get the name of the database type associated with the given
      * {@link Types} typecode.
@@ -403,17 +401,17 @@ public abstract class AbstractDialect implements Dialect {
     @SuppressWarnings({"UnusedDeclaration"})
     protected static final LobMergeStrategy LEGACY_LOB_MERGE_STRATEGY = new LobMergeStrategy() {
         @Override
-        public Blob mergeBlob(Blob original, Blob target, SharedSessionContractImplementor session) {
+        public Blob mergeBlob(Blob original, Blob target) {
             return target;
         }
 
         @Override
-        public Clob mergeClob(Clob original, Clob target, SharedSessionContractImplementor session) {
+        public Clob mergeClob(Clob original, Clob target) {
             return target;
         }
 
         @Override
-        public NClob mergeNClob(NClob original, NClob target, SharedSessionContractImplementor session) {
+        public NClob mergeNClob(NClob original, NClob target) {
             return target;
         }
     };
@@ -424,7 +422,7 @@ public abstract class AbstractDialect implements Dialect {
     @SuppressWarnings({"UnusedDeclaration"})
     protected static final LobMergeStrategy STREAM_XFER_LOB_MERGE_STRATEGY = new LobMergeStrategy() {
         @Override
-        public Blob mergeBlob(Blob original, Blob target, SharedSessionContractImplementor session) {
+        public Blob mergeBlob(Blob original, Blob target) {
             if (original != target) {
                 try {
                     // the BLOB just read during the load phase of merge
@@ -434,15 +432,15 @@ public abstract class AbstractDialect implements Dialect {
                     StreamCopier.copy(detachedStream, connectedStream);
                     return target;
                 } catch (SQLException e) {
-                    throw session.getFactory().getSQLExceptionHelper().convert(e, "unable to merge BLOB data");
+                    throw new RuntimeException("unable to merge BLOB data", e);
                 }
             } else {
-                return NEW_LOCATOR_LOB_MERGE_STRATEGY.mergeBlob(original, target, session);
+                return NEW_LOCATOR_LOB_MERGE_STRATEGY.mergeBlob(original, target);
             }
         }
 
         @Override
-        public Clob mergeClob(Clob original, Clob target, SharedSessionContractImplementor session) {
+        public Clob mergeClob(Clob original, Clob target) {
             if (original != target) {
                 try {
                     // the CLOB just read during the load phase of merge
@@ -452,15 +450,15 @@ public abstract class AbstractDialect implements Dialect {
                     StreamCopier.copy(detachedStream, connectedStream);
                     return target;
                 } catch (SQLException e) {
-                    throw session.getFactory().getSQLExceptionHelper().convert(e, "unable to merge CLOB data");
+                    throw new RuntimeException("unable to merge CLOB data", e);
                 }
             } else {
-                return NEW_LOCATOR_LOB_MERGE_STRATEGY.mergeClob(original, target, session);
+                return NEW_LOCATOR_LOB_MERGE_STRATEGY.mergeClob(original, target);
             }
         }
 
         @Override
-        public NClob mergeNClob(NClob original, NClob target, SharedSessionContractImplementor session) {
+        public NClob mergeNClob(NClob original, NClob target) {
             if (original != target) {
                 try {
                     // the NCLOB just read during the load phase of merge
@@ -470,10 +468,10 @@ public abstract class AbstractDialect implements Dialect {
                     StreamCopier.copy(detachedStream, connectedStream);
                     return target;
                 } catch (SQLException e) {
-                    throw session.getFactory().getSQLExceptionHelper().convert(e, "unable to merge NCLOB data");
+                    throw new RuntimeException("unable to merge NCLOB data", e);
                 }
             } else {
-                return NEW_LOCATOR_LOB_MERGE_STRATEGY.mergeNClob(original, target, session);
+                return NEW_LOCATOR_LOB_MERGE_STRATEGY.mergeNClob(original, target);
             }
         }
     };
@@ -483,49 +481,48 @@ public abstract class AbstractDialect implements Dialect {
      */
     protected static final LobMergeStrategy NEW_LOCATOR_LOB_MERGE_STRATEGY = new LobMergeStrategy() {
         @Override
-        public Blob mergeBlob(Blob original, Blob target, SharedSessionContractImplementor session) {
+        public Blob mergeBlob(Blob original, Blob target) {
             if (original == null && target == null) {
                 return null;
             }
             try {
-                final LobCreator lobCreator = session.getFactory().getServiceRegistry().getService(JdbcServices.class).getLobCreator(
-                        session
-                );
+                final LobCreator lobCreator = null;
+
                 return original == null
                         ? lobCreator.createBlob(ArrayHelper.EMPTY_BYTE_ARRAY)
                         : lobCreator.createBlob(original.getBinaryStream(), original.length());
             } catch (SQLException e) {
-                throw session.getFactory().getSQLExceptionHelper().convert(e, "unable to merge BLOB data");
+                throw new RuntimeException("unable to merge BLOB data", e);
             }
         }
 
         @Override
-        public Clob mergeClob(Clob original, Clob target, SharedSessionContractImplementor session) {
+        public Clob mergeClob(Clob original, Clob target) {
             if (original == null && target == null) {
                 return null;
             }
             try {
-                final LobCreator lobCreator = session.getFactory().getServiceRegistry().getService(JdbcServices.class).getLobCreator(session);
+                final LobCreator lobCreator = null;
                 return original == null
                         ? lobCreator.createClob("")
                         : lobCreator.createClob(original.getCharacterStream(), original.length());
             } catch (SQLException e) {
-                throw session.getFactory().getSQLExceptionHelper().convert(e, "unable to merge CLOB data");
+                throw new RuntimeException("unable to merge CLOB data", e);
             }
         }
 
         @Override
-        public NClob mergeNClob(NClob original, NClob target, SharedSessionContractImplementor session) {
+        public NClob mergeNClob(NClob original, NClob target) {
             if (original == null && target == null) {
                 return null;
             }
             try {
-                final LobCreator lobCreator = session.getFactory().getServiceRegistry().getService(JdbcServices.class).getLobCreator(session);
+                final LobCreator lobCreator = null;
                 return original == null
                         ? lobCreator.createNClob("")
                         : lobCreator.createNClob(original.getCharacterStream(), original.length());
             } catch (SQLException e) {
-                throw session.getFactory().getSQLExceptionHelper().convert(e, "unable to merge NCLOB data");
+                throw new RuntimeException("unable to merge NCLOB data", e);
             }
         }
     };
@@ -635,25 +632,6 @@ public abstract class AbstractDialect implements Dialect {
     }
 
 
-    // native identifier generation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
-     * The class (which implements {@link org.hibernate.id.IdentifierGenerator})
-     * which acts as this dialects native generation strategy.
-     * <p/>
-     * Comes into play whenever the user specifies the native generator.
-     *
-     * @return The native generator class.
-     * @deprecated use {@link #getNativeIdentifierGeneratorStrategy()} instead
-     */
-    @Deprecated
-    public Class getNativeIdentifierGeneratorClass() {
-        if (getIdentityColumnSupport().supportsIdentityColumns()) {
-            return IdentityGenerator.class;
-        } else {
-            return SequenceStyleGenerator.class;
-        }
-    }
 
     /**
      * Resolves the native generation strategy associated to this dialect.
@@ -839,14 +817,6 @@ public abstract class AbstractDialect implements Dialect {
      */
     public String getQuerySequencesString() {
         return null;
-    }
-
-    public SequenceInformationExtractor getSequenceInformationExtractor() {
-        if (getQuerySequencesString() == null) {
-            return SequenceInformationExtractorNoOpImpl.INSTANCE;
-        } else {
-            return SequenceInformationExtractorLegacyImpl.INSTANCE;
-        }
     }
 
 
@@ -1057,73 +1027,6 @@ public abstract class AbstractDialect implements Dialect {
     }
 
     /**
-     * Get a strategy instance which knows how to acquire a database-level lock
-     * of the specified mode for this dialect.
-     *
-     * @param lockable The persister for the entity to be locked.
-     * @param lockMode The type of lock to be acquired.
-     * @return The appropriate locking strategy.
-     * @since 3.2
-     */
-    public LockingStrategy getLockingStrategy(Lockable lockable, LockMode lockMode) {
-        switch (lockMode) {
-            case PESSIMISTIC_FORCE_INCREMENT:
-                return new PessimisticForceIncrementLockingStrategy(lockable, lockMode);
-            case PESSIMISTIC_WRITE:
-                return new PessimisticWriteSelectLockingStrategy(lockable, lockMode);
-            case PESSIMISTIC_READ:
-                return new PessimisticReadSelectLockingStrategy(lockable, lockMode);
-            case OPTIMISTIC:
-                return new OptimisticLockingStrategy(lockable, lockMode);
-            case OPTIMISTIC_FORCE_INCREMENT:
-                return new OptimisticForceIncrementLockingStrategy(lockable, lockMode);
-            default:
-                return new SelectLockingStrategy(lockable, lockMode);
-        }
-    }
-
-    /**
-     * Given LockOptions (lockMode, timeout), determine the appropriate for update fragment to use.
-     *
-     * @param lockOptions contains the lock mode to apply.
-     * @return The appropriate for update fragment.
-     */
-    public String getForUpdateString(LockOptions lockOptions) {
-        final LockMode lockMode = lockOptions.getLockMode();
-        return getForUpdateString(lockMode, lockOptions.getTimeOut());
-    }
-
-    @SuppressWarnings({"deprecation"})
-    private String getForUpdateString(LockMode lockMode, int timeout) {
-        switch (lockMode) {
-            case UPGRADE:
-                return getForUpdateString();
-            case PESSIMISTIC_READ:
-                return getReadLockString(timeout);
-            case PESSIMISTIC_WRITE:
-                return getWriteLockString(timeout);
-            case UPGRADE_NOWAIT:
-            case FORCE:
-            case PESSIMISTIC_FORCE_INCREMENT:
-                return getForUpdateNowaitString();
-            case UPGRADE_SKIPLOCKED:
-                return getForUpdateSkipLockedString();
-            default:
-                return "";
-        }
-    }
-
-    /**
-     * Given a lock mode, determine the appropriate for update fragment to use.
-     *
-     * @param lockMode The lock mode to apply.
-     * @return The appropriate for update fragment.
-     */
-    public String getForUpdateString(LockMode lockMode) {
-        return getForUpdateString(lockMode, LockOptions.WAIT_FOREVER);
-    }
-
-    /**
      * Get the string to append to SELECT statements to acquire locks
      * for this dialect.
      *
@@ -1223,29 +1126,6 @@ public abstract class AbstractDialect implements Dialect {
         return getForUpdateString();
     }
 
-    /**
-     * Get the <tt>FOR UPDATE OF column_list</tt> fragment appropriate for this
-     * dialect given the aliases of the columns to be write locked.
-     *
-     * @param aliases     The columns to be write locked.
-     * @param lockOptions the lock options to apply
-     * @return The appropriate <tt>FOR UPDATE OF column_list</tt> clause string.
-     */
-    @SuppressWarnings({"unchecked", "UnusedParameters"})
-    public String getForUpdateString(String aliases, LockOptions lockOptions) {
-        LockMode lockMode = lockOptions.getLockMode();
-        final Iterator<Map.Entry<String, LockMode>> itr = lockOptions.getAliasLockIterator();
-        while (itr.hasNext()) {
-            // seek the highest lock mode
-            final Map.Entry<String, LockMode> entry = itr.next();
-            final LockMode lm = entry.getValue();
-            if (lm.greaterThan(lockMode)) {
-                lockMode = lm;
-            }
-        }
-        lockOptions.setLockMode(lockMode);
-        return getForUpdateString(lockOptions);
-    }
 
     /**
      * Retrieves the <tt>FOR UPDATE NOWAIT</tt> syntax specific to this dialect.
@@ -1289,52 +1169,6 @@ public abstract class AbstractDialect implements Dialect {
         return getForUpdateString(aliases);
     }
 
-    /**
-     * Some dialects support an alternative means to <tt>SELECT FOR UPDATE</tt>,
-     * whereby a "lock hint" is appends to the table name in the from clause.
-     * <p/>
-     * contributed by <a href="http://sourceforge.net/users/heschulz">Helge Schulz</a>
-     *
-     * @param mode      The lock mode to apply
-     * @param tableName The name of the table to which to apply the lock hint.
-     * @return The table with any required lock hints.
-     * @deprecated use {@code appendLockHint(LockOptions,String)} instead
-     */
-    @Deprecated
-    public String appendLockHint(LockMode mode, String tableName) {
-        return appendLockHint(new LockOptions(mode), tableName);
-    }
-
-    /**
-     * Some dialects support an alternative means to <tt>SELECT FOR UPDATE</tt>,
-     * whereby a "lock hint" is appends to the table name in the from clause.
-     * <p/>
-     * contributed by <a href="http://sourceforge.net/users/heschulz">Helge Schulz</a>
-     *
-     * @param lockOptions The lock options to apply
-     * @param tableName   The name of the table to which to apply the lock hint.
-     * @return The table with any required lock hints.
-     */
-    public String appendLockHint(LockOptions lockOptions, String tableName) {
-        return tableName;
-    }
-
-    /**
-     * Modifies the given SQL by applying the appropriate updates for the specified
-     * lock modes and key columns.
-     * <p/>
-     * The behavior here is that of an ANSI SQL <tt>SELECT FOR UPDATE</tt>.  This
-     * method is really intended to allow dialects which do not support
-     * <tt>SELECT FOR UPDATE</tt> to achieve this in their own fashion.
-     *
-     * @param sql                the SQL string to modify
-     * @param aliasedLockOptions lock options indexed by aliased table names.
-     * @param keyColumnNames     a map of key columns indexed by aliased table names.
-     * @return the modified SQL string.
-     */
-    public String applyLocksToSql(String sql, LockOptions aliasedLockOptions, Map<String, String[]> keyColumnNames) {
-        return sql + new ForUpdateFragment(this, aliasedLockOptions, keyColumnNames).toFragmentString();
-    }
 
 
     // table support ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1348,23 +1182,6 @@ public abstract class AbstractDialect implements Dialect {
         return "create table";
     }
 
-    /**
-     * Slight variation on {@link #getCreateTableString}.  Here, we have the
-     * command used to create a table when there is no primary key and
-     * duplicate rows are expected.
-     * <p/>
-     * Most databases do not care about the distinction; originally added for
-     * Teradata support which does care.
-     *
-     * @return The command used to create a multiset table.
-     */
-    public String getCreateMultisetTableString() {
-        return getCreateTableString();
-    }
-
-    public MultiTableBulkIdStrategy getDefaultMultiTableBulkIdStrategy() {
-        return new PersistentTableBulkIdStrategy();
-    }
 
     // callable statement support ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1494,81 +1311,6 @@ public abstract class AbstractDialect implements Dialect {
         return "current_timestamp";
     }
 
-
-    // SQLException support ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
-     * Build an instance of the SQLExceptionConverter preferred by this dialect for
-     * converting SQLExceptions into Hibernate's JDBCException hierarchy.
-     * <p/>
-     * The preferred method is to not override this method; if possible,
-     * {@link #buildSQLExceptionConversionDelegate()} should be overridden
-     * instead.
-     * <p>
-     * If this method is not overridden, the default SQLExceptionConverter
-     * implementation executes 3 SQLException converter delegates:
-     * <ol>
-     * <li>a "static" delegate based on the JDBC 4 defined SQLException hierarchy;</li>
-     * <li>the vendor-specific delegate returned by {@link #buildSQLExceptionConversionDelegate()};
-     * (it is strongly recommended that specific Dialect implementations
-     * override {@link #buildSQLExceptionConversionDelegate()})</li>
-     * <li>a delegate that interprets SQLState codes for either X/Open or SQL-2003 codes,
-     * depending on java.sql.DatabaseMetaData#getSQLStateType</li>
-     * </ol>
-     * <p/>
-     * If this method is overridden, it is strongly recommended that the
-     * returned {@link SQLExceptionConverter} interpret SQL errors based on
-     * vendor-specific error codes rather than the SQLState since the
-     * interpretation is more accurate when using vendor-specific ErrorCodes.
-     *
-     * @return The Dialect's preferred SQLExceptionConverter, or null to
-     * indicate that the default {@link SQLExceptionConverter} should be used.
-     * @see {@link #buildSQLExceptionConversionDelegate()}
-     * @deprecated {@link #buildSQLExceptionConversionDelegate()} should be
-     * overridden instead.
-     */
-    @Deprecated
-    public SQLExceptionConverter buildSQLExceptionConverter() {
-        return null;
-    }
-
-    /**
-     * Build an instance of a {@link SQLExceptionConversionDelegate} for
-     * interpreting dialect-specific error or SQLState codes.
-     * <p/>
-     * When {@link #buildSQLExceptionConverter} returns null, the default
-     * {@link SQLExceptionConverter} is used to interpret SQLState and
-     * error codes. If this method is overridden to return a non-null value,
-     * the default {@link SQLExceptionConverter} will use the returned
-     * {@link SQLExceptionConversionDelegate} in addition to the following
-     * standard delegates:
-     * <ol>
-     * <li>a "static" delegate based on the JDBC 4 defined SQLException hierarchy;</li>
-     * <li>a delegate that interprets SQLState codes for either X/Open or SQL-2003 codes,
-     * depending on java.sql.DatabaseMetaData#getSQLStateType</li>
-     * </ol>
-     * <p/>
-     * It is strongly recommended that specific Dialect implementations override this
-     * method, since interpretation of a SQL error is much more accurate when based on
-     * the a vendor-specific ErrorCode rather than the SQLState.
-     * <p/>
-     * Specific Dialects may override to return whatever is most appropriate for that vendor.
-     *
-     * @return The SQLExceptionConversionDelegate for this dialect
-     */
-    public SQLExceptionConversionDelegate buildSQLExceptionConversionDelegate() {
-        return null;
-    }
-
-    private static final ViolatedConstraintNameExtracter EXTRACTER = new ViolatedConstraintNameExtracter() {
-        public String extractConstraintName(SQLException sqle) {
-            return null;
-        }
-    };
-
-    public ViolatedConstraintNameExtracter getViolatedConstraintNameExtracter() {
-        return EXTRACTER;
-    }
 
 
     // union subclass support ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1718,45 +1460,6 @@ public abstract class AbstractDialect implements Dialect {
         return sqlKeywords;
     }
 
-    /**
-     * Build the IdentifierHelper indicated by this Dialect for handling identifier conversions.
-     * Returning {@code null} is allowed and indicates that Hibernate should fallback to building a
-     * "standard" helper.  In the fallback path, any changes made to the IdentifierHelperBuilder
-     * during this call will still be incorporated into the built IdentifierHelper.
-     * <p/>
-     * The incoming builder will have the following set:<ul>
-     * <li>{@link IdentifierHelperBuilder#isGloballyQuoteIdentifiers()}</li>
-     * <li>{@link IdentifierHelperBuilder#getUnquotedCaseStrategy()} - initialized to UPPER</li>
-     * <li>{@link IdentifierHelperBuilder#getQuotedCaseStrategy()} - initialized to MIXED</li>
-     * </ul>
-     * <p/>
-     * By default Hibernate will do the following:<ul>
-     * <li>Call {@link IdentifierHelperBuilder#applyIdentifierCasing(DatabaseMetaData)}
-     * <li>Call {@link IdentifierHelperBuilder#applyReservedWords(DatabaseMetaData)}
-     * <li>Applies {@link AnsiSqlKeywords#sql2003()} as reserved words</li>
-     * <li>Applies the {#link #sqlKeywords} collected here as reserved words</li>
-     * <li>Applies the Dialect's NameQualifierSupport, if it defines one</li>
-     * </ul>
-     *
-     * @param builder    A semi-configured IdentifierHelper builder.
-     * @param dbMetaData Access to the metadata returned from the driver if needed and if available.  WARNING: may be {@code null}
-     * @return The IdentifierHelper instance to use, or {@code null} to indicate Hibernate should use its fallback path
-     * @throws SQLException Accessing the DatabaseMetaData can throw it.  Just re-throw and Hibernate will handle.
-     * @see #getNameQualifierSupport()
-     */
-    public IdentifierHelper buildIdentifierHelper(
-            IdentifierHelperBuilder builder,
-            DatabaseMetaData dbMetaData) throws SQLException {
-        builder.applyIdentifierCasing(dbMetaData);
-
-        builder.applyReservedWords(dbMetaData);
-        builder.applyReservedWords(AnsiSqlKeywords.INSTANCE.sql2003());
-        builder.applyReservedWords(sqlKeywords);
-
-        builder.setNameQualifierSupport(getNameQualifierSupport());
-
-        return builder.build();
-    }
 
 
     // identifier quoting support ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1803,39 +1506,6 @@ public abstract class AbstractDialect implements Dialect {
         }
     }
 
-
-    // DDL support ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    private StandardTableExporter tableExporter = new StandardTableExporter(this);
-    private StandardSequenceExporter sequenceExporter = new StandardSequenceExporter(this);
-    private StandardIndexExporter indexExporter = new StandardIndexExporter(this);
-    private StandardForeignKeyExporter foreignKeyExporter = new StandardForeignKeyExporter(this);
-    private StandardUniqueKeyExporter uniqueKeyExporter = new StandardUniqueKeyExporter(this);
-    private StandardAuxiliaryDatabaseObjectExporter auxiliaryObjectExporter = new StandardAuxiliaryDatabaseObjectExporter(this);
-
-    public Exporter<Table> getTableExporter() {
-        return tableExporter;
-    }
-
-    public Exporter<Sequence> getSequenceExporter() {
-        return sequenceExporter;
-    }
-
-    public Exporter<Index> getIndexExporter() {
-        return indexExporter;
-    }
-
-    public Exporter<ForeignKey> getForeignKeyExporter() {
-        return foreignKeyExporter;
-    }
-
-    public Exporter<Constraint> getUniqueKeyExporter() {
-        return uniqueKeyExporter;
-    }
-
-    public Exporter<AuxiliaryDatabaseObject> getAuxiliaryDatabaseObjectExporter() {
-        return auxiliaryObjectExporter;
-    }
 
     /**
      * Does this dialect support catalog creation?
@@ -2285,31 +1955,6 @@ public abstract class AbstractDialect implements Dialect {
         return false;
     }
 
-    /**
-     * Renders an ordering fragment
-     *
-     * @param expression The SQL order expression. In case of {@code @OrderBy} annotation user receives property placeholder
-     *                   (e.g. attribute name enclosed in '{' and '}' signs).
-     * @param collation  Collation string in format {@code collate IDENTIFIER}, or {@code null}
-     *                   if expression has not been explicitly specified.
-     * @param order      Order direction. Possible values: {@code asc}, {@code desc}, or {@code null}
-     *                   if expression has not been explicitly specified.
-     * @param nulls      Nulls precedence. Default value: {@link NullPrecedence#NONE}.
-     * @return Renders single element of {@code ORDER BY} clause.
-     */
-    public String renderOrderByElement(String expression, String collation, String order, NullPrecedence nulls) {
-        final StringBuilder orderByElement = new StringBuilder(expression);
-        if (collation != null) {
-            orderByElement.append(" ").append(collation);
-        }
-        if (order != null) {
-            orderByElement.append(" ").append(order);
-        }
-        if (nulls != NullPrecedence.NONE) {
-            orderByElement.append(" nulls ").append(nulls.name().toLowerCase(Locale.ROOT));
-        }
-        return orderByElement.toString();
-    }
 
     /**
      * Does this dialect require that parameters appearing in the <tt>SELECT</tt> clause be wrapped in <tt>cast()</tt>
@@ -2543,34 +2188,6 @@ public abstract class AbstractDialect implements Dialect {
     }
 
     /**
-     * Some dialects have trouble applying pessimistic locking depending upon what other query options are
-     * specified (paging, ordering, etc).  This method allows these dialects to request that locking be applied
-     * by subsequent selects.
-     *
-     * @return {@code true} indicates that the dialect requests that locking be applied by subsequent select;
-     * {@code false} (the default) indicates that locking should be applied to the main SQL statement..
-     * @deprecated Use {@link #useFollowOnLocking(QueryParameters)} instead.
-     */
-    @Deprecated
-    public boolean useFollowOnLocking() {
-        return useFollowOnLocking(null);
-    }
-
-    /**
-     * Some dialects have trouble applying pessimistic locking depending upon what other query options are
-     * specified (paging, ordering, etc).  This method allows these dialects to request that locking be applied
-     * by subsequent selects.
-     *
-     * @param parameters query parameters
-     * @return {@code true} indicates that the dialect requests that locking be applied by subsequent select;
-     * {@code false} (the default) indicates that locking should be applied to the main SQL statement..
-     * @since 5.2
-     */
-    public boolean useFollowOnLocking(QueryParameters parameters) {
-        return false;
-    }
-
-    /**
      * Negate an expression
      *
      * @param expression The expression to negate
@@ -2646,49 +2263,6 @@ public abstract class AbstractDialect implements Dialect {
         return query;
     }
 
-    /**
-     * Certain dialects support a subset of ScrollModes.  Provide a default to be used by Criteria and Query.
-     *
-     * @return ScrollMode
-     */
-    public ScrollMode defaultScrollMode() {
-        return ScrollMode.SCROLL_INSENSITIVE;
-    }
-
-    /**
-     * Does this dialect support tuples in subqueries?  Ex:
-     * delete from Table1 where (col1, col2) in (select col1, col2 from Table2)
-     *
-     * @return boolean
-     */
-    public boolean supportsTuplesInSubqueries() {
-        return true;
-    }
-
-    public CallableStatementSupport getCallableStatementSupport() {
-        // most databases do not support returning cursors (ref_cursor)...
-        return StandardCallableStatementSupport.NO_REF_CURSOR_INSTANCE;
-    }
-
-    /**
-     * By default interpret this based on DatabaseMetaData.
-     *
-     * @return
-     */
-    public NameQualifierSupport getNameQualifierSupport() {
-        return null;
-    }
-
-    protected final BatchLoadSizingStrategy STANDARD_DEFAULT_BATCH_LOAD_SIZING_STRATEGY = new BatchLoadSizingStrategy() {
-        @Override
-        public int determineOptimalBatchLoadSize(int numberOfKeyColumns, int numberOfKeys) {
-            return 50;
-        }
-    };
-
-    public BatchLoadSizingStrategy getDefaultBatchLoadSizingStrategy() {
-        return STANDARD_DEFAULT_BATCH_LOAD_SIZING_STRATEGY;
-    }
 
     /**
      * Does the fetching JDBC statement warning for logging is enabled by default
@@ -2764,14 +2338,4 @@ public abstract class AbstractDialect implements Dialect {
         return legacyLimitHandlerBehavior;
     }
 
-    private void resolveLegacyLimitHandlerBehavior(ServiceRegistry serviceRegistry) {
-        // HHH-11194
-        // Temporary solution to set whether legacy limit handler behavior should be used.
-        final ConfigurationService configurationService = serviceRegistry.getService(ConfigurationService.class);
-        legacyLimitHandlerBehavior = configurationService.getSetting(
-                AvailableSettings.USE_LEGACY_LIMIT_HANDLERS,
-                StandardConverters.BOOLEAN,
-                false
-        );
-    }
 }

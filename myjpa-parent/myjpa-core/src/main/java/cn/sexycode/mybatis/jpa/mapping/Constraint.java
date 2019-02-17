@@ -162,7 +162,7 @@ public abstract class Constraint implements Serializable {
             return String.format(
                     Locale.ROOT,
                     "alter table %s drop constraint %s",
-                    getTable().getQualifiedName(dialect, defaultCatalog, defaultSchema),
+//                    getTable().getQualifiedName(dialect, defaultCatalog, defaultSchema),
                     dialect.quote(getName())
             );
         } else {
@@ -177,8 +177,9 @@ public abstract class Constraint implements Serializable {
             // empty string.  Prevent blank "alter table" statements.
             String constraintString = sqlConstraintString(dialect, getName(), defaultCatalog, defaultSchema);
             if (!StringHelper.isEmpty(constraintString)) {
-                return "alter table " + getTable().getQualifiedName(dialect, defaultCatalog, defaultSchema)
-                        + constraintString;
+                /*return "alter table " + getTable().getQualifiedName(dialect, defaultCatalog, defaultSchema)
+                        + constraintString;*/
+                return "";
             }
         }
         return null;

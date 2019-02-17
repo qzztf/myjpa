@@ -6,34 +6,23 @@
  */
 package cn.sexycode.mybatis.jpa.binding;
 
-import cn.sexycode.mybatis.jpa.mapping.*;
 import cn.sexycode.mybatis.jpa.mapping.Column;
 import cn.sexycode.mybatis.jpa.mapping.Table;
+import cn.sexycode.mybatis.jpa.mapping.*;
 import cn.sexycode.sql.AssertionFailure;
+import cn.sexycode.sql.AvailableSettings;
+import com.sun.tools.javac.comp.Check;
 import javafx.scene.Parent;
 import jdk.nashorn.internal.objects.annotations.Where;
-import org.hibernate.*;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.OrderBy;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.*;
-import org.hibernate.annotations.common.reflection.*;
 import org.hibernate.boot.model.IdGeneratorStrategyInterpreter;
 import org.hibernate.boot.model.IdentifierGeneratorDefinition;
 import org.hibernate.boot.model.TypeDefinition;
 import org.hibernate.boot.spi.InFlightMetadataCollector.EntityTableXref;
-import org.hibernate.boot.spi.MetadataBuildingContext;
-import org.hibernate.cfg.annotations.*;
 import org.hibernate.engine.OptimisticLockStyle;
 import org.hibernate.engine.spi.FilterDefinition;
 import org.hibernate.id.PersistentIdentifierGenerator;
-import org.hibernate.internal.CoreMessageLogger;
 import org.hibernate.internal.util.StringHelper;
 import org.hibernate.loader.PropertyPath;
-import org.hibernate.mapping.*;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 import javax.persistence.*;
@@ -41,8 +30,6 @@ import javax.persistence.criteria.Fetch;
 import javax.persistence.criteria.Join;
 import java.lang.annotation.Annotation;
 import java.util.*;
-
-import static org.hibernate.internal.CoreLogging.messageLogger;
 
 /**
  * JSR 175 annotation binder which reads the annotations from classes, applies the

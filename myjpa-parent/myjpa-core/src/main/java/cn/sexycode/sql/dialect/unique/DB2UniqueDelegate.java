@@ -6,11 +6,9 @@
  */
 package cn.sexycode.sql.dialect.unique;
 
-import java.util.Iterator;
 
-import org.hibernate.boot.Metadata;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.mapping.UniqueKey;
+import cn.sexycode.mybatis.jpa.mapping.UniqueKey;
+import cn.sexycode.sql.dialect.Dialect;
 
 /**
  * DB2 does not allow unique constraints on nullable columns.  Rather than

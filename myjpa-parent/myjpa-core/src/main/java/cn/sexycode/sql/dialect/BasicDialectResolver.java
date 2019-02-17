@@ -6,10 +6,8 @@
  */
 package cn.sexycode.sql.dialect;
 
-import org.hibernate.HibernateException;
-import org.hibernate.dialect.Dialect;
 
-import static org.hibernate.engine.jdbc.dialect.spi.DialectResolutionInfo.NO_VERSION;
+import static cn.sexycode.sql.dialect.DialectResolutionInfo.NO_VERSION;
 
 /**
  * Intended as support for custom resolvers which match a single db name (with optional version info).
@@ -69,11 +67,11 @@ public class BasicDialectResolver implements DialectResolver {
                 && (minorVersionToMatch == NO_VERSION || majorVersionToMatch == databaseMinorVersion)) {
             try {
                 return (Dialect) dialectClass.newInstance();
-            } catch (HibernateException e) {
+            } catch (DialectException e) {
                 // conceivable that the dialect ctor could throw HibernateExceptions, so don't re-wrap
                 throw e;
             } catch (Throwable t) {
-                throw new HibernateException(
+                throw new DialectException(
                         "Could not instantiate specified Dialect class [" + dialectClass.getName() + "]",
                         t
                 );

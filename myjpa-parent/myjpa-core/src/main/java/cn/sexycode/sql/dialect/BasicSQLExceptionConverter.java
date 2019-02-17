@@ -6,13 +6,10 @@
  */
 package cn.sexycode.sql.dialect;
 
-import java.sql.SQLException;
 
-import org.hibernate.JDBCException;
-import org.hibernate.exception.internal.SQLStateConverter;
-import org.hibernate.exception.spi.ViolatedConstraintNameExtracter;
-import org.hibernate.internal.CoreLogging;
-import org.hibernate.internal.CoreMessageLogger;
+import cn.sexycode.sql.JDBCException;
+
+import java.sql.SQLException;
 
 /**
  * A helper to centralize conversion of {@link SQLException}s to {@link org.hibernate.JDBCException}s.
@@ -22,7 +19,6 @@ import org.hibernate.internal.CoreMessageLogger;
  * @author Steve Ebersole
  */
 public class BasicSQLExceptionConverter {
-    private static final CoreMessageLogger LOG = CoreLogging.messageLogger(BasicSQLExceptionConverter.class);
 
     /**
      * Singleton access
@@ -32,9 +28,7 @@ public class BasicSQLExceptionConverter {
     /**
      * Message
      */
-    public static final String MSG = LOG.unableToQueryDatabaseMetadata();
 
-    private static final SQLStateConverter CONVERTER = new SQLStateConverter(new ConstraintNameExtracter());
 
     /**
      * Perform a conversion.
@@ -46,10 +40,5 @@ public class BasicSQLExceptionConverter {
         return CONVERTER.convert(sqlException, MSG, null);
     }
 
-    private static class ConstraintNameExtracter implements ViolatedConstraintNameExtracter {
-        @Override
-        public String extractConstraintName(SQLException sqle) {
-            return "???";
-        }
-    }
+
 }

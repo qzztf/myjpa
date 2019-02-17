@@ -6,54 +6,12 @@
  */
 package cn.sexycode.mybatis.jpa.binding;
 
-import cn.sexycode.mybatis.jpa.mapping.Column;
-import cn.sexycode.mybatis.jpa.mapping.PersistentClass;
-import cn.sexycode.mybatis.jpa.mapping.RootClass;
-import cn.sexycode.mybatis.jpa.mapping.Table;
-import org.hibernate.*;
-import org.hibernate.annotations.AnyMetaDef;
-import org.hibernate.annotations.common.reflection.XClass;
-import org.hibernate.annotations.common.util.StringHelper;
-import org.hibernate.boot.CacheRegionDefinition;
-import org.hibernate.boot.SessionFactoryBuilder;
-import org.hibernate.boot.model.IdentifierGeneratorDefinition;
-import org.hibernate.boot.model.TypeDefinition;
-import org.hibernate.boot.model.naming.Identifier;
-import org.hibernate.boot.model.naming.ImplicitForeignKeyNameSource;
-import org.hibernate.boot.model.naming.ImplicitIndexNameSource;
-import org.hibernate.boot.model.naming.ImplicitUniqueKeyNameSource;
-import org.hibernate.boot.model.relational.AuxiliaryDatabaseObject;
-import org.hibernate.boot.model.relational.Database;
-import org.hibernate.boot.model.relational.ExportableProducer;
-import org.hibernate.boot.model.relational.Namespace;
-import org.hibernate.boot.model.source.internal.ImplicitColumnNamingSecondPass;
-import org.hibernate.boot.model.source.spi.LocalMetadataBuildingContext;
-import org.hibernate.boot.spi.AttributeConverterAutoApplyHandler;
-import org.hibernate.boot.spi.InFlightMetadataCollector;
-import org.hibernate.boot.spi.MetadataBuildingOptions;
-import org.hibernate.boot.spi.NaturalIdUniqueKeyBinder;
-import org.hibernate.cfg.*;
-import org.hibernate.cfg.annotations.NamedEntityGraphDefinition;
-import org.hibernate.cfg.annotations.NamedProcedureCallDefinition;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.function.SQLFunction;
-import org.hibernate.engine.ResultSetMappingDefinition;
-import org.hibernate.engine.spi.FilterDefinition;
-import org.hibernate.engine.spi.NamedQueryDefinition;
-import org.hibernate.engine.spi.NamedSQLQueryDefinition;
-import org.hibernate.id.IdentifierGenerator;
-import org.hibernate.id.factory.IdentifierGeneratorFactory;
-import org.hibernate.id.factory.spi.MutableIdentifierGeneratorFactory;
-import org.hibernate.internal.CoreLogging;
-import org.hibernate.internal.CoreMessageLogger;
-import org.hibernate.internal.SessionFactoryImpl;
-import org.hibernate.internal.util.collections.CollectionHelper;
-import org.hibernate.mapping.Collection;
-import org.hibernate.mapping.*;
-import org.hibernate.query.spi.NamedQueryRepository;
-import org.hibernate.type.TypeResolver;
 
-import javax.persistence.*;
+import cn.sexycode.mybatis.jpa.mapping.*;
+import cn.sexycode.mybatis.jpa.util.CollectionHelper;
+import cn.sexycode.sql.dialect.Dialect;
+
+import javax.persistence.MappedSuperclass;
 import javax.persistence.criteria.Join;
 import java.io.Serializable;
 import java.util.*;
@@ -91,8 +49,6 @@ public class InFlightMetadataCollectorImpl implements InFlightMetadataCollector 
 
     public InFlightMetadataCollectorImpl() {
         this.uuid = UUID.randomUUID();
-
-
     }
 
 
@@ -135,7 +91,6 @@ public class InFlightMetadataCollectorImpl implements InFlightMetadataCollector 
             String subselectFragment,
             boolean isAbstract) {
 
-		);
 
         // annotation binding depends on the "table name" for @Subselect bindings
         // being set into the generated table (mainly to avoid later NPE), but for now we need to keep that :(
@@ -159,83 +114,6 @@ public class InFlightMetadataCollectorImpl implements InFlightMetadataCollector 
             return namespace.createTable(logicalName, isAbstract);
         }
     }
-
-    @Override
-    public cn.sexycode.mybatis.jpa.mapping.Table addDenormalizedTable(
-            String schemaName,
-            String catalogName,
-            String name,
-            boolean isAbstract,
-            String subselectFragment,
-            cn.sexycode.mybatis.jpa.mapping.Table includedTable) throws DuplicateMappingException {
-        final Namespace namespace = getDatabase().locateNamespace(
-                getDatabase().toIdentifier(catalogName),
-                getDatabase().toIdentifier(schemaName)
-        );
-
-        // annotation binding depends on the "table name" for @Subselect bindings
-        // being set into the generated table (mainly to avoid later NPE), but for now we need to keep that :(
-        final Identifier logicalName;
-        if (name != null) {
-            logicalName = getDatabase().toIdentifier(name);
-        } else {
-            logicalName = null;
-        }
-
-        if (subselectFragment != null) {
-            return new DenormalizedTable(namespace, logicalName, subselectFragment, isAbstract, includedTable);
-        } else {
-            cn.sexycode.mybatis.jpa.mapping.Table table = namespace.locateTable(logicalName);
-            if (table != null) {
-                throw new DuplicateMappingException(DuplicateMappingException.Type.TABLE, logicalName.toString());
-            } else {
-                table = namespace.createDenormalizedTable(logicalName, isAbstract, includedTable);
-            }
-            return table;
-        }
-    }
-
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Mapping impl
-
-    @Override
-    public org.hibernate.type.Type getIdentifierType(String entityName) throws MappingException {
-        final PersistentClass pc = entityBindingMap.get(entityName);
-        if (pc == null) {
-            throw new MappingException("persistent class not known: " + entityName);
-        }
-        return pc.getIdentifier().getType();
-    }
-
-    @Override
-    public String getIdentifierPropertyName(String entityName) throws MappingException {
-        final PersistentClass pc = entityBindingMap.get(entityName);
-        if (pc == null) {
-            throw new MappingException("persistent class not known: " + entityName);
-        }
-        if (!pc.hasIdentifierProperty()) {
-            return null;
-        }
-        return pc.getIdentifierProperty().getName();
-    }
-
-    @Override
-    public org.hibernate.type.Type getReferencedPropertyType(String entityName, String propertyName) throws MappingException {
-        final PersistentClass pc = entityBindingMap.get(entityName);
-        if (pc == null) {
-            throw new MappingException("persistent class not known: " + entityName);
-        }
-        Property prop = pc.getReferencedProperty(propertyName);
-        if (prop == null) {
-            throw new MappingException(
-                    "property not known: " +
-                            entityName + '.' + propertyName
-            );
-        }
-        return prop.getType();
-    }
-
 
     private Map<Identifier, Identifier> logicalToPhysicalTableNameMap = new HashMap<Identifier, Identifier>();
     private Map<Identifier, Identifier> physicalToLogicalTableNameMap = new HashMap<Identifier, Identifier>();
@@ -352,7 +230,7 @@ public class InFlightMetadataCollectorImpl implements InFlightMetadataCollector 
         TableColumnNameBinding binding = null;
 
         if (columnNameBindingByTableMap == null) {
-            columnNameBindingByTableMap = new HashMap<cn.sexycode.mybatis.jpa.mapping.Table, TableColumnNameBinding>();
+            columnNameBindingByTableMap = new HashMap<>();
         } else {
             binding = columnNameBindingByTableMap.get(table);
         }
@@ -440,59 +318,8 @@ public class InFlightMetadataCollectorImpl implements InFlightMetadataCollector 
         return logicalName.render();
     }
 
-    @Override
-    public void addAuxiliaryDatabaseObject(AuxiliaryDatabaseObject auxiliaryDatabaseObject) {
-        getDatabase().addAuxiliaryDatabaseObject(auxiliaryDatabaseObject);
-    }
 
     private final Map<String, AnnotatedClassType> annotatedClassTypeMap = new HashMap<String, AnnotatedClassType>();
-
-    @Override
-    public AnnotatedClassType getClassType(XClass clazz) {
-        AnnotatedClassType type = annotatedClassTypeMap.get(clazz.getName());
-        if (type == null) {
-            return addClassType(clazz);
-        } else {
-            return type;
-        }
-    }
-
-    @Override
-    public AnnotatedClassType addClassType(XClass clazz) {
-        AnnotatedClassType type;
-        if (clazz.isAnnotationPresent(Entity.class)) {
-            type = AnnotatedClassType.ENTITY;
-        } else if (clazz.isAnnotationPresent(Embeddable.class)) {
-            type = AnnotatedClassType.EMBEDDABLE;
-        } else if (clazz.isAnnotationPresent(javax.persistence.MappedSuperclass.class)) {
-            type = AnnotatedClassType.EMBEDDABLE_SUPERCLASS;
-        } else {
-            type = AnnotatedClassType.NONE;
-        }
-        annotatedClassTypeMap.put(clazz.getName(), type);
-        return type;
-    }
-
-    @Override
-    public void addAnyMetaDef(AnyMetaDef defAnn) {
-        if (anyMetaDefs == null) {
-            anyMetaDefs = new HashMap<String, AnyMetaDef>();
-        } else {
-            if (anyMetaDefs.containsKey(defAnn.name())) {
-                throw new AnnotationException("Two @AnyMetaDef with the same name defined: " + defAnn.name());
-            }
-        }
-
-        anyMetaDefs.put(defAnn.name(), defAnn);
-    }
-
-    @Override
-    public AnyMetaDef getAnyMetaDef(String name) {
-        if (anyMetaDefs == null) {
-            return null;
-        }
-        return anyMetaDefs.get(name);
-    }
 
 
     @Override
@@ -509,68 +336,6 @@ public class InFlightMetadataCollectorImpl implements InFlightMetadataCollector 
             return null;
         }
         return mappedSuperClasses.get(type);
-    }
-
-    @Override
-    public PropertyData getPropertyAnnotatedWithMapsId(XClass entityType, String propertyName) {
-        if (propertiesAnnotatedWithMapsId == null) {
-            return null;
-        }
-
-        final Map<String, PropertyData> map = propertiesAnnotatedWithMapsId.get(entityType);
-        return map == null ? null : map.get(propertyName);
-    }
-
-    @Override
-    public void addPropertyAnnotatedWithMapsId(XClass entityType, PropertyData property) {
-        if (propertiesAnnotatedWithMapsId == null) {
-            propertiesAnnotatedWithMapsId = new HashMap<XClass, Map<String, PropertyData>>();
-        }
-
-        Map<String, PropertyData> map = propertiesAnnotatedWithMapsId.get(entityType);
-        if (map == null) {
-            map = new HashMap<String, PropertyData>();
-            propertiesAnnotatedWithMapsId.put(entityType, map);
-        }
-        map.put(property.getProperty().getAnnotation(MapsId.class).value(), property);
-    }
-
-    @Override
-    public void addPropertyAnnotatedWithMapsIdSpecj(XClass entityType, PropertyData property, String mapsIdValue) {
-        if (propertiesAnnotatedWithMapsId == null) {
-            propertiesAnnotatedWithMapsId = new HashMap<XClass, Map<String, PropertyData>>();
-        }
-
-        Map<String, PropertyData> map = propertiesAnnotatedWithMapsId.get(entityType);
-        if (map == null) {
-            map = new HashMap<String, PropertyData>();
-            propertiesAnnotatedWithMapsId.put(entityType, map);
-        }
-        map.put(mapsIdValue, property);
-    }
-
-    @Override
-    public PropertyData getPropertyAnnotatedWithIdAndToOne(XClass entityType, String propertyName) {
-        if (propertiesAnnotatedWithIdAndToOne == null) {
-            return null;
-        }
-
-        final Map<String, PropertyData> map = propertiesAnnotatedWithIdAndToOne.get(entityType);
-        return map == null ? null : map.get(propertyName);
-    }
-
-    @Override
-    public void addToOneAndIdProperty(XClass entityType, PropertyData property) {
-        if (propertiesAnnotatedWithIdAndToOne == null) {
-            propertiesAnnotatedWithIdAndToOne = new HashMap<XClass, Map<String, PropertyData>>();
-        }
-
-        Map<String, PropertyData> map = propertiesAnnotatedWithIdAndToOne.get(entityType);
-        if (map == null) {
-            map = new HashMap<String, PropertyData>();
-            propertiesAnnotatedWithIdAndToOne.put(entityType, map);
-        }
-        map.put(property.getPropertyName(), property);
     }
 
     @Override
@@ -654,7 +419,7 @@ public class InFlightMetadataCollectorImpl implements InFlightMetadataCollector 
 
     @Override
     @SuppressWarnings({"unchecked"})
-    public void addUniqueConstraints(cn.sexycode.mybatis.jpa.mapping.Table table, List uniqueConstraints) {
+    public void addUniqueConstraints(Table table, List uniqueConstraints) {
         List<UniqueConstraintHolder> constraintHolders = new ArrayList<UniqueConstraintHolder>(
                 CollectionHelper.determineProperSizing(uniqueConstraints.size())
         );
@@ -676,65 +441,9 @@ public class InFlightMetadataCollectorImpl implements InFlightMetadataCollector 
                 : currentHolders.size();
     }
 
-    @Override
-    public void addUniqueConstraintHolders(cn.sexycode.mybatis.jpa.mapping.Table table, List<UniqueConstraintHolder> uniqueConstraintHolders) {
-        List<UniqueConstraintHolder> holderList = null;
-
-        if (uniqueConstraintHoldersByTable == null) {
-            uniqueConstraintHoldersByTable = new HashMap<cn.sexycode.mybatis.jpa.mapping.Table, List<UniqueConstraintHolder>>();
-        } else {
-            holderList = uniqueConstraintHoldersByTable.get(table);
-        }
-
-        if (holderList == null) {
-            holderList = new ArrayList<UniqueConstraintHolder>();
-            uniqueConstraintHoldersByTable.put(table, holderList);
-        }
-
-        holderList.addAll(uniqueConstraintHolders);
-    }
-
-    @Override
-    public void addJpaIndexHolders(cn.sexycode.mybatis.jpa.mapping.Table table, List<JPAIndexHolder> holders) {
-        List<JPAIndexHolder> holderList = null;
-
-        if (jpaIndexHoldersByTable == null) {
-            jpaIndexHoldersByTable = new HashMap<cn.sexycode.mybatis.jpa.mapping.Table, List<JPAIndexHolder>>();
-        } else {
-            holderList = jpaIndexHoldersByTable.get(table);
-        }
-
-        if (holderList == null) {
-            holderList = new ArrayList<JPAIndexHolder>();
-            jpaIndexHoldersByTable.put(table, holderList);
-        }
-
-        holderList.addAll(holders);
-    }
 
     private final Map<String, EntityTableXrefImpl> entityTableXrefMap = new HashMap<String, EntityTableXrefImpl>();
 
-    @Override
-    public EntityTableXref getEntityTableXref(String entityName) {
-        return entityTableXrefMap.get(entityName);
-    }
-
-    @Override
-    public EntityTableXref addEntityTableXref(
-            String entityName,
-            Identifier primaryTableLogicalName,
-            cn.sexycode.mybatis.jpa.mapping.Table primaryTable,
-            EntityTableXref superEntityTableXref) {
-        final EntityTableXrefImpl entry = new EntityTableXrefImpl(
-                primaryTableLogicalName,
-                primaryTable,
-                (EntityTableXrefImpl) superEntityTableXref
-        );
-
-        entityTableXrefMap.put(entityName, entry);
-
-        return entry;
-    }
 
     @Override
     public Map<String, Join> getJoins(String entityName) {
@@ -742,538 +451,9 @@ public class InFlightMetadataCollectorImpl implements InFlightMetadataCollector 
         return xrefEntry == null ? null : xrefEntry.secondaryTableJoinMap;
     }
 
-    private final class EntityTableXrefImpl implements EntityTableXref {
-        private final Identifier primaryTableLogicalName;
-        private final cn.sexycode.mybatis.jpa.mapping.Table primaryTable;
-        private EntityTableXrefImpl superEntityTableXref;
-
-        //annotations needs a Map<String,Join>
-        //private Map<Identifier,Join> secondaryTableJoinMap;
-        private Map<String, Join> secondaryTableJoinMap;
-
-        public EntityTableXrefImpl(Identifier primaryTableLogicalName, cn.sexycode.mybatis.jpa.mapping.Table primaryTable, EntityTableXrefImpl superEntityTableXref) {
-            this.primaryTableLogicalName = primaryTableLogicalName;
-            this.primaryTable = primaryTable;
-            this.superEntityTableXref = superEntityTableXref;
-        }
-
-        @Override
-        public void addSecondaryTable(LocalMetadataBuildingContext buildingContext, Identifier logicalName, Join secondaryTableJoin) {
-            if (Identifier.areEqual(primaryTableLogicalName, logicalName)) {
-                throw new org.hibernate.boot.MappingException(
-                        String.format(
-                                Locale.ENGLISH,
-                                "Attempt to add secondary table with same name as primary table [%s]",
-                                primaryTableLogicalName
-                        ),
-                        buildingContext.getOrigin()
-                );
-            }
-
-
-            if (secondaryTableJoinMap == null) {
-                //secondaryTableJoinMap = new HashMap<Identifier,Join>();
-                //secondaryTableJoinMap.put( logicalName, secondaryTableJoin );
-                secondaryTableJoinMap = new HashMap<String, Join>();
-                secondaryTableJoinMap.put(logicalName.getCanonicalName(), secondaryTableJoin);
-            } else {
-                //final Join existing = secondaryTableJoinMap.put( logicalName, secondaryTableJoin );
-                final Join existing = secondaryTableJoinMap.put(logicalName.getCanonicalName(), secondaryTableJoin);
-
-                if (existing != null) {
-                    throw new org.hibernate.boot.MappingException(
-                            String.format(
-                                    Locale.ENGLISH,
-                                    "Added secondary table with same name [%s]",
-                                    logicalName
-                            ),
-                            buildingContext.getOrigin()
-                    );
-                }
-            }
-        }
-
-        @Override
-        public void addSecondaryTable(Identifier logicalName, Join secondaryTableJoin) {
-            if (Identifier.areEqual(primaryTableLogicalName, logicalName)) {
-                throw new DuplicateSecondaryTableException(logicalName);
-            }
-
-
-            if (secondaryTableJoinMap == null) {
-                //secondaryTableJoinMap = new HashMap<Identifier,Join>();
-                //secondaryTableJoinMap.put( logicalName, secondaryTableJoin );
-                secondaryTableJoinMap = new HashMap<String, Join>();
-                secondaryTableJoinMap.put(logicalName.getCanonicalName(), secondaryTableJoin);
-            } else {
-                //final Join existing = secondaryTableJoinMap.put( logicalName, secondaryTableJoin );
-                final Join existing = secondaryTableJoinMap.put(logicalName.getCanonicalName(), secondaryTableJoin);
-
-                if (existing != null) {
-                    throw new DuplicateSecondaryTableException(logicalName);
-                }
-            }
-        }
-
-        @Override
-        public cn.sexycode.mybatis.jpa.mapping.Table getPrimaryTable() {
-            return primaryTable;
-        }
-
-        @Override
-        public cn.sexycode.mybatis.jpa.mapping.Table resolveTable(Identifier tableName) {
-            if (tableName == null) {
-                return primaryTable;
-            }
-
-            if (Identifier.areEqual(primaryTableLogicalName, tableName)) {
-                return primaryTable;
-            }
-
-            Join secondaryTableJoin = null;
-            if (secondaryTableJoinMap != null) {
-                //secondaryTableJoin = secondaryTableJoinMap.get( tableName );
-                secondaryTableJoin = secondaryTableJoinMap.get(tableName.getCanonicalName());
-            }
-
-            if (secondaryTableJoin != null) {
-                return secondaryTableJoin.getTable();
-            }
-
-            if (superEntityTableXref != null) {
-                return superEntityTableXref.resolveTable(tableName);
-            }
-
-            return null;
-        }
-
-        public Join locateJoin(Identifier tableName) {
-            if (tableName == null) {
-                return null;
-            }
-
-            Join join = null;
-            if (secondaryTableJoinMap != null) {
-                join = secondaryTableJoinMap.get(tableName.getCanonicalName());
-            }
-
-            if (join != null) {
-                return join;
-            }
-
-            if (superEntityTableXref != null) {
-                return superEntityTableXref.locateJoin(tableName);
-            }
-
-            return null;
-        }
-    }
-
-    private ArrayList<PkDrivenByDefaultMapsIdSecondPass> pkDrivenByDefaultMapsIdSecondPassList;
-    private ArrayList<SetSimpleValueTypeSecondPass> setSimpleValueTypeSecondPassList;
-    private ArrayList<CopyIdentifierComponentSecondPass> copyIdentifierComponentSecondPasList;
-    private ArrayList<FkSecondPass> fkSecondPassList;
-    private ArrayList<CreateKeySecondPass> createKeySecondPasList;
-    private ArrayList<SecondaryTableSecondPass> secondaryTableSecondPassList;
-    private ArrayList<QuerySecondPass> querySecondPassList;
-    private ArrayList<ImplicitColumnNamingSecondPass> implicitColumnNamingSecondPassList;
-
-    private ArrayList<SecondPass> generalSecondPassList;
-
-    @Override
-    public void addSecondPass(SecondPass secondPass) {
-        addSecondPass(secondPass, false);
-    }
-
-    @Override
-    public void addSecondPass(SecondPass secondPass, boolean onTopOfTheQueue) {
-        if (secondPass instanceof PkDrivenByDefaultMapsIdSecondPass) {
-            addPkDrivenByDefaultMapsIdSecondPass((PkDrivenByDefaultMapsIdSecondPass) secondPass, onTopOfTheQueue);
-        } else if (secondPass instanceof SetSimpleValueTypeSecondPass) {
-            addSetSimpleValueTypeSecondPass((SetSimpleValueTypeSecondPass) secondPass, onTopOfTheQueue);
-        } else if (secondPass instanceof CopyIdentifierComponentSecondPass) {
-            addCopyIdentifierComponentSecondPass((CopyIdentifierComponentSecondPass) secondPass, onTopOfTheQueue);
-        } else if (secondPass instanceof FkSecondPass) {
-            addFkSecondPass((FkSecondPass) secondPass, onTopOfTheQueue);
-        } else if (secondPass instanceof CreateKeySecondPass) {
-            addCreateKeySecondPass((CreateKeySecondPass) secondPass, onTopOfTheQueue);
-        } else if (secondPass instanceof SecondaryTableSecondPass) {
-            addSecondaryTableSecondPass((SecondaryTableSecondPass) secondPass, onTopOfTheQueue);
-        } else if (secondPass instanceof QuerySecondPass) {
-            addQuerySecondPass((QuerySecondPass) secondPass, onTopOfTheQueue);
-        } else if (secondPass instanceof ImplicitColumnNamingSecondPass) {
-            addImplicitColumnNamingSecondPass((ImplicitColumnNamingSecondPass) secondPass);
-        } else {
-            // add to the general SecondPass list
-            if (generalSecondPassList == null) {
-                generalSecondPassList = new ArrayList<SecondPass>();
-            }
-            addSecondPass(secondPass, generalSecondPassList, onTopOfTheQueue);
-        }
-    }
-
-    private void addPkDrivenByDefaultMapsIdSecondPass(
-            PkDrivenByDefaultMapsIdSecondPass secondPass,
-            boolean onTopOfTheQueue) {
-        if (pkDrivenByDefaultMapsIdSecondPassList == null) {
-            pkDrivenByDefaultMapsIdSecondPassList = new ArrayList<PkDrivenByDefaultMapsIdSecondPass>();
-        }
-        addSecondPass(secondPass, pkDrivenByDefaultMapsIdSecondPassList, onTopOfTheQueue);
-    }
-
-    private <T extends SecondPass> void addSecondPass(T secondPass, ArrayList<T> secondPassList, boolean onTopOfTheQueue) {
-        if (onTopOfTheQueue) {
-            secondPassList.add(0, secondPass);
-        } else {
-            secondPassList.add(secondPass);
-        }
-    }
-
-    private void addSetSimpleValueTypeSecondPass(SetSimpleValueTypeSecondPass secondPass, boolean onTopOfTheQueue) {
-        if (setSimpleValueTypeSecondPassList == null) {
-            setSimpleValueTypeSecondPassList = new ArrayList<SetSimpleValueTypeSecondPass>();
-        }
-        addSecondPass(secondPass, setSimpleValueTypeSecondPassList, onTopOfTheQueue);
-    }
-
-    private void addCopyIdentifierComponentSecondPass(
-            CopyIdentifierComponentSecondPass secondPass,
-            boolean onTopOfTheQueue) {
-        if (copyIdentifierComponentSecondPasList == null) {
-            copyIdentifierComponentSecondPasList = new ArrayList<CopyIdentifierComponentSecondPass>();
-        }
-        addSecondPass(secondPass, copyIdentifierComponentSecondPasList, onTopOfTheQueue);
-    }
-
-    private void addFkSecondPass(FkSecondPass secondPass, boolean onTopOfTheQueue) {
-        if (fkSecondPassList == null) {
-            fkSecondPassList = new ArrayList<FkSecondPass>();
-        }
-        addSecondPass(secondPass, fkSecondPassList, onTopOfTheQueue);
-    }
-
-    private void addCreateKeySecondPass(CreateKeySecondPass secondPass, boolean onTopOfTheQueue) {
-        if (createKeySecondPasList == null) {
-            createKeySecondPasList = new ArrayList<CreateKeySecondPass>();
-        }
-        addSecondPass(secondPass, createKeySecondPasList, onTopOfTheQueue);
-    }
-
-    private void addSecondaryTableSecondPass(SecondaryTableSecondPass secondPass, boolean onTopOfTheQueue) {
-        if (secondaryTableSecondPassList == null) {
-            secondaryTableSecondPassList = new ArrayList<SecondaryTableSecondPass>();
-        }
-        addSecondPass(secondPass, secondaryTableSecondPassList, onTopOfTheQueue);
-    }
-
-    private void addQuerySecondPass(QuerySecondPass secondPass, boolean onTopOfTheQueue) {
-        if (querySecondPassList == null) {
-            querySecondPassList = new ArrayList<QuerySecondPass>();
-        }
-        addSecondPass(secondPass, querySecondPassList, onTopOfTheQueue);
-    }
-
-    private void addImplicitColumnNamingSecondPass(ImplicitColumnNamingSecondPass secondPass) {
-        if (implicitColumnNamingSecondPassList == null) {
-            implicitColumnNamingSecondPassList = new ArrayList<ImplicitColumnNamingSecondPass>();
-        }
-        implicitColumnNamingSecondPassList.add(secondPass);
-    }
-
 
     private boolean inSecondPass = false;
 
-
-    /**
-     * Ugh!  But we need this done beforeQuery we ask Envers to produce its entities.
-     */
-    public void processSecondPasses(MetadataBuildingContext buildingContext) {
-        inSecondPass = true;
-
-        try {
-            processSecondPasses(implicitColumnNamingSecondPassList);
-
-            processSecondPasses(pkDrivenByDefaultMapsIdSecondPassList);
-            processSecondPasses(setSimpleValueTypeSecondPassList);
-
-            processCopyIdentifierSecondPassesInOrder();
-
-            processFkSecondPassesInOrder();
-
-            processSecondPasses(createKeySecondPasList);
-            processSecondPasses(secondaryTableSecondPassList);
-
-            processSecondPasses(querySecondPassList);
-            processSecondPasses(generalSecondPassList);
-
-            processPropertyReferences();
-
-            secondPassCompileForeignKeys(buildingContext);
-
-            processUniqueConstraintHolders(buildingContext);
-            processJPAIndexHolders(buildingContext);
-
-            processNaturalIdUniqueKeyBinders();
-
-            processCachingOverrides();
-        } finally {
-            inSecondPass = false;
-        }
-    }
-
-    private void processCopyIdentifierSecondPassesInOrder() {
-        if (copyIdentifierComponentSecondPasList == null) {
-            return;
-        }
-        sortCopyIdentifierComponentSecondPasses();
-        processSecondPasses(copyIdentifierComponentSecondPasList);
-    }
-
-    private void processSecondPasses(ArrayList<? extends SecondPass> secondPasses) {
-        if (secondPasses == null) {
-            return;
-        }
-
-        for (SecondPass secondPass : secondPasses) {
-            secondPass.doSecondPass(getEntityBindingMap());
-        }
-
-        secondPasses.clear();
-    }
-
-    private void sortCopyIdentifierComponentSecondPasses() {
-
-        ArrayList<CopyIdentifierComponentSecondPass> sorted =
-                new ArrayList<CopyIdentifierComponentSecondPass>(copyIdentifierComponentSecondPasList.size());
-        Set<CopyIdentifierComponentSecondPass> toSort = new HashSet<CopyIdentifierComponentSecondPass>();
-        toSort.addAll(copyIdentifierComponentSecondPasList);
-        topologicalSort(sorted, toSort);
-        copyIdentifierComponentSecondPasList = sorted;
-    }
-
-    /* naive O(n^3) topological sort */
-    private void topologicalSort(List<CopyIdentifierComponentSecondPass> sorted, Set<CopyIdentifierComponentSecondPass> toSort) {
-        while (!toSort.isEmpty()) {
-            CopyIdentifierComponentSecondPass independent = null;
-
-            searchForIndependent:
-            for (CopyIdentifierComponentSecondPass secondPass : toSort) {
-                for (CopyIdentifierComponentSecondPass other : toSort) {
-                    if (secondPass.dependentUpon(other)) {
-                        continue searchForIndependent;
-                    }
-                }
-                independent = secondPass;
-                break;
-            }
-            if (independent == null) {
-                throw new MappingException("cyclic dependency in derived identities");
-            }
-            toSort.remove(independent);
-            sorted.add(independent);
-        }
-    }
-
-
-    private void processFkSecondPassesInOrder() {
-        if (fkSecondPassList == null || fkSecondPassList.isEmpty()) {
-            return;
-        }
-
-        // split FkSecondPass instances into primary key and non primary key FKs.
-        // While doing so build a map of class names to FkSecondPass instances depending on this class.
-        Map<String, Set<FkSecondPass>> isADependencyOf = new HashMap<String, Set<FkSecondPass>>();
-        List<FkSecondPass> endOfQueueFkSecondPasses = new ArrayList<FkSecondPass>(fkSecondPassList.size());
-        for (FkSecondPass sp : fkSecondPassList) {
-            if (sp.isInPrimaryKey()) {
-                final String referenceEntityName = sp.getReferencedEntityName();
-                final PersistentClass classMapping = getEntityBinding(referenceEntityName);
-                final String dependentTable = classMapping.getTable().getQualifiedTableName().render();
-                if (!isADependencyOf.containsKey(dependentTable)) {
-                    isADependencyOf.put(dependentTable, new HashSet<FkSecondPass>());
-                }
-                isADependencyOf.get(dependentTable).add(sp);
-            } else {
-                endOfQueueFkSecondPasses.add(sp);
-            }
-        }
-
-        // using the isADependencyOf map we order the FkSecondPass recursively instances into the right order for processing
-        List<FkSecondPass> orderedFkSecondPasses = new ArrayList<FkSecondPass>(fkSecondPassList.size());
-        for (String tableName : isADependencyOf.keySet()) {
-            buildRecursiveOrderedFkSecondPasses(orderedFkSecondPasses, isADependencyOf, tableName, tableName);
-        }
-
-        // process the ordered FkSecondPasses
-        for (FkSecondPass sp : orderedFkSecondPasses) {
-            sp.doSecondPass(getEntityBindingMap());
-        }
-
-        processEndOfQueue(endOfQueueFkSecondPasses);
-
-        fkSecondPassList.clear();
-    }
-
-    /**
-     * Recursively builds a list of FkSecondPass instances ready to be processed in this order.
-     * Checking all dependencies recursively seems quite expensive, but the original code just relied
-     * on some sort of table name sorting which failed in certain circumstances.
-     * <p/>
-     * See <tt>ANN-722</tt> and <tt>ANN-730</tt>
-     *
-     * @param orderedFkSecondPasses The list containing the <code>FkSecondPass<code> instances ready
-     *                              for processing.
-     * @param isADependencyOf       Our lookup data structure to determine dependencies between tables
-     * @param startTable            Table name to start recursive algorithm.
-     * @param currentTable          The current table name used to check for 'new' dependencies.
-     */
-    private void buildRecursiveOrderedFkSecondPasses(
-            List<FkSecondPass> orderedFkSecondPasses,
-            Map<String, Set<FkSecondPass>> isADependencyOf,
-            String startTable,
-            String currentTable) {
-
-        Set<FkSecondPass> dependencies = isADependencyOf.get(currentTable);
-
-        // bottom out
-        if (dependencies == null || dependencies.size() == 0) {
-            return;
-        }
-
-        for (FkSecondPass sp : dependencies) {
-            String dependentTable = sp.getValue().getTable().getQualifiedTableName().render();
-            if (dependentTable.compareTo(startTable) == 0) {
-                throw new AnnotationException("Foreign key circularity dependency involving the following tables: " + startTable + ", " + dependentTable);
-            }
-            buildRecursiveOrderedFkSecondPasses(orderedFkSecondPasses, isADependencyOf, startTable, dependentTable);
-            if (!orderedFkSecondPasses.contains(sp)) {
-                orderedFkSecondPasses.add(0, sp);
-            }
-        }
-    }
-
-    private void processEndOfQueue(List<FkSecondPass> endOfQueueFkSecondPasses) {
-        /*
-         * If a second pass raises a recoverableException, queue it for next round
-         * stop of no pass has to be processed or if the number of pass to processes
-         * does not diminish between two rounds.
-         * If some failing pass remain, raise the original exception
-         */
-        boolean stopProcess = false;
-        RuntimeException originalException = null;
-        while (!stopProcess) {
-            List<FkSecondPass> failingSecondPasses = new ArrayList<FkSecondPass>();
-            for (FkSecondPass pass : endOfQueueFkSecondPasses) {
-                try {
-                    pass.doSecondPass(getEntityBindingMap());
-                } catch (RecoverableException e) {
-                    failingSecondPasses.add(pass);
-                    if (originalException == null) {
-                        originalException = (RuntimeException) e.getCause();
-                    }
-                }
-            }
-            stopProcess = failingSecondPasses.size() == 0 || failingSecondPasses.size() == endOfQueueFkSecondPasses.size();
-            endOfQueueFkSecondPasses = failingSecondPasses;
-        }
-        if (endOfQueueFkSecondPasses.size() > 0) {
-            throw originalException;
-        }
-    }
-
-    private void secondPassCompileForeignKeys(MetadataBuildingContext buildingContext) {
-        int uniqueInteger = 0;
-        Set<ForeignKey> done = new HashSet<ForeignKey>();
-        for (cn.sexycode.mybatis.jpa.mapping.Table table : collectTableMappings()) {
-            table.setUniqueInteger(uniqueInteger++);
-            secondPassCompileForeignKeys(table, done, buildingContext);
-        }
-    }
-
-    protected void secondPassCompileForeignKeys(
-            final cn.sexycode.mybatis.jpa.mapping.Table table,
-            Set<ForeignKey> done,
-            final MetadataBuildingContext buildingContext) throws MappingException {
-        table.createForeignKeys();
-
-        Iterator itr = table.getForeignKeyIterator();
-        while (itr.hasNext()) {
-            final ForeignKey fk = (ForeignKey) itr.next();
-            if (!done.contains(fk)) {
-                done.add(fk);
-                final String referencedEntityName = fk.getReferencedEntityName();
-                if (referencedEntityName == null) {
-                    throw new MappingException(
-                            "An association from the table " +
-                                    fk.getTable().getName() +
-                                    " does not specify the referenced entity"
-                    );
-                }
-
-                log.debugf("Resolving reference to class: %s", referencedEntityName);
-                final PersistentClass referencedClass = getEntityBinding(referencedEntityName);
-                if (referencedClass == null) {
-                    throw new MappingException(
-                            "An association from the table " +
-                                    fk.getTable().getName() +
-                                    " refers to an unmapped class: " +
-                                    referencedEntityName
-                    );
-                }
-                if (referencedClass.isJoinedSubclass()) {
-                    secondPassCompileForeignKeys(referencedClass.getSuperclass().getTable(), done, buildingContext);
-                }
-
-                fk.setReferencedTable(referencedClass.getTable());
-
-                Identifier nameIdentifier;
-
-                ImplicitForeignKeyNameSource foreignKeyNameSource = new ImplicitForeignKeyNameSource() {
-                    final List<Identifier> columnNames = extractColumnNames(fk.getColumns());
-                    List<Identifier> referencedColumnNames = null;
-
-                    @Override
-                    public Identifier getTableName() {
-                        return table.getNameIdentifier();
-                    }
-
-                    @Override
-                    public List<Identifier> getColumnNames() {
-                        return columnNames;
-                    }
-
-                    @Override
-                    public Identifier getReferencedTableName() {
-                        return fk.getReferencedTable().getNameIdentifier();
-                    }
-
-                    @Override
-                    public List<Identifier> getReferencedColumnNames() {
-                        if (referencedColumnNames == null) {
-                            referencedColumnNames = extractColumnNames(fk.getReferencedColumns());
-                        }
-                        return referencedColumnNames;
-                    }
-
-                    @Override
-                    public Identifier getUserProvidedIdentifier() {
-                        return fk.getName() != null ? Identifier.toIdentifier(fk.getName()) : null;
-                    }
-
-                    @Override
-                    public MetadataBuildingContext getBuildingContext() {
-                        return buildingContext;
-                    }
-                };
-
-                nameIdentifier = getMetadataBuildingOptions().getImplicitNamingStrategy().determineForeignKeyName(foreignKeyNameSource);
-
-                fk.setName(nameIdentifier.render(getDatabase().getJdbcEnvironment().getDialect()));
-
-                fk.alignColumns();
-            }
-        }
-    }
 
     private List<Identifier> toIdentifiers(List<String> names) {
         if (names == null || names.isEmpty()) {
@@ -1317,7 +497,7 @@ public class InFlightMetadataCollectorImpl implements InFlightMetadataCollector 
         if (delayedPropertyReferenceHandlers == null) {
             return;
         }
-        log.debug("Processing association property references");
+//        log.debug("Processing association property references");
 
         for (DelayedPropertyReferenceHandler delayedPropertyReferenceHandler : delayedPropertyReferenceHandlers) {
             delayedPropertyReferenceHandler.process(this);
@@ -1326,21 +506,6 @@ public class InFlightMetadataCollectorImpl implements InFlightMetadataCollector 
         delayedPropertyReferenceHandlers.clear();
     }
 
-    private void processUniqueConstraintHolders(MetadataBuildingContext buildingContext) {
-        if (uniqueConstraintHoldersByTable == null) {
-            return;
-        }
-
-        for (Map.Entry<cn.sexycode.mybatis.jpa.mapping.Table, List<UniqueConstraintHolder>> tableListEntry : uniqueConstraintHoldersByTable.entrySet()) {
-            final cn.sexycode.mybatis.jpa.mapping.Table table = tableListEntry.getKey();
-            final List<UniqueConstraintHolder> uniqueConstraints = tableListEntry.getValue();
-            for (UniqueConstraintHolder holder : uniqueConstraints) {
-                buildUniqueKeyFromColumnNames(table, holder.getName(), holder.getColumns(), buildingContext);
-            }
-        }
-
-        uniqueConstraintHoldersByTable.clear();
-    }
 
     private void buildUniqueKeyFromColumnNames(
             cn.sexycode.mybatis.jpa.mapping.Table table,
@@ -1487,92 +652,6 @@ public class InFlightMetadataCollectorImpl implements InFlightMetadataCollector 
         }
     }
 
-    private void processJPAIndexHolders(MetadataBuildingContext buildingContext) {
-        if (jpaIndexHoldersByTable == null) {
-            return;
-        }
-
-        for (Table table : jpaIndexHoldersByTable.keySet()) {
-            final List<JPAIndexHolder> jpaIndexHolders = jpaIndexHoldersByTable.get(table);
-            for (JPAIndexHolder holder : jpaIndexHolders) {
-                buildUniqueKeyFromColumnNames(
-                        table,
-                        holder.getName(),
-                        holder.getColumns(),
-                        holder.getOrdering(),
-                        holder.isUnique(),
-                        buildingContext
-                );
-            }
-        }
-    }
-
-    private Map<String, NaturalIdUniqueKeyBinder> naturalIdUniqueKeyBinderMap;
-
-    @Override
-    public NaturalIdUniqueKeyBinder locateNaturalIdUniqueKeyBinder(String entityName) {
-        if (naturalIdUniqueKeyBinderMap == null) {
-            return null;
-        }
-        return naturalIdUniqueKeyBinderMap.get(entityName);
-    }
-
-    @Override
-    public void registerNaturalIdUniqueKeyBinder(String entityName, NaturalIdUniqueKeyBinder ukBinder) {
-        if (naturalIdUniqueKeyBinderMap == null) {
-            naturalIdUniqueKeyBinderMap = new HashMap<String, NaturalIdUniqueKeyBinder>();
-        }
-        final NaturalIdUniqueKeyBinder previous = naturalIdUniqueKeyBinderMap.put(entityName, ukBinder);
-        if (previous != null) {
-            throw new AssertionFailure("Previous NaturalIdUniqueKeyBinder already registered for entity name : " + entityName);
-        }
-    }
-
-    private void processNaturalIdUniqueKeyBinders() {
-        if (naturalIdUniqueKeyBinderMap == null) {
-            return;
-        }
-
-        for (NaturalIdUniqueKeyBinder naturalIdUniqueKeyBinder : naturalIdUniqueKeyBinderMap.values()) {
-            naturalIdUniqueKeyBinder.process();
-        }
-
-        naturalIdUniqueKeyBinderMap.clear();
-    }
-
-    private void processCachingOverrides() {
-        if (options.getCacheRegionDefinitions() == null) {
-            return;
-        }
-
-        for (CacheRegionDefinition cacheRegionDefinition : options.getCacheRegionDefinitions()) {
-            if (cacheRegionDefinition.getRegionType() == CacheRegionDefinition.CacheRegionType.ENTITY) {
-                final PersistentClass entityBinding = getEntityBinding(cacheRegionDefinition.getRole());
-                if (entityBinding == null) {
-                    throw new MyJpaException(
-                            "Cache override referenced an unknown entity : " + cacheRegionDefinition.getRole()
-                    );
-                }
-                if (!RootClass.class.isInstance(entityBinding)) {
-                    throw new MyJpaException(
-                            "Cache override referenced a non-root entity : " + cacheRegionDefinition.getRole()
-                    );
-                }
-                ((RootClass) entityBinding).setCacheRegionName(cacheRegionDefinition.getRegion());
-                ((RootClass) entityBinding).setCacheConcurrencyStrategy(cacheRegionDefinition.getUsage());
-                ((RootClass) entityBinding).setLazyPropertiesCacheable(cacheRegionDefinition.isCacheLazy());
-            } else if (cacheRegionDefinition.getRegionType() == CacheRegionDefinition.CacheRegionType.COLLECTION) {
-                final Collection collectionBinding = getCollectionBinding(cacheRegionDefinition.getRole());
-                if (collectionBinding == null) {
-                    throw new MyJpaException(
-                            "Cache override referenced an unknown collection role : " + cacheRegionDefinition.getRole()
-                    );
-                }
-                collectionBinding.setCacheRegionName(cacheRegionDefinition.getRegion());
-                collectionBinding.setCacheConcurrencyStrategy(cacheRegionDefinition.getUsage());
-            }
-        }
-    }
 
     @Override
     public boolean isInSecondPass() {

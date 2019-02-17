@@ -13,35 +13,6 @@ package cn.sexycode.sql.dialect;
  * @author Vlad Mihalcea
  */
 public enum Database {
-
-    CACHE {
-        @Override
-        public Class<? extends Dialect> latestDialect() {
-            return Cache71Dialect.class;
-        }
-
-        @Override
-        public Dialect resolveDialect(DialectResolutionInfo info) {
-            return null;
-        }
-    },
-    CUBRID {
-        @Override
-        public Class<? extends Dialect> latestDialect() {
-            return CUBRIDDialect.class;
-        }
-
-        @Override
-        public Dialect resolveDialect(DialectResolutionInfo info) {
-            final String databaseName = info.getDatabaseName();
-
-            if ("CUBRID".equalsIgnoreCase(databaseName)) {
-                return latestDialectInstance(this);
-            }
-
-            return null;
-        }
-    },
     DB2 {
         @Override
         public Class<? extends Dialect> latestDialect() {
@@ -153,24 +124,7 @@ public enum Database {
             return null;
         }
     },
-    HANA {
-        @Override
-        public Class<? extends Dialect> latestDialect() {
-            return HANAColumnStoreDialect.class;
-        }
 
-        @Override
-        public Dialect resolveDialect(DialectResolutionInfo info) {
-            final String databaseName = info.getDatabaseName();
-
-            if ("HDB".equals(databaseName)) {
-                // SAP recommends defaulting to column store.
-                return latestDialectInstance(this);
-            }
-
-            return null;
-        }
-    },
     HSQL {
         @Override
         public Class<? extends Dialect> latestDialect() {

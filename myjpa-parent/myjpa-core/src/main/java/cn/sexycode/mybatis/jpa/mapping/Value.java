@@ -6,12 +6,12 @@
  */
 package cn.sexycode.mybatis.jpa.mapping;
 
-import org.hibernate.FetchMode;
-import org.hibernate.MappingException;
-import org.hibernate.engine.spi.Mapping;
-import org.hibernate.service.ServiceRegistry;
-import org.hibernate.type.Type;
 
+import cn.sexycode.mybatis.jpa.binding.MappingException;
+import cn.sexycode.sql.type.Mapping;
+import cn.sexycode.sql.type.Type;
+
+import javax.imageio.spi.ServiceRegistry;
 import java.io.Serializable;
 import java.util.Iterator;
 
@@ -25,35 +25,33 @@ import java.util.Iterator;
  * @author Gavin King
  */
 public interface Value extends Serializable {
-    public int getColumnSpan();
+    int getColumnSpan();
 
-    public Iterator<Selectable> getColumnIterator();
+    Iterator<Selectable> getColumnIterator();
 
-    public Type getType() throws MappingException;
+    Type getType() throws MappingException;
 
-    public FetchMode getFetchMode();
 
-    public Table getTable();
+    Table getTable();
 
-    public boolean hasFormula();
+    boolean hasFormula();
 
-    public boolean isAlternateUniqueKey();
+    boolean isAlternateUniqueKey();
 
-    public boolean isNullable();
+    boolean isNullable();
 
-    public boolean[] getColumnUpdateability();
+    boolean[] getColumnUpdateability();
 
-    public boolean[] getColumnInsertability();
+    boolean[] getColumnInsertability();
 
-    public void createForeignKey() throws MappingException;
+    void createForeignKey() throws MappingException;
 
-    public boolean isSimpleValue();
+    boolean isSimpleValue();
 
-    public boolean isValid(Mapping mapping) throws MappingException;
+    boolean isValid(Mapping mapping) throws MappingException;
 
-    public void setTypeUsingReflection(String className, String propertyName) throws MappingException;
+//    public void setTypeUsingReflection(String className, String propertyName) throws MappingException;
 
-    public Object accept(ValueVisitor visitor);
+    Object accept(ValueVisitor visitor);
 
-    ServiceRegistry getServiceRegistry();
 }

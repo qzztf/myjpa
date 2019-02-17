@@ -6,53 +6,37 @@
  */
 package cn.sexycode.sql.dialect;
 
+import cn.sexycode.mybatis.jpa.binding.MappingException;
+import cn.sexycode.sql.Environment;
+import cn.sexycode.sql.JDBCException;
+import cn.sexycode.sql.LockMode;
+import cn.sexycode.sql.LockOptions;
+import cn.sexycode.sql.dialect.function.*;
+import cn.sexycode.sql.dialect.identity.DB2IdentityColumnSupport;
+import cn.sexycode.sql.dialect.identity.IdentityColumnSupport;
+import cn.sexycode.sql.dialect.pagination.AbstractLimitHandler;
+import cn.sexycode.sql.dialect.pagination.LimitHandler;
+import cn.sexycode.sql.dialect.pagination.LimitHelper;
+import cn.sexycode.sql.dialect.unique.DB2UniqueDelegate;
+import cn.sexycode.sql.dialect.unique.UniqueDelegate;
+import cn.sexycode.sql.type.StandardBasicTypes;
+import cn.sexycode.sql.type.descriptor.sql.DecimalTypeDescriptor;
+import cn.sexycode.sql.type.descriptor.sql.SmallIntTypeDescriptor;
+import cn.sexycode.sql.type.descriptor.sql.SqlTypeDescriptor;
+
+import javax.persistence.LockTimeoutException;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Locale;
 
-import org.hibernate.JDBCException;
-import org.hibernate.MappingException;
-import org.hibernate.NullPrecedence;
-import org.hibernate.cfg.Environment;
-import org.hibernate.dialect.function.AvgWithArgumentCastFunction;
-import org.hibernate.dialect.function.NoArgSQLFunction;
-import org.hibernate.dialect.function.SQLFunctionTemplate;
-import org.hibernate.dialect.function.StandardSQLFunction;
-import org.hibernate.dialect.function.VarArgsSQLFunction;
-import org.hibernate.dialect.identity.DB2IdentityColumnSupport;
-import org.hibernate.dialect.identity.IdentityColumnSupport;
-import org.hibernate.dialect.pagination.AbstractLimitHandler;
-import org.hibernate.dialect.pagination.LimitHandler;
-import org.hibernate.dialect.pagination.LimitHelper;
-import org.hibernate.dialect.unique.DB2UniqueDelegate;
-import org.hibernate.dialect.unique.UniqueDelegate;
-import org.hibernate.engine.spi.RowSelection;
-import org.hibernate.exception.LockTimeoutException;
-import org.hibernate.exception.spi.SQLExceptionConversionDelegate;
-import org.hibernate.hql.spi.id.IdTableSupportStandardImpl;
-import org.hibernate.hql.spi.id.MultiTableBulkIdStrategy;
-import org.hibernate.hql.spi.id.local.AfterUseAction;
-import org.hibernate.hql.spi.id.local.LocalTemporaryTableBulkIdStrategy;
-import org.hibernate.internal.CoreLogging;
-import org.hibernate.internal.CoreMessageLogger;
-import org.hibernate.internal.util.JdbcExceptionHelper;
-import org.hibernate.tool.schema.extract.internal.SequenceInformationExtractorDB2DatabaseImpl;
-import org.hibernate.tool.schema.extract.internal.SequenceInformationExtractorNoOpImpl;
-import org.hibernate.tool.schema.extract.spi.SequenceInformationExtractor;
-import org.hibernate.type.StandardBasicTypes;
-import org.hibernate.type.descriptor.sql.DecimalTypeDescriptor;
-import org.hibernate.type.descriptor.sql.SmallIntTypeDescriptor;
-import org.hibernate.type.descriptor.sql.SqlTypeDescriptor;
-
 /**
  * An SQL dialect for DB2.
  *
  * @author Gavin King
  */
-public class DB2Dialect extends Dialect {
-    private static final CoreMessageLogger log = CoreLogging.messageLogger(DB2Dialect.class);
+public class DB2Dialect extends AbstractDialect {
 
     private static final AbstractLimitHandler LIMIT_HANDLER = new AbstractLimitHandler() {
         @Override
@@ -272,14 +256,7 @@ public class DB2Dialect extends Dialect {
         return "select * from syscat.sequences";
     }
 
-    @Override
-    public SequenceInformationExtractor getSequenceInformationExtractor() {
-        if (getQuerySequencesString() == null) {
-            return SequenceInformationExtractorNoOpImpl.INSTANCE;
-        } else {
-            return SequenceInformationExtractorDB2DatabaseImpl.INSTANCE;
-        }
-    }
+
 
     @Override
     @SuppressWarnings("deprecation")
@@ -395,32 +372,6 @@ public class DB2Dialect extends Dialect {
         return true;
     }
 
-    @Override
-    public MultiTableBulkIdStrategy getDefaultMultiTableBulkIdStrategy() {
-        // Prior to DB2 9.7, "real" global temporary tables that can be shared between sessions
-        // are *not* supported; even though the DB2 command says to declare a "global" temp table
-        // Hibernate treats it as a "local" temp table.
-        return new LocalTemporaryTableBulkIdStrategy(
-                new IdTableSupportStandardImpl() {
-                    @Override
-                    public String generateIdTableName(String baseName) {
-                        return "session." + super.generateIdTableName(baseName);
-                    }
-
-                    @Override
-                    public String getCreateIdTableCommand() {
-                        return "declare global temporary table";
-                    }
-
-                    @Override
-                    public String getCreateIdTableStatementOptions() {
-                        return "not logged";
-                    }
-                },
-                AfterUseAction.DROP,
-                null
-        );
-    }
 
     @Override
     public boolean supportsCurrentTimestampSelection() {
@@ -457,6 +408,16 @@ public class DB2Dialect extends Dialect {
     @Override
     public boolean requiresCastingOfParametersInSelectClause() {
         return true;
+    }
+
+    @Override
+    public String appendLockHint(LockOptions lockOptions, String tableName) {
+        return null;
+    }
+
+    @Override
+    public String applyLocksToSql(String buf, LockOptions lockOptions, Object o) {
+        return null;
     }
 
     @Override
@@ -504,21 +465,6 @@ public class DB2Dialect extends Dialect {
         return super.getSqlTypeDescriptorOverride(sqlCode);
     }
 
-    @Override
-    public SQLExceptionConversionDelegate buildSQLExceptionConversionDelegate() {
-        return new SQLExceptionConversionDelegate() {
-            @Override
-            public JDBCException convert(SQLException sqlException, String message, String sql) {
-                final String sqlState = JdbcExceptionHelper.extractSqlState(sqlException);
-                final int errorCode = JdbcExceptionHelper.extractErrorCode(sqlException);
-
-                if (-952 == errorCode && "57014".equals(sqlState)) {
-                    throw new LockTimeoutException(message, sqlException, sql);
-                }
-                return null;
-            }
-        };
-    }
 
     @Override
     public UniqueDelegate getUniqueDelegate() {
@@ -535,51 +481,29 @@ public class DB2Dialect extends Dialect {
         return LIMIT_HANDLER;
     }
 
-    /**
-     * Handle DB2 "support" for null precedence...
-     *
-     * @param expression     The SQL order expression. In case of {@code @OrderBy} annotation user receives property placeholder
-     *                       (e.g. attribute name enclosed in '{' and '}' signs).
-     * @param collation      Collation string in format {@code collate IDENTIFIER}, or {@code null}
-     *                       if expression has not been explicitly specified.
-     * @param order          Order direction. Possible values: {@code asc}, {@code desc}, or {@code null}
-     *                       if expression has not been explicitly specified.
-     * @param nullPrecedence Nulls precedence. Default value: {@link NullPrecedence#NONE}.
-     * @return
-     */
     @Override
-    public String renderOrderByElement(String expression, String collation, String order, NullPrecedence nullPrecedence) {
-        if (nullPrecedence == null || nullPrecedence == NullPrecedence.NONE) {
-            return super.renderOrderByElement(expression, collation, order, NullPrecedence.NONE);
-        }
+    public String toBooleanValueString(Boolean value) {
+        return null;
+    }
 
-        // DB2 FTW!  A null precedence was explicitly requested, but DB2 "support" for null precedence
-        // is a joke.  Basically it supports combos that align with what it does anyway.  Here is the
-        // support matrix:
-        //		* ASC + NULLS FIRST -> case statement
-        //		* ASC + NULLS LAST -> just drop the NULLS LAST from sql fragment
-        //		* DESC + NULLS FIRST -> just drop the NULLS FIRST from sql fragment
-        //		* DESC + NULLS LAST -> case statement
+    @Override
+    public String getForUpdateString(LockOptions lockOptions) {
+        return null;
+    }
 
-        if ((nullPrecedence == NullPrecedence.FIRST && "desc".equalsIgnoreCase(order))
-                || (nullPrecedence == NullPrecedence.LAST && "asc".equalsIgnoreCase(order))) {
-            // we have one of:
-            //		* ASC + NULLS LAST
-            //		* DESC + NULLS FIRST
-            // so just drop the null precedence.  *NOTE: we could pass along the null precedence here,
-            // but only DB2 9.7 or greater understand it; dropping it is more portable across DB2 versions
-            return super.renderOrderByElement(expression, collation, order, NullPrecedence.NONE);
-        }
+    @Override
+    public String getForUpdateString(String toString, LockOptions lockOptions) {
+        return null;
+    }
 
-        return String.format(
-                Locale.ENGLISH,
-                "case when %s is null then %s else %s end, %s %s",
-                expression,
-                nullPrecedence == NullPrecedence.FIRST ? "0" : "1",
-                nullPrecedence == NullPrecedence.FIRST ? "1" : "0",
-                expression,
-                order
-        );
+    @Override
+    public String getForUpdateString(LockMode lockMode) {
+        return null;
+    }
+
+    @Override
+    public boolean supportsNoColumnsInsert() {
+        return false;
     }
 
     @Override

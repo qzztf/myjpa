@@ -26,11 +26,11 @@
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>3.0.6</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>cn.sexycode</groupId>
             <artifactId>spring-orm-myjpa</artifactId>
             <version>${my-jpa.version}</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -40,12 +40,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
             <!--<version>2.0.0.BUILD-SNAPSHOT</version>-->
-            <!--<exclusions>
+            <exclusions>
                 <exclusion>
                     <groupId>org.hibernate</groupId>
                     <artifactId>hibernate-core</artifactId>
                 </exclusion>
-            </exclusions>-->
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>

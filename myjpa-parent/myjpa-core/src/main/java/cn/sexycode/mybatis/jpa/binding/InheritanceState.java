@@ -11,7 +11,6 @@ import java.util.Map;
 /**
  * Some extra data to the inheritance position of a class.
  *
- * @author Emmanuel Bernard
  */
 public class InheritanceState {
     private XClass clazz;

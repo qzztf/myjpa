@@ -8,7 +8,6 @@ import javax.persistence.PersistenceException;
  * Note that all {@link java.sql.SQLException SQLExceptions} will be wrapped in some form of
  * {@link PersistenceException}.
  *
- * @author Gavin King
  */
 public class MyJpaException extends PersistenceException {
     /**

@@ -1,25 +1,20 @@
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later.
- * See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
- */
 package cn.sexycode.mybatis.jpa.binding;
 
-import cn.sexycode.mybatis.jpa.SessionFactoryBuilder;
 import cn.sexycode.mybatis.jpa.mapping.PersistentClass;
-import cn.sexycode.mybatis.jpa.session.SessionFactory;
+import cn.sexycode.sql.dialect.function.SQLFunction;
+import cn.sexycode.sql.model.Database;
+import cn.sexycode.sql.type.TypeResolver;
 
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Container for configuration data collected during binding the metamodel.
  *
- * @author Steve Ebersole
- * @author Hardy Ferentschik
- * @author Gail Badner
+ *
  */
 public class MetadataImpl implements Metadata, Serializable {
     private final UUID uuid;
@@ -27,22 +22,18 @@ public class MetadataImpl implements Metadata, Serializable {
 
     private final Map<String, PersistentClass> entityBindingMap;
     private final Map<Class, MappedSuperclass> mappedSuperclassMap;
-    private final Map<String, Collection> collectionBindingMap;
 
-    public MetadataImpl(
-            UUID uuid,
-            Map<String, PersistentClass> entityBindingMap,
-            Map<Class, MappedSuperclass> mappedSuperclassMap,
-            Map<String, Collection> collectionBindingMap
+    public MetadataImpl(UUID uuid, MetadataBuildingOptions options, TypeResolver typeResolver,
+            Map<String, PersistentClass> entityBindingMap, Map<Class, MappedSuperclass> mappedSuperclassMap,
+            Map<String, SQLFunction> sqlFunctionMap, Database database
     ) {
         this.uuid = uuid;
         this.entityBindingMap = entityBindingMap;
         this.mappedSuperclassMap = mappedSuperclassMap;
-        this.collectionBindingMap = collectionBindingMap;
     }
 
     @Override
-    public java.util.Collection<PersistentClass> getEntityBindings() {
+    public Collection<PersistentClass> getEntityBindings() {
         return entityBindingMap.values();
     }
 

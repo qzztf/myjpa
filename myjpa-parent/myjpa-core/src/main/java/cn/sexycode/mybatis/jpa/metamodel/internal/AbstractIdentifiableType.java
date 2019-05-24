@@ -1,9 +1,3 @@
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later.
- * See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
- */
 package cn.sexycode.mybatis.jpa.metamodel.internal;
 
 import javax.persistence.metamodel.Attribute;
@@ -23,7 +17,7 @@ import java.util.Set;
  * as the information for them is consumed into the closest actual entity subclass(es) in the
  * internal Hibernate mapping-metamodel.
  *
- * @author Steve Ebersole
+ *
  */
 public abstract class AbstractIdentifiableType<X>
 		extends AbstractManagedType<X>
@@ -101,9 +95,7 @@ public abstract class AbstractIdentifiableType<X>
 		else {
 			if ( getSupertype() != null ) {
 				SingularAttributeImpl id = getSupertype().internalGetId();
-				if ( id != null ) {
-					return id;
-				}
+				return id;
 			}
 		}
 

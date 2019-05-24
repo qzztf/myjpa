@@ -1,11 +1,7 @@
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later.
- * See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
- */
 package cn.sexycode.mybatis.jpa.metamodel.internal;
 
+import cn.sexycode.mybatis.jpa.binding.Metadata;
+import cn.sexycode.mybatis.jpa.mapping.PersistentClass;
 import cn.sexycode.mybatis.jpa.session.SessionFactory;
 
 import javax.persistence.EntityGraph;
@@ -17,10 +13,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Hibernate implementation of the JPA {@link javax.persistence.metamodel.Metamodel} contract.
+ * implementation of the JPA {@link javax.persistence.metamodel.Metamodel} contract.
  *
- * @author Steve Ebersole
- * @author Emmanuel Bernard
  */
 public class MetamodelImpl implements Metamodel, Serializable {
     private final Map<String, String> imports = new ConcurrentHashMap<>();
@@ -58,7 +52,7 @@ public class MetamodelImpl implements Metamodel, Serializable {
         if (type == null) {
             type = jpaEmbeddableTypeMap.get(cls);
         }
-        if (type == null) {
+        /*if (type == null) {
             EntityTypeImpl entityType = new EntityTypeImpl(
                     cls,
                     null
@@ -66,7 +60,7 @@ public class MetamodelImpl implements Metamodel, Serializable {
             jpaEntityTypeMap.put(cls, entityType);
             type = entityType;
 //            throw new IllegalArgumentException("Not a managed type: " + cls);
-        }
+        }*/
         return (ManagedType<X>) type;
     }
 
@@ -103,4 +97,46 @@ public class MetamodelImpl implements Metamodel, Serializable {
     public Set<EmbeddableType<?>> getEmbeddables() {
         return new HashSet<>(jpaEmbeddableTypeMap.values());
     }
+
+    /**
+     * Prepare the metamodel using the information from the collection of Hibernate
+     * {@link PersistentClass} models
+     *
+     * @param mappingMetadata The mapping information
+     */
+    public void initialize(Metadata mappingMetadata) {
+
+        MetadataContext context = new MetadataContext(sessionFactory, null);
+
+        for (PersistentClass entityBinding : mappingMetadata.getEntityBindings()) {
+            locateOrBuildEntityType(entityBinding, context);
+        }
+
+        this.jpaEntityTypeMap.putAll(context.getEntityTypeMap());
+        this.jpaEmbeddableTypeMap.putAll(context.getEmbeddableTypeMap());
+        this.jpaMappedSuperclassTypeMap.putAll(context.getMappedSuperclassTypeMap());
+        this.jpaEntityTypesByEntityName.putAll(context.getEntityTypesByEntityName());
+
+    }
+
+    private static EntityTypeImpl<?> locateOrBuildEntityType(PersistentClass persistentClass, MetadataContext context) {
+        EntityTypeImpl<?> entityType = context.locateEntityType(persistentClass);
+        if (entityType == null) {
+            entityType = buildEntityType(persistentClass, context);
+        }
+        return entityType;
+    }
+
+    //TODO remove / reduce @SW scope
+    @SuppressWarnings("unchecked")
+    private static EntityTypeImpl<?> buildEntityType(PersistentClass persistentClass, MetadataContext context) {
+        final Class javaType = persistentClass.getMappedClass();
+        context.pushEntityWorkedOn(persistentClass);
+
+        EntityTypeImpl entityType = new EntityTypeImpl(javaType, null, persistentClass);
+
+        context.registerEntityType(persistentClass, entityType);
+        return entityType;
+    }
+
 }

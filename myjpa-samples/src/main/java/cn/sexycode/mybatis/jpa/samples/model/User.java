@@ -1,5 +1,6 @@
 package cn.sexycode.mybatis.jpa.samples.model;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -12,6 +13,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table()
+@TableName
 @Data
 public class User {
     @Id

@@ -6,7 +6,7 @@
 
     <groupId>cn.sexycode</groupId>
     <artifactId>myjpa-build</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2-SNAPSHOT</version>
     <description>The plugin for mybatis to handle jpa.</description>
     <url>https://github.com/qzzsunly/my-jpa</url>
     <packaging>pom</packaging>

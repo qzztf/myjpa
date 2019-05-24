@@ -6,7 +6,7 @@ import java.io.Serializable;
 /**
  * Defines commonality for the JPA {@link Type} hierarchy of interfaces.
  *
- * @author Steve Ebersole
+ *
  * @author Brad Koehn
  */
 public abstract class AbstractType<X> implements Type<X>, Serializable {

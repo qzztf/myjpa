@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 /**
  * Models the commonality of the JPA {@link Attribute} hierarchy.
  *
- * @author Steve Ebersole
+ *
  */
 public abstract class AbstractAttribute<X, Y>
 		implements Attribute<X, Y>, Serializable {
@@ -103,6 +103,6 @@ public abstract class AbstractAttribute<X, Y>
 		oos.writeObject( getJavaMember().getDeclaringClass().getName() );
 		oos.writeObject( getJavaMember().getName() );
 		// should only ever be a field or the getter-method...
-		oos.writeObject( Method.class.isInstance( getJavaMember() ) ? "method" : "field" );
+        oos.writeObject(getJavaMember() instanceof Method ? "method" : "field");
 	}
 }

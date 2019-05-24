@@ -1,7 +1,6 @@
 package cn.sexycode.mybatis.jpa.util;
 
 /**
- * @author svili
  */
 public class ColumnNameUtil {
 
@@ -13,12 +12,12 @@ public class ColumnNameUtil {
             return "";
         }
         StringBuilder result = new StringBuilder(text.length() + 1);
-        result.append(text.substring(0, 1));
+        result.append(text, 0, 1);
         for (int i = 1; i < text.length(); i++) {
             if (!Character.isLowerCase(text.charAt(i))) {
                 result.append('_');
             }
-            result.append(text.substring(i, i + 1));
+            result.append(text, i, i + 1);
         }
         return result.toString().toLowerCase();
     }

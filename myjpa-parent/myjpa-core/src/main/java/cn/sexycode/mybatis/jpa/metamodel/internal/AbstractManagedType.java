@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * Defines commonality for the JPA {@link ManagedType} hierarchy of interfaces.
  *
- * @author Steve Ebersole
+ *
  */
 public abstract class AbstractManagedType<X> 
 		extends AbstractType<X>
@@ -68,8 +68,8 @@ public abstract class AbstractManagedType<X>
 		locked = true;
 	}
 
-	public static interface Builder<X> {
-		public void addAttribute(Attribute<X, ?> attribute);
+	public interface Builder<X> {
+		void addAttribute(Attribute<X, ?> attribute);
 	}
 
 

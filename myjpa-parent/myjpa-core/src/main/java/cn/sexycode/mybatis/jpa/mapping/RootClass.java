@@ -1,9 +1,3 @@
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later.
- * See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
- */
 package cn.sexycode.mybatis.jpa.mapping;
 
 import javax.persistence.Table;
@@ -12,7 +6,6 @@ import java.util.Iterator;
 /**
  * The root class of an inheritance hierarchy
  *
- * @author Gavin King
  */
 public class RootClass extends PersistentClass {
 

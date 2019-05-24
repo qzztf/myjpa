@@ -1,16 +1,8 @@
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later.
- * See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
- */
 package cn.sexycode.mybatis.jpa.binding;
 
-import cn.sexycode.mybatis.jpa.SessionFactoryBuilder;
 import cn.sexycode.mybatis.jpa.mapping.PersistentClass;
-import cn.sexycode.mybatis.jpa.session.SessionFactory;
 
-import java.util.UUID;
+import java.util.Collection;
 
 /**
  * Represents the ORM model as determined from all provided mapping sources.
@@ -18,8 +10,7 @@ import java.util.UUID;
  * NOTE : for the time being this is essentially a copy of the legacy Mappings contract, split between
  * reading the mapping information exposed here and collecting it via InFlightMetadataCollector
  *
- * @author Steve Ebersole
- * @since 5.0
+ *
  */
 public interface Metadata {
 
@@ -30,7 +21,7 @@ public interface Metadata {
      *
      * @return All PersistentClass representations.
      */
-    java.util.Collection<PersistentClass> getEntityBindings();
+    Collection<PersistentClass> getEntityBindings();
 
     /**
      * Retrieves the PersistentClass entity mapping metadata representation for

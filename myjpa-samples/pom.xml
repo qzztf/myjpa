@@ -11,11 +11,14 @@
 
     <artifactId>myjpa-samples</artifactId>
 
+    <properties>
+        <my-jpa.version>0.0.2-SNAPSHOT</my-jpa.version>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>cn.sexycode</groupId>
             <artifactId>myjpa-plus</artifactId>
-            <version>0.0.1</version>
+            <version>${my-jpa.version}</version>
         </dependency>
 
         <dependency>
@@ -26,7 +29,7 @@
         <dependency>
             <groupId>cn.sexycode</groupId>
             <artifactId>spring-orm-myjpa</artifactId>
-            <version>0.0.1</version>
+            <version>${my-jpa.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -50,11 +53,11 @@
             <!--<version>8.0.12</version>-->
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.2.10.Final</version>
-        </dependency>
+            <version>5.3.7.Final</version>
+        </dependency>-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -62,9 +65,15 @@
         </dependency>
         <!--<dependency>
             <groupId>cn.sexycode</groupId>
-            <artifactId>myjpa-spring-boot-starter</artifactId>
+            <artifactId>spring-data-myjpa</artifactId>
             <version>0.0.1</version>
+            <scope>compile</scope>
         </dependency>-->
+        <dependency>
+            <groupId>cn.sexycode</groupId>
+            <artifactId>myjpa-spring-boot-starter</artifactId>
+            <version>${my-jpa.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

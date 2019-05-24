@@ -1,10 +1,15 @@
 package cn.sexycode.mybatis.jpa.orm.vendor;
 
+import cn.sexycode.mybatis.jpa.AvailableSettings;
+import cn.sexycode.mybatis.jpa.Configuration;
 import cn.sexycode.mybatis.jpa.MybatisPersistenceProvider;
 import cn.sexycode.mybatis.jpa.session.Session;
 import cn.sexycode.mybatis.jpa.session.SessionFactory;
+import cn.sexycode.sql.dialect.MySQL5Dialect;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.lang.Nullable;
 import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
+import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
 
 import javax.persistence.EntityManager;
@@ -69,16 +74,51 @@ public class MyJpaVendorAdapter extends AbstractJpaVendorAdapter {
 
     @Override
     public Map<String, Object> getJpaPropertyMap(PersistenceUnitInfo pui) {
-        Map<String, Object> jpaProperties = new HashMap<>();
-        return jpaProperties;
+        return getJpaPropertyMap();
     }
 
     @Override
     public Map<String, Object> getJpaPropertyMap() {
-        Map<String, Object> jpaProperties = new HashMap<>();
+        Map<String, Object> jpaProperties = new HashMap<>(5);
+        if (getDatabasePlatform() != null) {
+            jpaProperties.put(Configuration.DIALECT, getDatabasePlatform());
+        } else {
+            Class<?> databaseDialectClass = determineDatabaseDialectClass(getDatabase());
+            if (databaseDialectClass != null) {
+                jpaProperties.put(AvailableSettings.DIALECT, databaseDialectClass.getName());
+            }
+        }
+        if (isShowSql()) {
+            jpaProperties.put(AvailableSettings.SHOW_SQL, "true");
+        }
         return jpaProperties;
     }
 
+    /**
+     * Determine the Hibernate database dialect class for the given target database.
+     *
+     * @param database the target database
+     * @return the Hibernate database dialect class, or {@code null} if none found
+     */
+    @Nullable
+    protected Class<?> determineDatabaseDialectClass(Database database) {
+        switch (database) {
+            //            case DB2: return DB2Dialect.class;
+            //            case DERBY: return DerbyTenSevenDialect.class;
+            //            case H2: return H2Dialect.class;
+            //            case HANA: return HANAColumnStoreDialect.class;
+            //            case HSQL: return HSQLDialect.class;
+            //            case INFORMIX: return InformixDialect.class;
+            case MYSQL:
+                return MySQL5Dialect.class;
+            //            case ORACLE: return Oracle12cDialect.class;
+            //            case POSTGRESQL: return PostgreSQL95Dialect.class;
+            //            case SQL_SERVER: return SQLServer2012Dialect.class;
+            //            case SYBASE: return SybaseDialect.class;
+            default:
+                return null;
+        }
+    }
 
     @Override
     public MyJpaDialect getJpaDialect() {

@@ -1,5 +1,6 @@
 package cn.sexycode.mybatis.jpa.session;
 
+import cn.sexycode.mybatis.jpa.binding.Metadata;
 import cn.sexycode.mybatis.jpa.metamodel.internal.MetamodelImpl;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -18,8 +19,14 @@ public class SessionFactoryImpl implements SessionFactory {
 
     private SqlSessionFactory sessionFactory;
 
-    public SessionFactoryImpl(SqlSessionFactory sessionFactory) {
+    private final transient MetamodelImpl metamodel;
+
+    public SessionFactoryImpl(Metadata metadata, SqlSessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
+        sessionFactory.getConfiguration();
+
+        this.metamodel = new MetamodelImpl(this);
+        metamodel.initialize(metadata);
     }
 
     @Override
@@ -54,7 +61,7 @@ public class SessionFactoryImpl implements SessionFactory {
 
     @Override
     public Metamodel getMetamodel() {
-        return new MetamodelImpl(this);
+        return metamodel;
     }
 
     @Override

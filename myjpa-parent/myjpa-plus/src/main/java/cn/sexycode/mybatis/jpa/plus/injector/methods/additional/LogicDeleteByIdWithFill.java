@@ -6,13 +6,11 @@ import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
 import java.util.List;
 
-import static cn.sexycode.mybatis.jpa.util.StringPool.EMPTY;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 

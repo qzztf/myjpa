@@ -1,28 +1,25 @@
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later.
- * See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
- */
 package cn.sexycode.mybatis.jpa.binding;
 
+import cn.sexycode.mybatis.jpa.MyJpaException;
 import cn.sexycode.mybatis.jpa.mapping.PersistentClass;
+import cn.sexycode.mybatis.jpa.session.SessionFactory;
+import cn.sexycode.mybatis.jpa.session.SessionFactoryBuilder;
+import cn.sexycode.sql.dialect.function.SQLFunction;
+import cn.sexycode.sql.mapping.Column;
+import cn.sexycode.sql.mapping.Table;
+import cn.sexycode.sql.model.Database;
+import cn.sexycode.sql.model.Identifier;
+import cn.sexycode.sql.type.TypeResolver;
+import cn.sexycode.util.core.cls.XClass;
 
-import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Table;
-import javax.persistence.criteria.Join;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * An in-flight representation of Metadata while Metadata is being built.
  *
- * @author Steve Ebersole
- * @since 5.0
+ *
  */
 public interface InFlightMetadataCollector extends Metadata {
 
@@ -35,10 +32,34 @@ public interface InFlightMetadataCollector extends Metadata {
      */
     void addEntityBinding(PersistentClass persistentClass) throws DuplicateMappingException;
 
+    UUID getUUID();
+
+    MetadataBuildingOptions getMetadataBuildingOptions();
+
+    TypeResolver getTypeResolver();
+
+    Database getDatabase();
+
+    Map<String, SQLFunction> getSqlFunctionMap();
+
+    void validate() throws MappingException;
+
+    Set<MappedSuperclass> getMappedSuperclassMappingsCopy();
+
+    SessionFactoryBuilder getSessionFactoryBuilder();
+
+    SessionFactory buildSessionFactory();
+
     /**
      * Needed for SecondPass handling
      */
     Map<String, PersistentClass> getEntityBindingMap();
+
+    void addIdentifierGenerator(IdentifierGeneratorDefinition generator);
+
+    void addDefaultIdentifierGenerator(IdentifierGeneratorDefinition generator);
+
+    Map<String, String> getImports();
 
     /**
      * Adds an import (HQL entity rename).
@@ -49,15 +70,6 @@ public interface InFlightMetadataCollector extends Metadata {
      *                                   entity name in this repository.
      */
     void addImport(String entityName, String rename) throws DuplicateMappingException;
-
-    /**
-     * Add collection mapping metadata to this repository.
-     *
-     * @param collection The collection metadata
-     * @throws DuplicateMappingException Indicates there was already an entry
-     *                                   corresponding to the given collection role
-     */
-    void addCollectionBinding(Collection collection) throws DuplicateMappingException;
 
     /**
      * Adds table metadata to this repository returning the created
@@ -92,11 +104,12 @@ public interface InFlightMetadataCollector extends Metadata {
 
     String getPhysicalTableName(String logicalName);
 
-    void addColumnNameBinding(Table table, Identifier logicalColumnName, Column column);
-
-    void addColumnNameBinding(Table table, String logicalColumnName, Column column);
 
     String getPhysicalColumnName(Table table, Identifier logicalName) throws MappingException;
+
+    void addColumnNameBinding(Table table, String logicalName, Column column) throws DuplicateMappingException;
+
+    void addColumnNameBinding(Table table, Identifier logicalName, Column column) throws DuplicateMappingException;
 
     String getPhysicalColumnName(Table table, String logicalName) throws MappingException;
 
@@ -112,24 +125,13 @@ public interface InFlightMetadataCollector extends Metadata {
 
     boolean isInSecondPass();
 
+    AnnotatedClassType getClassType(XClass clazz);
+
+    AnnotatedClassType addClassType(XClass clazz);
 
     interface DelayedPropertyReferenceHandler extends Serializable {
         void process(InFlightMetadataCollector metadataCollector);
     }
-
-    void addDelayedPropertyReferenceHandler(DelayedPropertyReferenceHandler handler);
-
-    void addPropertyReference(String entityName, String propertyName);
-
-    void addUniquePropertyReference(String entityName, String propertyName);
-
-    void addPropertyReferencedAssociation(String s, String propertyName, String syntheticPropertyName);
-
-    String getPropertyReferencedAssociation(String entityName, String mappedBy);
-
-    void addMappedBy(String name, String mappedBy, String propertyName);
-
-    String getFromMappedBy(String ownerEntityName, String propertyName);
 
     void addUniqueConstraints(Table table, List uniqueConstraints);
 
@@ -149,5 +151,4 @@ public interface InFlightMetadataCollector extends Metadata {
         }
     }
 
-    Map<String, Join> getJoins(String entityName);
 }

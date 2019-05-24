@@ -1,7 +1,7 @@
 package cn.sexycode.mybatis.jpa.samples.dao;
 
 import cn.sexycode.mybatis.jpa.binding.ModelProxy;
-//import cn.sexycode.mybatis.jpa.data.repository.support.MyJpaRepositoryFactoryBean;
+import cn.sexycode.mybatis.jpa.data.repository.support.MyJpaRepositoryFactoryBean;
 import cn.sexycode.mybatis.jpa.samples.model.User;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -19,12 +19,14 @@ import javax.persistence.Persistence;
 import java.io.IOException;
 import java.io.InputStream;
 
+//import cn.sexycode.mybatis.jpa.data.repository.support.MyJpaRepositoryFactoryBean;
+
 /**
  *
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-//@EnableJpaRepositories(repositoryFactoryBeanClass = MyJpaRepositoryFactoryBean.class)
+@EnableJpaRepositories(repositoryFactoryBeanClass = MyJpaRepositoryFactoryBean.class)
 //@ContextConfiguration(classes = JPAConfig.class)
 //@MapperScan("cn.sexycode.mybatis.jpa.samples.dao")
 public class UserDaoTest {

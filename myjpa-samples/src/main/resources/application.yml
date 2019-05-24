@@ -9,5 +9,6 @@ logging:
     org.springframework.data: debug
     org.springframework.orm: debug
     org.mybatis: debug
+    root: debug
 mybatis-plus:
   mapper-locations: UserMapper.xml

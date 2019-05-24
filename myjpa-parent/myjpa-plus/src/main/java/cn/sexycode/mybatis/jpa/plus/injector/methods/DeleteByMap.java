@@ -1,18 +1,16 @@
 package cn.sexycode.mybatis.jpa.plus.injector.methods;
 
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlSource;
-
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlSource;
 
 /**
  * <p>
  * 根据 ID 删除
  * </p>
  *
- * @author hubin
  * @since 2018-04-06
  */
 public class DeleteByMap extends AbstractMethod {

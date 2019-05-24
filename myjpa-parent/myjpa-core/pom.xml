@@ -5,7 +5,7 @@
     <parent>
         <artifactId>myjpa-parent</artifactId>
         <groupId>cn.sexycode</groupId>
-        <version>0.0.1</version>
+        <version>0.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -32,6 +32,10 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.7.25</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>cn.sexycode</groupId>
+            <artifactId>my-sql</artifactId>
         </dependency>
     </dependencies>
 

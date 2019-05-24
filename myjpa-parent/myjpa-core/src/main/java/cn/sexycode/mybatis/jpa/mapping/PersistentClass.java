@@ -13,7 +13,6 @@ import java.util.Set;
 /**
  * Mapping for an entity.
  *
- * @author Gavin King
  */
 public abstract class PersistentClass implements Serializable {
 
@@ -166,4 +165,15 @@ public abstract class PersistentClass implements Serializable {
         subclassTables.add(subclassTable);
     }
 
+    public void setEntityName(String entityName) {
+        this.entityName = entityName == null ? null : entityName.intern();
+    }
+
+    public void setJpaEntityName(String jpaEntityName) {
+        this.jpaEntityName = jpaEntityName;
+    }
+
+    public String getJpaEntityName() {
+        return jpaEntityName;
+    }
 }

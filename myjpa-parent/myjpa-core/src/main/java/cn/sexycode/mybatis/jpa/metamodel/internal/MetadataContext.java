@@ -1,9 +1,3 @@
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later.
- * See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
- */
 package cn.sexycode.mybatis.jpa.metamodel.internal;
 
 import cn.sexycode.mybatis.jpa.mapping.PersistentClass;
@@ -24,8 +18,8 @@ import java.util.*;
  * results, which represent all the registered {@linkplain #registerEntityType entities} and
  * {@linkplain #registerEmbeddedableType embeddables} respectively.
  *
- * @author Steve Ebersole
- * @author Emmanuel Bernard
+ *
+ *
  */
 class MetadataContext {
 
@@ -254,7 +248,7 @@ class MetadataContext {
             registerAttribute(metamodelClass, attribute);
         }
 
-        if (IdentifiableType.class.isInstance(managedType)) {
+        if (managedType instanceof IdentifiableType) {
             final AbstractIdentifiableType<X> entityType = (AbstractIdentifiableType<X>) managedType;
 
             // handle version

@@ -3,8 +3,6 @@ package cn.sexycode.mybatis.jpa.plus.injector;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.scripting.LanguageDriver;
-import org.apache.ibatis.session.Configuration;
 
 /**
  * <p>

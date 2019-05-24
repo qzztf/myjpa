@@ -1,10 +1,9 @@
 package cn.sexycode.mybatis.jpa;
 
-import cn.sexycode.mybatis.jpa.session.SessionFactoryImpl;
+import cn.sexycode.mybatis.jpa.session.SessionFactoryBuilderImpl;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceException;
@@ -27,6 +26,8 @@ public class MybatisPersistenceProvider implements PersistenceProvider {
     private static final Logger log = Logger.getLogger(MybatisPersistenceProvider.class.getName());
     private SqlSessionFactory sessionFactory;
 
+    private PersistenceUnitInfo persistenceUnitInfo;
+
     public MybatisPersistenceProvider(SqlSessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
@@ -46,16 +47,17 @@ public class MybatisPersistenceProvider implements PersistenceProvider {
 
         try {
             if (sessionFactory != null) {
-                return new SessionFactoryImpl(sessionFactory);
+                return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, properties)
+                        .sqlSessionFactory(sessionFactory).build((MyBatisConfiguration) getConfig(properties));
             }
             Properties prop = new Properties();
             prop.putAll(wrap(properties));
             InputStream configStream = Resources.getResourceAsStream(ClassLoader.getSystemClassLoader(), Consts.DEFAULT_CFG_FILE);
             if (configStream != null) {
-                SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(configStream, prop);
-                return new SessionFactoryImpl(sessionFactory);
+                return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, properties).build(configStream, prop);
             }
-            return new SessionFactoryImpl(new SqlSessionFactoryBuilder().build(getConfig(wrap(properties))));
+            return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, properties)
+                    .build(((MyBatisConfiguration) getConfig(properties)));
         } catch (PersistenceException pe) {
             throw pe;
         } catch (Exception e) {
@@ -66,7 +68,7 @@ public class MybatisPersistenceProvider implements PersistenceProvider {
 
     private Configuration getConfig(Map properties) {
 
-        return new Configuration();
+        return new MyBatisConfiguration();
     }
 
 
@@ -84,6 +86,7 @@ public class MybatisPersistenceProvider implements PersistenceProvider {
         if (log.isLoggable(Level.FINEST)) {
             log.finest(String.format("Starting createContainerEntityManagerFactory : %s", info.getPersistenceUnitName()));
         }
+        this.persistenceUnitInfo = info;
         return createEntityManagerFactory(info.getPersistenceUnitName(), properties);
     }
 

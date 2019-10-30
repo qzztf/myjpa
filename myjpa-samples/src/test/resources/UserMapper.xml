@@ -2,21 +2,21 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.sexycode.mybatis.jpa.samples.dao.UserDao">
-    <insert id="save" parameterType="cn.sexycode.mybatis.jpa.samples.model.User">
+<mapper namespace="cn.sexycode.myjpa.samples.dao.UserDao">
+    <insert id="save" parameterType="cn.sexycode.myjpa.samples.model.User">
         insert into user(id,name) values (#{id},#{name})
     </insert>
-    <select id="findByFullName" resultType="cn.sexycode.mybatis.jpa.samples.model.User">
+    <select id="findByFullName" resultType="cn.sexycode.myjpa.samples.model.User">
     select * from user where id = #{id}
   </select>
-    <select id="findById" resultType="cn.sexycode.mybatis.jpa.samples.model.User">
+    <select id="findById" resultType="cn.sexycode.myjpa.samples.model.User">
     select * from user where id = #{id}
   </select>
 
-    <update id="updateById" parameterType="cn.sexycode.mybatis.jpa.samples.model.User">
+    <update id="updateById" parameterType="cn.sexycode.myjpa.samples.model.User">
         update user set name =#{name }
     </update>
-    <delete id="removeById" parameterType="cn.sexycode.mybatis.jpa.samples.model.User">
+    <delete id="removeById" parameterType="cn.sexycode.myjpa.samples.model.User">
         delete  from user where id=#{id}
     </delete>
 </mapper>

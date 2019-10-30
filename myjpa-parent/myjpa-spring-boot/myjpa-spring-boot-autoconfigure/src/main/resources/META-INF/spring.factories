@@ -1,2 +1,2 @@
 # Auto Configure
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.sexycode.mybatis.jpa.boot.autoconfigure.MyJpaAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.sexycode.myjpa.boot.autoconfigure.MyjpaAutoConfiguration

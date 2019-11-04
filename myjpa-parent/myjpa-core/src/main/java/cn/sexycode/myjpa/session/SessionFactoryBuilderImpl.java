@@ -1,11 +1,10 @@
 package cn.sexycode.myjpa.session;
 
 import cn.sexycode.myjpa.MyjpaConfiguration;
-import cn.sexycode.mybatis.jpa.binding.*;
 import cn.sexycode.myjpa.binding.*;
-import cn.sexycode.myjpa.service.ServiceRegistry;
-import cn.sexycode.myjpa.service.ServiceRegistryImpl;
 import cn.sexycode.sql.dialect.function.SQLFunction;
+import cn.sexycode.util.core.service.ServiceRegistry;
+import cn.sexycode.util.core.service.ServiceRegistryImpl;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 

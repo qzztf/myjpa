@@ -1,7 +1,7 @@
 package cn.sexycode.myjpa;
 
 import cn.sexycode.myjpa.binding.MappingException;
-import cn.sexycode.util.core.str.StringHelper;
+import cn.sexycode.util.core.str.StringUtils;
 import cn.sexycode.util.core.str.Style;
 
 import java.util.ArrayList;
@@ -81,7 +81,7 @@ public class Configuration implements AvailableSettings {
      * @return
      */
     /*public String getIDENTITY() {
-        if (StringHelper.isNotEmpty(this.IDENTITY)) {
+        if (StringUtils.isNotEmpty(this.IDENTITY)) {
             return this.IDENTITY;
         }
         //针对mysql的默认值
@@ -108,10 +108,10 @@ public class Configuration implements AvailableSettings {
      * @return
      */
     public String getPrefix() {
-        if (StringHelper.isNotEmpty(this.catalog)) {
+        if (StringUtils.isNotEmpty(this.catalog)) {
             return this.catalog;
         }
-        if (StringHelper.isNotEmpty(this.schema)) {
+        if (StringUtils.isNotEmpty(this.schema)) {
             return this.schema;
         }
         return "";
@@ -137,7 +137,7 @@ public class Configuration implements AvailableSettings {
      * @return
      */
     public String getSeqFormat() {
-        if (StringHelper.isNotEmpty(this.seqFormat)) {
+        if (StringUtils.isNotEmpty(this.seqFormat)) {
             return this.seqFormat;
         }
         return "{0}.nextval";
@@ -167,7 +167,7 @@ public class Configuration implements AvailableSettings {
      * @return
      */
     public String getUUID() {
-        if (StringHelper.isNotEmpty(this.UUID)) {
+        if (StringUtils.isNotEmpty(this.UUID)) {
             return this.UUID;
         }
         return "@java.util.UUID@randomUUID().toString().replace(\"-\", \"\")";
@@ -298,27 +298,27 @@ public class Configuration implements AvailableSettings {
             return;
         }
         String UUID = properties.getProperty("UUID");
-        if (StringHelper.isNotEmpty(UUID)) {
+        if (StringUtils.isNotEmpty(UUID)) {
             setUUID(UUID);
         }
         String IDENTITY = properties.getProperty("IDENTITY");
-        if (StringHelper.isNotEmpty(IDENTITY)) {
+        if (StringUtils.isNotEmpty(IDENTITY)) {
             //            setIDENTITY(IDENTITY);
         }
         String seqFormat = properties.getProperty("seqFormat");
-        if (StringHelper.isNotEmpty(seqFormat)) {
+        if (StringUtils.isNotEmpty(seqFormat)) {
             setSeqFormat(seqFormat);
         }
         String catalog = properties.getProperty("catalog");
-        if (StringHelper.isNotEmpty(catalog)) {
+        if (StringUtils.isNotEmpty(catalog)) {
             setCatalog(catalog);
         }
         String schema = properties.getProperty("schema");
-        if (StringHelper.isNotEmpty(schema)) {
+        if (StringUtils.isNotEmpty(schema)) {
             setSchema(schema);
         }
         String ORDER = properties.getProperty("ORDER");
-        if (StringHelper.isNotEmpty(ORDER)) {
+        if (StringUtils.isNotEmpty(ORDER)) {
             setOrder(ORDER);
         }
         this.notEmpty = Boolean.valueOf(properties.getProperty("notEmpty"));
@@ -326,17 +326,17 @@ public class Configuration implements AvailableSettings {
         this.checkExampleEntityClass = Boolean.valueOf(properties.getProperty("checkExampleEntityClass"));
         //默认值 true，所以要特殊判断
         String useSimpleTypeStr = properties.getProperty("useSimpleType");
-        if (StringHelper.isNotEmpty(useSimpleTypeStr)) {
+        if (StringUtils.isNotEmpty(useSimpleTypeStr)) {
             this.useSimpleType = Boolean.valueOf(useSimpleTypeStr);
         }
         this.enumAsSimpleType = Boolean.valueOf(properties.getProperty("enumAsSimpleType"));
         //注册新的基本类型，以逗号隔开，使用全限定类名
         String simpleTypes = properties.getProperty("simpleTypes");
-       /* if (StringHelper.isNotEmpty(simpleTypes)) {
+       /* if (StringUtils.isNotEmpty(simpleTypes)) {
             SimpleTypeUtil.registerSimpleType(simpleTypes);
         }*/
         String styleStr = properties.getProperty("style");
-        if (StringHelper.isNotEmpty(styleStr)) {
+        if (StringUtils.isNotEmpty(styleStr)) {
             try {
                 this.style = Style.valueOf(styleStr);
             } catch (IllegalArgumentException e) {
@@ -348,7 +348,7 @@ public class Configuration implements AvailableSettings {
         }
         //处理关键字
         String wrapKeyword = properties.getProperty("wrapKeyword");
-        if (StringHelper.isNotEmpty(wrapKeyword)) {
+        if (StringUtils.isNotEmpty(wrapKeyword)) {
             this.wrapKeyword = wrapKeyword;
         }
     }

@@ -1,9 +1,14 @@
 package cn.sexycode.myjpa;
 
+import cn.sexycode.myjpa.boot.ParsedPersistenceXmlDescriptor;
+import cn.sexycode.myjpa.boot.PersistenceXmlParser;
+import cn.sexycode.myjpa.boot.ProviderChecker;
 import cn.sexycode.myjpa.session.SessionFactoryBuilderImpl;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceException;
@@ -12,10 +17,9 @@ import javax.persistence.spi.PersistenceUnitInfo;
 import javax.persistence.spi.ProviderUtil;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The Hibernate {@link PersistenceProvider} implementation
@@ -23,10 +27,14 @@ import java.util.logging.Logger;
  * @author qzz
  */
 public class MyjpaPersistenceProvider implements PersistenceProvider {
-    private static final Logger log = Logger.getLogger(MyjpaPersistenceProvider.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyjpaPersistenceProvider.class);
+
     private SqlSessionFactory sessionFactory;
 
     private PersistenceUnitInfo persistenceUnitInfo;
+
+    public MyjpaPersistenceProvider() {
+    }
 
     public MyjpaPersistenceProvider(SqlSessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -41,18 +49,53 @@ public class MyjpaPersistenceProvider implements PersistenceProvider {
      */
     @Override
     public EntityManagerFactory createEntityManagerFactory(String persistenceUnitName, Map properties) {
-        if (log.isLoggable(Level.FINEST)) {
-            log.finest(String.format("Starting createEntityManagerFactory for persistenceUnitName %s", persistenceUnitName));
-        }
-
+        LOGGER.debug(
+                String.format("Starting createEntityManagerFactory for persistenceUnitName %s", persistenceUnitName));
+        Properties prop = new Properties();
+        prop.putAll(wrap(properties));
         try {
+            final List<ParsedPersistenceXmlDescriptor> units;
+            try {
+                units = PersistenceXmlParser.locatePersistenceUnits(prop);
+            } catch (Exception e) {
+                LOGGER.warn("Unable to locate persistence units", e);
+                throw new PersistenceException("Unable to locate persistence units", e);
+            }
+
+            LOGGER.debug("Located and parsed {} persistence units; checking each", units.size());
+
+            if (persistenceUnitName == null && units.size() > 1) {
+                // no persistence-unit name to look for was given and we found multiple persistence-units
+                throw new PersistenceException("No name provided and multiple persistence units found");
+            }
+
+            for (ParsedPersistenceXmlDescriptor persistenceUnit : units) {
+                LOGGER.debug(
+                        "Checking persistence-unit [name={}, explicit-provider={}] against incoming persistence unit name [{}]",
+                        persistenceUnit.getName(), persistenceUnit.getProviderClassName(), persistenceUnitName);
+
+                final boolean matches =
+                        persistenceUnitName == null || persistenceUnit.getName().equals(persistenceUnitName);
+                if (!matches) {
+                    LOGGER.debug("Excluding from consideration due to name mis-match");
+                    continue;
+                }
+
+                // See if we (Hibernate) are the persistence provider
+                if (!ProviderChecker.isProvider(persistenceUnit, properties)) {
+                    LOGGER.debug("Excluding from consideration due to provider mis-match");
+                    continue;
+                }
+
+                persistenceUnitInfo = persistenceUnit.toPersistenceUnitInfo();
+            }
             if (sessionFactory != null) {
                 return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, properties)
                         .sqlSessionFactory(sessionFactory).build((MyjpaConfiguration) getConfig(properties));
             }
-            Properties prop = new Properties();
-            prop.putAll(wrap(properties));
-            InputStream configStream = Resources.getResourceAsStream(ClassLoader.getSystemClassLoader(), Consts.DEFAULT_CFG_FILE);
+
+            InputStream configStream = Resources
+                    .getResourceAsStream(ClassLoader.getSystemClassLoader(), Consts.DEFAULT_CFG_FILE);
             if (configStream != null) {
                 return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, properties).build(configStream, prop);
             }
@@ -61,7 +104,7 @@ public class MyjpaPersistenceProvider implements PersistenceProvider {
         } catch (PersistenceException pe) {
             throw pe;
         } catch (Exception e) {
-            log.log(Level.WARNING, "Unable to build entity manager factory", e);
+            LOGGER.warn("Unable to build entity manager factory", e);
             throw new PersistenceException("Unable to build entity manager factory", e);
         }
     }
@@ -70,7 +113,6 @@ public class MyjpaPersistenceProvider implements PersistenceProvider {
 
         return new MyjpaConfiguration();
     }
-
 
     protected static Map wrap(Map properties) {
         return properties == null ? Collections.emptyMap() : Collections.unmodifiableMap(properties);
@@ -83,9 +125,7 @@ public class MyjpaPersistenceProvider implements PersistenceProvider {
      */
     @Override
     public EntityManagerFactory createContainerEntityManagerFactory(PersistenceUnitInfo info, Map properties) {
-        if (log.isLoggable(Level.FINEST)) {
-            log.finest(String.format("Starting createContainerEntityManagerFactory : %s", info.getPersistenceUnitName()));
-        }
+        LOGGER.info(String.format("Starting createContainerEntityManagerFactory : %s", info.getPersistenceUnitName()));
         this.persistenceUnitInfo = info;
         return createEntityManagerFactory(info.getPersistenceUnitName(), properties);
     }
@@ -104,6 +144,5 @@ public class MyjpaPersistenceProvider implements PersistenceProvider {
     public ProviderUtil getProviderUtil() {
         return null;
     }
-
 
 }

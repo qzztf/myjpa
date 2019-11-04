@@ -1,7 +1,7 @@
 package cn.sexycode.myjpa.binding;
 
-import cn.sexycode.myjpa.service.ServiceRegistry;
 import cn.sexycode.sql.dialect.function.SQLFunction;
+import cn.sexycode.util.core.service.ServiceRegistry;
 
 import java.util.List;
 import java.util.Map;

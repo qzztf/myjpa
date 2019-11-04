@@ -16,13 +16,13 @@ import javax.persistence.PersistenceException;
  *
  * @author Gavin King
  */
-public class MyJpaException extends PersistenceException {
+public class MyjpaException extends PersistenceException {
     /**
      * Constructs a MyjpaException using the given exception message.
      *
      * @param message The message explaining the reason for the exception
      */
-    public MyJpaException(String message) {
+    public MyjpaException(String message) {
         super(message);
     }
 
@@ -31,7 +31,7 @@ public class MyJpaException extends PersistenceException {
      *
      * @param cause The underlying cause.
      */
-    public MyJpaException(Throwable cause) {
+    public MyjpaException(Throwable cause) {
         super(cause);
     }
 
@@ -41,7 +41,7 @@ public class MyJpaException extends PersistenceException {
      * @param message The message explaining the reason for the exception.
      * @param cause   The underlying cause.
      */
-    public MyJpaException(String message, Throwable cause) {
+    public MyjpaException(String message, Throwable cause) {
         super(message, cause);
     }
 }

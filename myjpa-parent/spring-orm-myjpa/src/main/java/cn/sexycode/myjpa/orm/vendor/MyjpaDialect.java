@@ -17,7 +17,6 @@
 package cn.sexycode.myjpa.orm.vendor;
 
 import org.springframework.jdbc.datasource.ConnectionHandle;
-import org.springframework.lang.Nullable;
 import org.springframework.orm.jpa.DefaultJpaDialect;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionException;
@@ -50,7 +49,7 @@ public class MyjpaDialect extends DefaultJpaDialect {
 
 
     @Override
-    @Nullable
+
     public Object beginTransaction(EntityManager entityManager, TransactionDefinition definition)
             throws PersistenceException, SQLException, TransactionException {
         entityManager.getTransaction().begin();
@@ -79,7 +78,6 @@ public class MyjpaDialect extends DefaultJpaDialect {
 
         private final EntityManager entityManager;
 
-        @Nullable
         private Connection connection;
 
         public MyJpaConnectionHandle(EntityManager entityManager) {

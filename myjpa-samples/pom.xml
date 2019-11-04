@@ -12,7 +12,7 @@
     <artifactId>myjpa-samples</artifactId>
 
     <properties>
-        <my-jpa.version>0.0.2-SNAPSHOT</my-jpa.version>
+        <my-jpa.version>0.0.3-SNAPSHOT</my-jpa.version>
     </properties>
     <dependencies>
         <dependency>
@@ -73,6 +73,18 @@
             <groupId>cn.sexycode</groupId>
             <artifactId>myjpa-spring-boot-starter</artifactId>
             <version>${my-jpa.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.sexycode</groupId>
+            <artifactId>spring-data-myjpa</artifactId>
+            <version>0.0.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>cn.sexycode</groupId>
+            <artifactId>spring-data-myjpa</artifactId>
+            <version>0.0.3-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

@@ -5,8 +5,8 @@ import cn.sexycode.myjpa.Configuration;
 import cn.sexycode.myjpa.MyjpaPersistenceProvider;
 import cn.sexycode.myjpa.session.Session;
 import cn.sexycode.myjpa.session.SessionFactory;
+import cn.sexycode.sql.dialect.MySQLDialect;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.springframework.lang.Nullable;
 import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
@@ -99,7 +99,7 @@ public class MyjpaVendorAdapter extends AbstractJpaVendorAdapter {
      * @param database the target database
      * @return the Hibernate database dialect class, or {@code null} if none found
      */
-    @Nullable
+
     protected Class<?> determineDatabaseDialectClass(Database database) {
         switch (database) {
             //            case DB2: return DB2Dialect.class;

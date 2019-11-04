@@ -6,7 +6,7 @@
     <parent>
         <groupId>cn.sexycode</groupId>
         <artifactId>myjpa-build</artifactId>
-        <version>0.0.2</version>
+        <version>0.0.3-SNAPSHOT</version>
     </parent>
     <artifactId>myjpa-dependencies</artifactId>
     <packaging>pom</packaging>
@@ -21,7 +21,7 @@
         <maven.plugin.compiler.version>3.1</maven.plugin.compiler.version>
         <java.version>1.8</java.version>
         <myjpa.version>${project.version}</myjpa.version>
-        <my-sql.version>1.0</my-sql.version>
+        <my-sql.version>1.1-SNAPSHOT</my-sql.version>
         <mybatis.version>3.4.6</mybatis.version>
         <spring-data-jpa.version>2.0.9.RELEASE</spring-data-jpa.version>
         <slf4j.version>1.7.21</slf4j.version>

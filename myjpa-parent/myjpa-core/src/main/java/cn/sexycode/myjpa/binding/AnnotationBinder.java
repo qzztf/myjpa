@@ -472,14 +472,14 @@ public final class AnnotationBinder {
 						// don't apply a constraint based on ConstraintMode
 						key.setForeignKeyName( "none" );
 					}
-					else if ( pkJoinColumns != null && !StringHelper.isEmpty( pkJoinColumns.foreignKey().name() ) ) {
+					else if ( pkJoinColumns != null && !StringUtils.isEmpty( pkJoinColumns.foreignKey().name() ) ) {
 						key.setForeignKeyName( pkJoinColumns.foreignKey().name() );
 					}
 					else if ( pkJoinColumn != null && pkJoinColumn.foreignKey().value() == ConstraintMode.NO_CONSTRAINT ) {
 						// don't apply a constraint based on ConstraintMode
 						key.setForeignKeyName( "none" );
 					}
-					else if ( pkJoinColumn != null && !StringHelper.isEmpty( pkJoinColumn.foreignKey().name() ) ) {
+					else if ( pkJoinColumn != null && !StringUtils.isEmpty( pkJoinColumn.foreignKey().name() ) ) {
 						key.setForeignKeyName( pkJoinColumn.foreignKey().name() );
 					}
 				}
@@ -2634,27 +2634,27 @@ public final class AnnotationBinder {
 		}
 		else {
 			final ForeignKey fk = property.getAnnotation( ForeignKey.class );
-			if ( fk != null && StringHelper.isNotEmpty( fk.name() ) ) {
+			if ( fk != null && StringUtils.isNotEmpty( fk.name() ) ) {
 				value.setForeignKeyName( fk.name() );
 			}
 			else {
 				final javax.persistence.ForeignKey fkOverride = propertyHolder.getOverriddenForeignKey(
-						StringHelper.qualify( propertyHolder.getPath(), propertyName )
+						StringUtils.qualify( propertyHolder.getPath(), propertyName )
 				);
 				if ( fkOverride != null && fkOverride.value() == ConstraintMode.NO_CONSTRAINT ) {
 					value.setForeignKeyName( "none" );
 				}
 				else if ( fkOverride != null ) {
-					value.setForeignKeyName( StringHelper.nullIfEmpty( fkOverride.name() ) );
-					value.setForeignKeyDefinition( StringHelper.nullIfEmpty( fkOverride.foreignKeyDefinition() ) );
+					value.setForeignKeyName( StringUtils.nullIfEmpty( fkOverride.name() ) );
+					value.setForeignKeyDefinition( StringUtils.nullIfEmpty( fkOverride.foreignKeyDefinition() ) );
 				}
 				else if ( joinColumns != null ) {
-					value.setForeignKeyName( StringHelper.nullIfEmpty( joinColumns.foreignKey().name() ) );
-					value.setForeignKeyDefinition( StringHelper.nullIfEmpty( joinColumns.foreignKey().foreignKeyDefinition() ) );
+					value.setForeignKeyName( StringUtils.nullIfEmpty( joinColumns.foreignKey().name() ) );
+					value.setForeignKeyDefinition( StringUtils.nullIfEmpty( joinColumns.foreignKey().foreignKeyDefinition() ) );
 				}
 				else if ( joinColumn != null ) {
-					value.setForeignKeyName( StringHelper.nullIfEmpty( joinColumn.foreignKey().name() ) );
-					value.setForeignKeyDefinition( StringHelper.nullIfEmpty( joinColumn.foreignKey().foreignKeyDefinition() ) );
+					value.setForeignKeyName( StringUtils.nullIfEmpty( joinColumn.foreignKey().name() ) );
+					value.setForeignKeyDefinition( StringUtils.nullIfEmpty( joinColumn.foreignKey().foreignKeyDefinition() ) );
 				}
 			}
 		}

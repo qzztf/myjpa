@@ -1,6 +1,8 @@
 package cn.sexycode.myjpa.session;
 
+import cn.sexycode.myjpa.transaction.MyjpaTransactionImpl;
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.transaction.Transaction;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -15,10 +17,13 @@ import java.util.Map;
  * @author qzz
  */
 public class SessionImpl implements Session {
+    private final EntityManagerFactory entityManagerFactory;
+
     private SqlSession sqlSession;
 
-    public SessionImpl(SqlSession sqlSession) {
+    public SessionImpl(SqlSession sqlSession, EntityManagerFactory entityManagerFactory) {
         this.sqlSession = sqlSession;
+        this.entityManagerFactory = entityManagerFactory;
     }
 
     @Override
@@ -192,12 +197,14 @@ public class SessionImpl implements Session {
 
     @Override
     public EntityTransaction getTransaction() {
-        return null;
+        Transaction transaction = sqlSession.getConfiguration().getEnvironment().getTransactionFactory()
+                .newTransaction(sqlSession.getConnection());
+        return  new MyjpaTransactionImpl(transaction);
     }
 
     @Override
     public EntityManagerFactory getEntityManagerFactory() {
-        return null;
+        return entityManagerFactory;
     }
 
     @Override
@@ -207,7 +214,7 @@ public class SessionImpl implements Session {
 
     @Override
     public Metamodel getMetamodel() {
-        return null;
+        return entityManagerFactory.getMetamodel();
     }
 
     @Override

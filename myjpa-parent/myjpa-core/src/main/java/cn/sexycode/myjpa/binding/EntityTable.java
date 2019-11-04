@@ -1,6 +1,6 @@
 package cn.sexycode.myjpa.binding;
 
-import cn.sexycode.util.core.str.StringHelper;
+import cn.sexycode.util.core.str.StringUtils;
 import org.apache.ibatis.mapping.ResultFlag;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
@@ -224,10 +224,10 @@ public class EntityTable {
     }
 
     public String getPrefix() {
-        if (StringHelper.isNotEmpty(catalog)) {
+        if (StringUtils.isNotEmpty(catalog)) {
             return catalog;
         }
-        if (StringHelper.isNotEmpty(schema)) {
+        if (StringUtils.isNotEmpty(schema)) {
             return schema;
         }
         return "";

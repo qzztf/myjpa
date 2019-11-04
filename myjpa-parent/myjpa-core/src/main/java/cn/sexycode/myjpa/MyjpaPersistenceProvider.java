@@ -4,6 +4,7 @@ import cn.sexycode.myjpa.boot.ParsedPersistenceXmlDescriptor;
 import cn.sexycode.myjpa.boot.PersistenceXmlParser;
 import cn.sexycode.myjpa.boot.ProviderChecker;
 import cn.sexycode.myjpa.session.SessionFactoryBuilderImpl;
+import cn.sexycode.util.core.object.ObjectUtils;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -54,40 +55,43 @@ public class MyjpaPersistenceProvider implements PersistenceProvider {
         Properties prop = new Properties();
         prop.putAll(wrap(properties));
         try {
-            final List<ParsedPersistenceXmlDescriptor> units;
-            try {
-                units = PersistenceXmlParser.locatePersistenceUnits(prop);
-            } catch (Exception e) {
-                LOGGER.warn("Unable to locate persistence units", e);
-                throw new PersistenceException("Unable to locate persistence units", e);
-            }
-
-            LOGGER.debug("Located and parsed {} persistence units; checking each", units.size());
-
-            if (persistenceUnitName == null && units.size() > 1) {
-                // no persistence-unit name to look for was given and we found multiple persistence-units
-                throw new PersistenceException("No name provided and multiple persistence units found");
-            }
-
-            for (ParsedPersistenceXmlDescriptor persistenceUnit : units) {
-                LOGGER.debug(
-                        "Checking persistence-unit [name={}, explicit-provider={}] against incoming persistence unit name [{}]",
-                        persistenceUnit.getName(), persistenceUnit.getProviderClassName(), persistenceUnitName);
-
-                final boolean matches =
-                        persistenceUnitName == null || persistenceUnit.getName().equals(persistenceUnitName);
-                if (!matches) {
-                    LOGGER.debug("Excluding from consideration due to name mis-match");
-                    continue;
+            if (ObjectUtils.isEmpty(persistenceUnitInfo)) {
+                final List<ParsedPersistenceXmlDescriptor> units;
+                try {
+                    units = PersistenceXmlParser.locatePersistenceUnits(prop);
+                } catch (Exception e) {
+                    LOGGER.warn("Unable to locate persistence units", e);
+                    throw new PersistenceException("Unable to locate persistence units", e);
                 }
 
-                // See if we (Hibernate) are the persistence provider
-                if (!ProviderChecker.isProvider(persistenceUnit, properties)) {
-                    LOGGER.debug("Excluding from consideration due to provider mis-match");
-                    continue;
+                LOGGER.debug("Located and parsed {} persistence units; checking each", units.size());
+
+                if (persistenceUnitName == null && units.size() > 1) {
+                    // no persistence-unit name to look for was given and we found multiple persistence-units
+                    throw new PersistenceException("No name provided and multiple persistence units found");
                 }
 
-                persistenceUnitInfo = persistenceUnit.toPersistenceUnitInfo();
+                for (ParsedPersistenceXmlDescriptor persistenceUnit : units) {
+                    LOGGER.debug(
+                            "Checking persistence-unit [name={}, explicit-provider={}] against incoming persistence unit name [{}]",
+                            persistenceUnit.getName(), persistenceUnit.getProviderClassName(), persistenceUnitName);
+
+                    final boolean matches =
+                            persistenceUnitName == null || persistenceUnit.getName().equals(persistenceUnitName);
+                    if (!matches) {
+                        LOGGER.debug("Excluding from consideration due to name mis-match");
+                        continue;
+                    }
+
+                    // See if we (Hibernate) are the persistence provider
+                    if (!ProviderChecker.isProvider(persistenceUnit, properties)) {
+                        LOGGER.debug("Excluding from consideration due to provider mis-match");
+                        continue;
+                    }
+
+                    persistenceUnitInfo = persistenceUnit.toPersistenceUnitInfo();
+                    prop.putAll(persistenceUnitInfo.getProperties());
+                }
             }
             if (sessionFactory != null) {
                 return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, properties)

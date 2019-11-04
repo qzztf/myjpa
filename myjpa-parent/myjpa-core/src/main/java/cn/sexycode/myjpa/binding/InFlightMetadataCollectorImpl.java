@@ -14,7 +14,7 @@ import cn.sexycode.sql.model.Identifier;
 import cn.sexycode.sql.model.Namespace;
 import cn.sexycode.sql.type.TypeResolver;
 import cn.sexycode.util.core.cls.XClass;
-import cn.sexycode.util.core.collection.CollectionHelper;
+import cn.sexycode.util.core.collection.CollectionUtils;
 import cn.sexycode.util.core.exception.AnnotationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -464,7 +464,7 @@ public class InFlightMetadataCollectorImpl implements InFlightMetadataCollector 
             return Collections.emptyList();
         }
 
-        final List<Identifier> columnNames = CollectionHelper.arrayList(names.length);
+        final List<Identifier> columnNames = CollectionUtils.arrayList(names.length);
         for (String name : names) {
             columnNames.add(getDatabase().toIdentifier(name));
         }
@@ -477,7 +477,7 @@ public class InFlightMetadataCollectorImpl implements InFlightMetadataCollector 
             return Collections.emptyList();
         }
 
-        final List<Identifier> columnNames = CollectionHelper.arrayList(columns.size());
+        final List<Identifier> columnNames = CollectionUtils.arrayList(columns.size());
         for (Column column : (List<Column>) columns) {
             columnNames.add(getDatabase().toIdentifier(column.getQuotedName()));
         }

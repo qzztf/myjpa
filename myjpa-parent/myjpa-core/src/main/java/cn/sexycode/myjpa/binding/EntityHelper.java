@@ -1,7 +1,7 @@
 package cn.sexycode.myjpa.binding;
 
 import cn.sexycode.myjpa.Configuration;
-import cn.sexycode.util.core.str.StringHelper;
+import cn.sexycode.util.core.str.StringUtils;
 import cn.sexycode.util.core.str.Style;
 
 import javax.persistence.*;
@@ -173,7 +173,7 @@ public class EntityHelper {
         if (entityTable == null) {
             entityTable = new EntityTable(entityClass);
             //可以通过stye控制
-            entityTable.setName(StringHelper.convertByStyle(entityClass.getSimpleName(), style));
+            entityTable.setName(StringUtils.convertByStyle(entityClass.getSimpleName(), style));
         }
         entityTable.setEntityClassColumns(new LinkedHashSet<EntityColumn>());
         entityTable.setEntityClassPKColumns(new LinkedHashSet<EntityColumn>());
@@ -232,8 +232,8 @@ public class EntityHelper {
         }
 
         //表名
-        if (StringHelper.isEmpty(columnName)) {
-            columnName = StringHelper.convertByStyle(field.getName(), style);
+        if (StringUtils.isEmpty(columnName)) {
+            columnName = StringUtils.convertByStyle(field.getName(), style);
         }
 
         entityColumn.setProperty(field.getName());

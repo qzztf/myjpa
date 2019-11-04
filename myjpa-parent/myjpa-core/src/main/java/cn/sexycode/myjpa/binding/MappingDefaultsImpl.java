@@ -1,7 +1,7 @@
 package cn.sexycode.myjpa.binding;
 
 import cn.sexycode.myjpa.AvailableSettings;
-import cn.sexycode.myjpa.service.StandardServiceRegistry;
+import cn.sexycode.util.core.service.StandardServiceRegistry;
 
 public class MappingDefaultsImpl implements MappingDefaults {
     private String implicitSchemaName;

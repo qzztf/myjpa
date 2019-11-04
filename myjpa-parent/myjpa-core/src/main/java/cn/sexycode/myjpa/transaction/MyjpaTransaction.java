@@ -5,6 +5,6 @@ import javax.persistence.EntityTransaction;
 /**
  * @author qzz
  */
-public interface Transaction extends EntityTransaction{
+public interface MyjpaTransaction extends EntityTransaction{
 
 }

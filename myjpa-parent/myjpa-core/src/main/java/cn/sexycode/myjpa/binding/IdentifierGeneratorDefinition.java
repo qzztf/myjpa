@@ -1,6 +1,6 @@
 package cn.sexycode.myjpa.binding;
 
-import cn.sexycode.util.core.collection.CollectionHelper;
+import cn.sexycode.util.core.collection.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -23,7 +23,7 @@ public class IdentifierGeneratorDefinition implements Serializable {
             final Map<String, String> parameters) {
         this.name = name;
         this.strategy = strategy;
-        if (CollectionHelper.isEmpty(parameters)) {
+        if (CollectionUtils.isEmpty(parameters)) {
             this.parameters = Collections.emptyMap();
         } else {
             this.parameters = Collections.unmodifiableMap(parameters);

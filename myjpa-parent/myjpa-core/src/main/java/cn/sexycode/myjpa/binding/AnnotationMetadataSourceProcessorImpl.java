@@ -3,7 +3,7 @@ package cn.sexycode.myjpa.binding;
 import cn.sexycode.util.core.cls.ReflectionManager;
 import cn.sexycode.util.core.cls.XClass;
 import cn.sexycode.util.core.cls.internal.JavaReflectionManager;
-import cn.sexycode.util.core.collection.CollectionHelper;
+import cn.sexycode.util.core.collection.CollectionUtils;
 import cn.sexycode.util.core.exception.AnnotationException;
 import cn.sexycode.util.core.exception.ClassLoadingException;
 import org.slf4j.Logger;
@@ -32,7 +32,7 @@ public class AnnotationMetadataSourceProcessorImpl extends SimpleMetadataSourceP
         this.rootMetadataBuildingContext = rootMetadataBuildingContext;
         this.reflectionManager = new JavaReflectionManager();
 
-        if (CollectionHelper.isNotEmpty(managedResources.getAnnotatedPackageNames())) {
+        if (CollectionUtils.isNotEmpty(managedResources.getAnnotatedPackageNames())) {
             annotatedPackages.addAll(managedResources.getAnnotatedPackageNames());
         }
 

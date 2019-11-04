@@ -10,6 +10,7 @@ import javax.persistence.SharedCacheMode;
 import javax.persistence.ValidationMode;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.persistence.spi.PersistenceUnitTransactionType;
+import javax.sql.DataSource;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -196,7 +197,16 @@ public class ParsedPersistenceXmlDescriptor implements PersistenceUnitDescriptor
 
     public PersistenceUnitInfo toPersistenceUnitInfo() {
         MutablePersistenceUnitInfo persistenceUnitInfo = new MutablePersistenceUnitInfo();
-        persistenceUnitInfo.setPersistenceUnitName(getName());
+        persistenceUnitInfo.setPersistenceUnitName(name);
+        persistenceUnitInfo.setExcludeUnlistedClasses(excludeUnlistedClasses);
+        persistenceUnitInfo.setJtaDataSource((DataSource) jtaDataSource);
+        persistenceUnitInfo.setNonJtaDataSource((DataSource) nonJtaDataSource);
+        persistenceUnitInfo.setPersistenceProviderClassName(getProviderClassName());
+        persistenceUnitInfo.setTransactionType(getTransactionType());
+        persistenceUnitInfo.setPersistenceUnitRootUrl(getPersistenceUnitRootUrl());
+        persistenceUnitInfo.setProperties(getProperties());
+        persistenceUnitInfo.setSharedCacheMode(getSharedCacheMode());
+        persistenceUnitInfo.setValidationMode(getValidationMode());
         return persistenceUnitInfo;
     }
 }

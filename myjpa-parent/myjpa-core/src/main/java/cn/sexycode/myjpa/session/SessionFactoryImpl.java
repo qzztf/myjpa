@@ -23,8 +23,6 @@ public class SessionFactoryImpl implements SessionFactory {
 
     public SessionFactoryImpl(Metadata metadata, SqlSessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
-        sessionFactory.getConfiguration();
-
         this.metamodel = new MetamodelImpl(this);
         metamodel.initialize(metadata);
     }
@@ -36,7 +34,7 @@ public class SessionFactoryImpl implements SessionFactory {
 
     @Override
     public EntityManager createEntityManager() {
-        return new SessionImpl(sessionFactory.openSession());
+        return new SessionImpl(sessionFactory.openSession(), this);
     }
 
     @Override

@@ -4,8 +4,7 @@ import cn.sexycode.myjpa.mapping.PersistentClass;
 import cn.sexycode.myjpa.mapping.RootClass;
 import cn.sexycode.util.core.cls.XClass;
 import cn.sexycode.util.core.exception.AnnotationException;
-import cn.sexycode.util.core.str.StringHelper;
-import jdk.nashorn.internal.ir.annotations.Immutable;
+import cn.sexycode.util.core.str.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,18 +135,16 @@ public class EntityBinder {
             RootClass rootClass = (RootClass) persistentClass;
             boolean mutable = true;
             //priority on @Immutable, then @Entity.mutable()
-            if (annotatedClass.isAnnotationPresent(Immutable.class)) {
-                mutable = false;
-            } else {
+
                 Entity entityAnn = annotatedClass.getAnnotation(Entity.class);
 				/*if ( entityAnn != null ) {
 					mutable = entityAnn.mutable();
 				}*/
-            }
+
             //			rootClass.setMutable( mutable );
             //			rootClass.setExplicitPolymorphism( isExplicitPolymorphism( polymorphismType ) );
 
-            if (StringHelper.isNotEmpty(where)) {
+            if (StringUtils.isNotEmpty(where)) {
                 //				rootClass.setWhere( where );
             }
 
@@ -278,7 +275,7 @@ public class EntityBinder {
 			if ( BinderHelper.isEmptyAnnotationValue( cond ) ) {
 				FilterDefinition definition = context.getMetadataCollector().getFilterDefinition( filterName );
 				cond = definition == null ? null : definition.getDefaultFilterCondition();
-				if ( StringHelper.isEmpty( cond ) ) {
+				if ( StringUtils.isEmpty( cond ) ) {
 					throw new AnnotationException(
 							"no filter condition found for filter " + filterName + " in " + this.name
 					);
@@ -321,7 +318,7 @@ public class EntityBinder {
     }
 
     public void bindDiscriminatorValue() {
-		/*if ( StringHelper.isEmpty( discriminatorValue ) ) {
+		/*if ( StringUtils.isEmpty( discriminatorValue ) ) {
 			Value discriminator = persistentClass.getDiscriminator();
 			if ( discriminator == null ) {
 				persistentClass.setDiscriminatorValue( name );

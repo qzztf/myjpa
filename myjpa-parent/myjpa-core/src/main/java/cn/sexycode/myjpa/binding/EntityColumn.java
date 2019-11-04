@@ -1,6 +1,6 @@
 package cn.sexycode.myjpa.binding;
 
-import cn.sexycode.util.core.str.StringHelper;
+import cn.sexycode.util.core.str.StringUtils;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
@@ -105,12 +105,12 @@ public class EntityColumn {
      */
     public String getColumnHolder(String entityName, String suffix, String separator) {
         StringBuffer sb = new StringBuffer("#{");
-        if (StringHelper.isNotEmpty(entityName)) {
+        if (StringUtils.isNotEmpty(entityName)) {
             sb.append(entityName);
             sb.append(".");
         }
         sb.append(this.property);
-        if (StringHelper.isNotEmpty(suffix)) {
+        if (StringUtils.isNotEmpty(suffix)) {
             sb.append(suffix);
         }
         if (this.jdbcType != null) {
@@ -124,7 +124,7 @@ public class EntityColumn {
             sb.append(javaType.getCanonicalName());
         }
         sb.append("}");
-        if (StringHelper.isNotEmpty(separator)) {
+        if (StringUtils.isNotEmpty(separator)) {
             sb.append(separator);
         }
         return sb.toString();

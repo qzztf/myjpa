@@ -1,5 +1,7 @@
 package cn.sexycode.myjpa.binding;
 
+import cn.sexycode.util.core.file.scan.ScanEnvironment;
+
 import javax.persistence.spi.PersistenceUnitInfo;
 import java.net.URL;
 import java.util.Collections;

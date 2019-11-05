@@ -1,5 +1,7 @@
 package cn.sexycode.myjpa.binding;
 
+import cn.sexycode.myjpa.boot.BootstrapContext;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -15,7 +17,7 @@ public class ManagedResourcesImpl implements ManagedResources {
 
     private Set<String> annotatedPackageNames = new LinkedHashSet<String>();
 
-    public static ManagedResourcesImpl baseline(MetadataSources sources, MetadataBuildingOptions options) {
+    public static ManagedResourcesImpl baseline(MetadataSources sources, BootstrapContext bootstrapContext) {
         final ManagedResourcesImpl impl = new ManagedResourcesImpl();
 
         impl.annotatedClassReferences.addAll(sources.getAnnotatedClasses());

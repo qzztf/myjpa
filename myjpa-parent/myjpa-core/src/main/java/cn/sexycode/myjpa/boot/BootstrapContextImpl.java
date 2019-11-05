@@ -7,7 +7,10 @@ import cn.sexycode.util.core.cls.classloading.ClassLoaderService;
 import cn.sexycode.util.core.file.ArchiveDescriptorFactory;
 import cn.sexycode.util.core.file.scan.ScanEnvironment;
 import cn.sexycode.util.core.file.scan.ScanOptions;
+import cn.sexycode.util.core.file.scan.Scanner;
 import cn.sexycode.util.core.service.StandardServiceRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,6 +21,7 @@ import java.util.Map;
  */
 public class BootstrapContextImpl implements BootstrapContext {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(BootstrapContextImpl.class);
     private final StandardServiceRegistry serviceRegistry;
 
     private boolean isJpaBootstrap;
@@ -119,4 +123,32 @@ public class BootstrapContextImpl implements BootstrapContext {
         }
     }
 
+
+    public  void injectScanOptions(ScanOptions scanOptions) {
+        LOGGER.debug( "Injecting ScanOptions [{}] into BootstrapContext; was [{}]", scanOptions, this.scanOptions );
+        this.scanOptions = scanOptions;
+    }
+
+    public void injectScanEnvironment(ScanEnvironment scanEnvironment) {
+        LOGGER.debug( "Injecting ScanEnvironment [{}] into BootstrapContext; was [{}]", scanEnvironment, this.scanEnvironment );
+        this.scanEnvironment = scanEnvironment;
+    }
+
+    public void injectScanner(Scanner scanner) {
+        LOGGER.debug( "Injecting Scanner [{}] into BootstrapContext; was [{}]", scanner, this.scannerSetting );
+        this.scannerSetting = scanner;
+    }
+
+    public void injectArchiveDescriptorFactory(ArchiveDescriptorFactory factory) {
+        LOGGER.debug( "Injecting ArchiveDescriptorFactory [{}] into BootstrapContext; was [{}]", factory, this.archiveDescriptorFactory );
+        this.archiveDescriptorFactory = factory;
+    }
+
+
+    public void addSqlFunction(String functionName, SQLFunction function) {
+        if ( this.sqlFunctionMap == null ) {
+            this.sqlFunctionMap = new HashMap<>();
+        }
+        this.sqlFunctionMap.put( functionName, function );
+    }
 }

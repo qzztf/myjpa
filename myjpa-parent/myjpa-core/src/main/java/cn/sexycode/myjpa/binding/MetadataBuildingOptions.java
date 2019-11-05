@@ -1,7 +1,9 @@
 package cn.sexycode.myjpa.binding;
 
 import cn.sexycode.sql.dialect.function.SQLFunction;
+import cn.sexycode.util.core.file.scan.ScanEnvironment;
 import cn.sexycode.util.core.service.ServiceRegistry;
+import cn.sexycode.util.core.service.StandardServiceRegistry;
 
 import java.util.List;
 import java.util.Map;
@@ -11,7 +13,6 @@ import java.util.Map;
  * {@link org.hibernate.boot.MetadataBuilder#build()} processing).
  */
 public interface MetadataBuildingOptions {
-
     /**
      * Access the list of BasicType registrations.  These are the BasicTypes explicitly
      * registered via calls to:<ul>

@@ -3,6 +3,7 @@ package cn.sexycode.myjpa.binding;
 import cn.sexycode.myjpa.boot.BootstrapContext;
 import cn.sexycode.util.core.cls.classloading.ClassLoaderService;
 import cn.sexycode.util.core.file.ArchiveDescriptorFactory;
+import cn.sexycode.util.core.file.StandardArchiveDescriptorFactory;
 import cn.sexycode.util.core.file.scan.*;
 import cn.sexycode.util.core.service.ServiceRegistry;
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Coordinates the process of executing {@link org.hibernate.boot.archive.scan.spi.Scanner} (if enabled)
+ * Coordinates the process of executing {@link Scanner} (if enabled)
  * and applying the resources (classes, packages and mappings) discovered.
  *
  * @author Steve Ebersole
@@ -40,12 +41,10 @@ public class ScanningCoordinator {
 
         final ClassLoaderService classLoaderService = bootstrapContext.getServiceRegistry()
                 .getService(ClassLoaderService.class);
-        final ClassLoaderAccess classLoaderAccess = new ClassLoaderAccessImpl(bootstrapContext.getJpaTempClassLoader(),
-                classLoaderService);
 
         // NOTE : the idea with JandexInitializer/JandexInitManager was to allow adding classes
         // to the index as we discovered them via scanning and .  Currently
-        final Scanner scanner = buildScanner(bootstrapContext, classLoaderAccess);
+        final Scanner scanner = buildScanner(bootstrapContext, classLoaderService);
         final ScanResult scanResult = scanner
                 .scan(bootstrapContext.getScanEnvironment(), bootstrapContext.getScanOptions(),
                         StandardScanParameters.INSTANCE);
@@ -56,7 +55,7 @@ public class ScanningCoordinator {
     private static final Class[] SINGLE_ARG = new Class[] { ArchiveDescriptorFactory.class };
 
     @SuppressWarnings("unchecked")
-    private static Scanner buildScanner(BootstrapContext bootstrapContext, ClassLoaderAccess classLoaderAccess) {
+    private static Scanner buildScanner(BootstrapContext bootstrapContext, ClassLoaderService classLoaderAccess) {
         final Object scannerSetting = bootstrapContext.getScanner();
         final ArchiveDescriptorFactory archiveDescriptorFactory = bootstrapContext.getArchiveDescriptorFactory();
 
@@ -142,28 +141,7 @@ public class ScanningCoordinator {
         final ServiceRegistry serviceRegistry = bootstrapContext.getServiceRegistry();
         final ClassLoaderService classLoaderService = serviceRegistry.getService(ClassLoaderService.class);
 
-        // mapping files ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        final Set<String> nonLocatedMappingFileNames = new HashSet<String>();
-        final List<String> explicitMappingFileNames = scanEnvironment.getExplicitlyListedMappingFiles();
-        if (explicitMappingFileNames != null) {
-            nonLocatedMappingFileNames.addAll(explicitMappingFileNames);
-        }
-
-        for (MappingFileDescriptor mappingFileDescriptor : scanResult.getLocatedMappingFiles()) {
-            managedResources.addXmlBinding(xmlMappingBinderAccess.bind(mappingFileDescriptor.getStreamAccess()));
-            nonLocatedMappingFileNames.remove(mappingFileDescriptor.getName());
-        }
-
-        for (String name : nonLocatedMappingFileNames) {
-            final URL url = classLoaderService.locateResource(name);
-            if (url == null) {
-                throw new MappingException("Unable to resolve explicitly named mapping-file : " + name,
-                        new Origin(SourceType.RESOURCE, name));
-            }
-            final UrlInputStreamAccess inputStreamAccess = new UrlInputStreamAccess(url);
-            managedResources.addXmlBinding(xmlMappingBinderAccess.bind(inputStreamAccess));
-        }
 
         // classes and packages ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -172,12 +150,12 @@ public class ScanningCoordinator {
                 : new ArrayList<String>(scanEnvironment.getExplicitlyListedClassNames());
 
         for (ClassDescriptor classDescriptor : scanResult.getLocatedClasses()) {
-            if (classDescriptor.getCategorization() == ClassDescriptor.Categorization.CONVERTER) {
+            if (classDescriptor.getCategorization() == ClassDescriptor.CategorizationEnum.CONVERTER) {
                 // converter classes are safe to load because we never enhance them,
                 // and notice we use the ClassLoaderService specifically, not the temp ClassLoader (if any)
-                managedResources.addAttributeConverterDefinition(AttributeConverterDefinition
-                        .from(classLoaderService.<AttributeConverter>classForName(classDescriptor.getName())));
-            } else if (classDescriptor.getCategorization() == ClassDescriptor.Categorization.MODEL) {
+                /*managedResources.addAttributeConverterDefinition(AttributeConverterDefinition
+                        .from(classLoaderService.<AttributeConverter>classForName(classDescriptor.getName())));*/
+            } else if (classDescriptor.getCategorization() == ClassDescriptor.CategorizationEnum.MODEL) {
                 managedResources.addAnnotatedClassName(classDescriptor.getName());
             }
             unresolvedListedClassNames.remove(classDescriptor.getName());
@@ -209,7 +187,7 @@ public class ScanningCoordinator {
                 continue;
             }
 
-            log.debugf("Unable to resolve class [%s] named in persistence unit [%s]", unresolvedListedClassName,
+            log.debug("Unable to resolve class [%s] named in persistence unit [%s]", unresolvedListedClassName,
                     scanEnvironment.getRootUrl());
         }
     }

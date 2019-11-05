@@ -1,5 +1,6 @@
 package cn.sexycode.myjpa.binding;
 
+import cn.sexycode.myjpa.boot.BootstrapContext;
 import cn.sexycode.sql.type.BasicTypeRegistry;
 import cn.sexycode.sql.type.TypeFactory;
 import cn.sexycode.sql.type.TypeResolver;
@@ -33,8 +34,11 @@ public class MetadataBuildingProcess {
      * @param options The building options
      * @return The built Metadata
      */
-    public static Metadata build(final MetadataSources sources, final MetadataBuildingOptions options) {
-        return complete(prepare(sources, options), options);
+    public static Metadata build(
+			final MetadataSources sources,
+            final BootstrapContext bootstrapContext,
+            final MetadataBuildingOptions options) {
+        return complete( prepare( sources, bootstrapContext ), bootstrapContext, options );
     }
 
     /**
@@ -44,9 +48,9 @@ public class MetadataBuildingProcess {
      * @param options The building options
      * @return Token/memento representing all known users resources (classes, packages, mapping files, etc).
      */
-    public static ManagedResources prepare(final MetadataSources sources, final MetadataBuildingOptions options) {
-        final ManagedResourcesImpl managedResources = ManagedResourcesImpl.baseline(sources, options);
-        ScanningCoordinator.INSTANCE.coordinateScan(managedResources, options, sources.getXmlMappingBinderAccess());
+    public static ManagedResources prepare(final MetadataSources sources, BootstrapContext bootstrapContext) {
+        final ManagedResourcesImpl managedResources = ManagedResourcesImpl.baseline(sources, bootstrapContext);
+        ScanningCoordinator.INSTANCE.coordinateScan(managedResources,  bootstrapContext );
         return managedResources;
     }
 
@@ -57,7 +61,10 @@ public class MetadataBuildingProcess {
      * @param options          The building options
      * @return Token/memento representing all known users resources (classes, packages, mapping files, etc).
      */
-    public static Metadata complete(final ManagedResources managedResources, final MetadataBuildingOptions options) {
+    public static Metadata complete(
+            final ManagedResources managedResources,
+            final BootstrapContext bootstrapContext,
+            final MetadataBuildingOptions options) {
         final BasicTypeRegistry basicTypeRegistry = handleTypes(options);
         final Set<String> processedEntityNames = new HashSet<String>();
         final InFlightMetadataCollectorImpl metadataCollector = new InFlightMetadataCollectorImpl(options,

@@ -8,10 +8,10 @@ import java.sql.SQLException;
  * @author qzz
  */
 public class MyjpaTransactionImpl implements MyjpaTransaction {
-    private final Transaction transaction;
+    private final Transaction mybatisTransaction;
 
     public MyjpaTransactionImpl(Transaction transaction) {
-        this.transaction = transaction;
+        this.mybatisTransaction = transaction;
     }
 
     @Override
@@ -21,7 +21,7 @@ public class MyjpaTransactionImpl implements MyjpaTransaction {
     @Override
     public void commit() {
         try {
-            transaction.commit();
+            mybatisTransaction.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -30,7 +30,7 @@ public class MyjpaTransactionImpl implements MyjpaTransaction {
     @Override
     public void rollback() {
         try {
-            transaction.rollback();
+            mybatisTransaction.rollback();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -48,5 +48,14 @@ public class MyjpaTransactionImpl implements MyjpaTransaction {
     @Override
     public boolean isActive() {
         return false;
+    }
+
+    /**
+     * 获取托管的mybatis事务对象
+     *
+     * @return Transaction
+     */
+    public Transaction getMybatisTransaction() {
+        return mybatisTransaction;
     }
 }

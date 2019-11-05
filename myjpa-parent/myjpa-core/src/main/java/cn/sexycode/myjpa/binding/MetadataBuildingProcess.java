@@ -46,7 +46,7 @@ public class MetadataBuildingProcess {
      */
     public static ManagedResources prepare(final MetadataSources sources, final MetadataBuildingOptions options) {
         final ManagedResourcesImpl managedResources = ManagedResourcesImpl.baseline(sources, options);
-        //		ScanningCoordinator.INSTANCE.coordinateScan( managedResources, options, sources.getXmlMappingBinderAccess() );
+        ScanningCoordinator.INSTANCE.coordinateScan(managedResources, options, sources.getXmlMappingBinderAccess());
         return managedResources;
     }
 

@@ -3,6 +3,8 @@ package cn.sexycode.myjpa.boot;
 import cn.sexycode.myjpa.binding.MetadataBuildingOptions;
 import cn.sexycode.myjpa.binding.StandardScanOptions;
 import cn.sexycode.sql.dialect.function.SQLFunction;
+import cn.sexycode.util.core.cls.classloading.ClassLoaderAccess;
+import cn.sexycode.util.core.cls.classloading.ClassLoaderAccessImpl;
 import cn.sexycode.util.core.cls.classloading.ClassLoaderService;
 import cn.sexycode.util.core.file.ArchiveDescriptorFactory;
 import cn.sexycode.util.core.file.scan.ScanEnvironment;
@@ -24,6 +26,8 @@ public class BootstrapContextImpl implements BootstrapContext {
     private static final Logger LOGGER = LoggerFactory.getLogger(BootstrapContextImpl.class);
     private final StandardServiceRegistry serviceRegistry;
 
+    private final ClassLoaderAccess classLoaderAccess;
+
     private boolean isJpaBootstrap;
 
     private ScanOptions scanOptions;
@@ -44,6 +48,7 @@ public class BootstrapContextImpl implements BootstrapContext {
         this.metadataBuildingOptions = metadataBuildingOptions;
 
         final ClassLoaderService classLoaderService = serviceRegistry.getService(ClassLoaderService.class);
+        this.classLoaderAccess = new ClassLoaderAccessImpl(classLoaderService);
         this.scanOptions = new StandardScanOptions(null, false);
 
         // ScanEnvironment must be set explicitly
@@ -73,6 +78,11 @@ public class BootstrapContextImpl implements BootstrapContext {
     @Override
     public boolean isJpaBootstrap() {
         return isJpaBootstrap;
+    }
+
+    @Override
+    public ClassLoaderAccess getClassLoaderAccess() {
+        return classLoaderAccess;
     }
 
     @Override

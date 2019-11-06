@@ -4,6 +4,7 @@ import cn.sexycode.myjpa.mapping.PersistentClass;
 import cn.sexycode.myjpa.mapping.RootClass;
 import cn.sexycode.util.core.cls.XClass;
 import cn.sexycode.util.core.exception.AnnotationException;
+import cn.sexycode.util.core.exception.AssertionFailure;
 import cn.sexycode.util.core.str.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,12 +91,12 @@ public class EntityBinder {
     public EntityBinder() {
     }
 
-    public EntityBinder(Entity hibAnn, XClass annotatedClass, PersistentClass persistentClass,
+    public EntityBinder(Entity ejb3Ann, XClass annotatedClass, PersistentClass persistentClass,
             MetadataBuildingContext context) {
         this.context = context;
         this.persistentClass = persistentClass;
         this.annotatedClass = annotatedClass;
-        //		bindEjb3Annotation( ejb3Ann );
+        bindEjb3Annotation(ejb3Ann);
         //		bindHibernateAnnotation( hibAnn );
     }
 
@@ -116,6 +117,16 @@ public class EntityBinder {
         this.insertableDiscriminator = insertableDiscriminator;
     }
 
+    private void bindEjb3Annotation(Entity ejb3Ann) {
+        if (ejb3Ann == null) {
+            throw new AssertionFailure("@Entity should always be not null");
+        }
+        if (BinderHelper.isEmptyAnnotationValue(ejb3Ann.name())) {
+            name = StringUtils.unqualify(annotatedClass.getName());
+        } else {
+            name = ejb3Ann.name();
+        }
+    }
     public void bindEntity() {
         //		persistentClass.setAbstract( annotatedClass.isAbstract() );
         persistentClass.setClassName(annotatedClass.getName());
@@ -284,7 +295,7 @@ public class EntityBinder {
 			persistentClass.addFilter(filterName, cond, filter.deduceAliasInjectionPoints(), 
 					toAliasTableMap(filter.aliases()), toAliasEntityMap(filter.aliases()));
 		}*/
-        LOG.debug("Import with entity name %s", name);
+        LOG.debug("Import with entity name {}", name);
         try {
             context.getMetadataCollector().addImport(name, persistentClass.getEntityName());
             String entityName = persistentClass.getEntityName();

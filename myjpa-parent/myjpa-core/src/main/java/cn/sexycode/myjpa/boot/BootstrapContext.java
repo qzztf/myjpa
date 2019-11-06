@@ -2,6 +2,7 @@ package cn.sexycode.myjpa.boot;
 
 import cn.sexycode.myjpa.binding.MetadataBuildingOptions;
 import cn.sexycode.sql.dialect.function.SQLFunction;
+import cn.sexycode.util.core.cls.classloading.ClassLoaderAccess;
 import cn.sexycode.util.core.file.ArchiveDescriptorFactory;
 import cn.sexycode.util.core.file.scan.ScanEnvironment;
 import cn.sexycode.util.core.file.scan.ScanOptions;
@@ -23,6 +24,7 @@ public interface BootstrapContext {
 
     boolean isJpaBootstrap();
 
+    ClassLoaderAccess getClassLoaderAccess();
     /**
      * Indicates that bootstrap was initiated from JPA bootstrapping.  Internally {@code false} is
      * the assumed value.  We only need to call this to mark that as true.

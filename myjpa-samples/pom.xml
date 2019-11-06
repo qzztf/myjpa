@@ -12,13 +12,13 @@
     <artifactId>myjpa-samples</artifactId>
 
     <properties>
-        <my-jpa.version>0.0.3-SNAPSHOT</my-jpa.version>
+        <myjpa.version>0.0.3-SNAPSHOT</myjpa.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>cn.sexycode</groupId>
             <artifactId>myjpa-plus</artifactId>
-            <version>${my-jpa.version}</version>
+            <version>${myjpa.version}</version>
         </dependency>
 
         <dependency>
@@ -72,7 +72,7 @@
         <dependency>
             <groupId>cn.sexycode</groupId>
             <artifactId>myjpa-spring-boot-starter</artifactId>
-            <version>${my-jpa.version}</version>
+            <version>${myjpa.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.sexycode</groupId>

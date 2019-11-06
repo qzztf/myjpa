@@ -95,7 +95,7 @@ public class InFlightMetadataCollectorImpl implements InFlightMetadataCollector 
     public Database getDatabase() {
         // important to delay this instantiation until as late as possible.
         if (database == null) {
-            this.database = new Database(null);
+            this.database = new Database(options.getJdbcEnvironment());
         }
         return database;
     }

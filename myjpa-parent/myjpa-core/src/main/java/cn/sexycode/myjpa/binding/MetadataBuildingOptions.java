@@ -1,9 +1,9 @@
 package cn.sexycode.myjpa.binding;
 
 import cn.sexycode.sql.dialect.function.SQLFunction;
+import cn.sexycode.sql.jdbc.JdbcEnvironment;
 import cn.sexycode.util.core.file.scan.ScanEnvironment;
 import cn.sexycode.util.core.service.ServiceRegistry;
-import cn.sexycode.util.core.service.StandardServiceRegistry;
 
 import java.util.List;
 import java.util.Map;
@@ -50,4 +50,6 @@ public interface MetadataBuildingOptions {
     ScanEnvironment getScanEnvironment();
 
     ServiceRegistry getServiceRegistry();
+
+    JdbcEnvironment getJdbcEnvironment();
 }

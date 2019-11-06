@@ -352,17 +352,20 @@ public final class AnnotationBinder {
                     "An entity cannot be annotated with both @Entity and @MappedSuperclass: " + clazzToProcess
                             .getName());
         }
-
+        if (clazzToProcess.isAnnotationPresent(Inheritance.class) && clazzToProcess
+                .isAnnotationPresent(MappedSuperclass.class)) {
+            //            LOG.unsupportedMappedSuperclassWithEntityInheritance( clazzToProcess.getName() );
+        }
         //TODO: be more strict with secondarytable allowance (not for ids, not for secondary table join columns etc)
         InheritanceState inheritanceState = inheritanceStatePerClass.get(clazzToProcess);
-        //		AnnotatedClassType classType = context.getMetadataCollector().getClassType( clazzToProcess );
+        AnnotatedClassType classType = context.getMetadataCollector().getClassType(clazzToProcess);
 
-        if (!isEntityClassType(clazzToProcess, Entity.class)) {
+        if (!isEntityClassType(clazzToProcess, classType)) {
             return;
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Binding entity from annotated class: %s", clazzToProcess.getName());
+            LOG.debug("Binding entity from annotated class: {}", clazzToProcess.getName());
         }
 
         PersistentClass persistentClass = makePersistentClass(inheritanceState, null, context);
@@ -395,9 +398,9 @@ public final class AnnotationBinder {
 //		applyCacheSettings( entityBinder, clazzToProcess, context );
 
 //		bindFilters( clazzToProcess, entityBinder, context );
-
+*/
 		entityBinder.bindEntity();
-
+/*
 		if ( inheritanceState.hasTable() ) {
 			Check checkAnn = clazzToProcess.getAnnotation( Check.class );
 			String constraints = checkAnn == null
@@ -859,20 +862,17 @@ public final class AnnotationBinder {
             MetadataBuildingContext metadataBuildingContext) {
         //we now know what kind of persistent entity it is
         if (!inheritanceState.hasParents()) {
-            return new RootClass( /*metadataBuildingContext*/);
+            return new RootClass(metadataBuildingContext);
         } else {
             throw new AssertionFailure("Unknown inheritance type: " + inheritanceState.getType());
         }
     }
 
-    private static boolean isEntityClassType(XClass clazzToProcess, Class classType) {
+    private static boolean isEntityClassType(XClass clazzToProcess, AnnotatedClassType classType) {
         if (AnnotatedClassType.EMBEDDABLE_SUPERCLASS.equals(classType) //will be processed by their subentities
                 || AnnotatedClassType.NONE.equals(classType) //to be ignored
                 || AnnotatedClassType.EMBEDDABLE.equals(classType) //allow embeddable element declaration
         ) {
-            if (AnnotatedClassType.NONE.equals(classType) && clazzToProcess.isAnnotationPresent(Entity.class)) {
-                //				LOG.missingEntityAnnotation( clazzToProcess.getName() );
-            }
             return false;
         }
 

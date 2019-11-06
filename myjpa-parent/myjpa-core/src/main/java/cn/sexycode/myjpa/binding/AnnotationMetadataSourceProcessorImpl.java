@@ -4,8 +4,6 @@ import cn.sexycode.util.core.cls.ReflectionManager;
 import cn.sexycode.util.core.cls.XClass;
 import cn.sexycode.util.core.cls.internal.JavaReflectionManager;
 import cn.sexycode.util.core.collection.CollectionUtils;
-import cn.sexycode.util.core.exception.AnnotationException;
-import cn.sexycode.util.core.exception.ClassLoadingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,18 +59,10 @@ public class AnnotationMetadataSourceProcessorImpl extends SimpleMetadataSourceP
         } else if (xClass.isAnnotationPresent(Embeddable.class)) {
             xClasses.add(xClass);
         } else {
-            LOGGER.debug("Encountered a non-categorized annotated class [%s]; ignoring", annotatedClass.getName());
+            LOGGER.debug("Encountered a non-categorized annotated class [{}]; ignoring", annotatedClass.getName());
         }
     }
 
-    @SuppressWarnings("deprecation")
-    private XClass toXClass(String className, ReflectionManager reflectionManager) {
-        try {
-            return reflectionManager.classForName(className);
-        } catch (ClassLoadingException e) {
-            throw new AnnotationException("Unable to load class defined in XML: " + className, e);
-        }
-    }
 
 //	private Document toDom4jDocument(MappingBinder.DelayedOrmXmlData delayedOrmXmlData) {
 //		// todo : do we need to build a DocumentFactory instance for use here?
@@ -110,7 +100,7 @@ public class AnnotationMetadataSourceProcessorImpl extends SimpleMetadataSourceP
                 .buildInheritanceStates(orderedClasses, rootMetadataBuildingContext);
         for (XClass clazz : orderedClasses) {
             if (processedEntityNames.contains(clazz.getName())) {
-                LOGGER.debug("Skipping annotated class processing of entity [%s], as it has already been processed",
+                LOGGER.debug("Skipping annotated class processing of entity [{}], as it has already been processed",
                         clazz);
                 continue;
             }

@@ -69,7 +69,8 @@ public class MetadataBuildingProcess {
         final Set<String> processedEntityNames = new HashSet<String>();
         final InFlightMetadataCollectorImpl metadataCollector = new InFlightMetadataCollectorImpl(options,
                 new TypeResolver(basicTypeRegistry, new TypeFactory()));
-        final MetadataBuildingContextRootImpl rootMetadataBuildingContext = new MetadataBuildingContextRootImpl(options,
+        final MetadataBuildingContextRootImpl rootMetadataBuildingContext = new MetadataBuildingContextRootImpl(
+                bootstrapContext, options,
                 metadataCollector);
         final MetadataSourceProcessor processor = new SimpleMetadataSourceProcessorImpl() {
 
@@ -119,6 +120,11 @@ public class MetadataBuildingProcess {
             @Override
             public void processResultSetMappings() {
                 annotationProcessor.processResultSetMappings();
+            }
+
+            @Override
+            public void processEntityHierarchies(Set<String> processedEntityNames) {
+                annotationProcessor.processEntityHierarchies(processedEntityNames);
             }
 
             @Override

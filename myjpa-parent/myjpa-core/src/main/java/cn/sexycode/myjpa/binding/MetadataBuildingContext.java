@@ -1,5 +1,6 @@
 package cn.sexycode.myjpa.binding;
 
+import cn.sexycode.myjpa.boot.BootstrapContext;
 import cn.sexycode.util.core.cls.ReflectionManager;
 
 /**
@@ -22,4 +23,6 @@ public interface MetadataBuildingContext {
     InFlightMetadataCollector getMetadataCollector();
 
     ReflectionManager getReflectionManager();
+
+    BootstrapContext getBootstrapContext();
 }

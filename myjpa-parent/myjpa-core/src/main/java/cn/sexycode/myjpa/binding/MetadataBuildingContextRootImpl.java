@@ -1,5 +1,6 @@
 package cn.sexycode.myjpa.binding;
 
+import cn.sexycode.myjpa.boot.BootstrapContext;
 import cn.sexycode.util.core.cls.ReflectionManager;
 import cn.sexycode.util.core.cls.internal.JavaReflectionManager;
 
@@ -9,14 +10,16 @@ import cn.sexycode.util.core.cls.internal.JavaReflectionManager;
 public class MetadataBuildingContextRootImpl implements MetadataBuildingContext {
     private final MetadataBuildingOptions options;
 
+    private final BootstrapContext bootstrapContext;
     private final MappingDefaults mappingDefaults;
 
     private final InFlightMetadataCollector metadataCollector;
 
     private final JavaReflectionManager reflectionManager;
 
-    public MetadataBuildingContextRootImpl(MetadataBuildingOptions options,
+    public MetadataBuildingContextRootImpl(BootstrapContext bootstrapContext, MetadataBuildingOptions options,
             InFlightMetadataCollector metadataCollector) {
+        this.bootstrapContext = bootstrapContext;
         this.options = options;
         this.mappingDefaults = options.getMappingDefaults();
         this.metadataCollector = metadataCollector;
@@ -41,6 +44,11 @@ public class MetadataBuildingContextRootImpl implements MetadataBuildingContext 
     @Override
     public ReflectionManager getReflectionManager() {
         return reflectionManager;
+    }
+
+    @Override
+    public BootstrapContext getBootstrapContext() {
+        return this.bootstrapContext;
     }
 
 }

@@ -1,5 +1,9 @@
 package cn.sexycode.myjpa.mapping;
 
+import cn.sexycode.myjpa.binding.MappingException;
+import cn.sexycode.myjpa.binding.MetadataBuildingContext;
+import cn.sexycode.util.core.exception.ClassLoadingException;
+import cn.sexycode.util.core.service.ServiceRegistry;
 
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
@@ -7,7 +11,6 @@ import javax.persistence.criteria.Join;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -19,7 +22,7 @@ public abstract class PersistentClass implements Serializable {
     public static final String NULL_DISCRIMINATOR_MAPPING = "null";
     public static final String NOT_NULL_DISCRIMINATOR_MAPPING = "not null";
 
-
+    private final MetadataBuildingContext metadataBuildingContext;
     private String entityName;
 
     private String className;
@@ -61,9 +64,13 @@ public abstract class PersistentClass implements Serializable {
 
     private MappedSuperclass superMappedSuperclass;
 
-    public PersistentClass() {
+    public PersistentClass(MetadataBuildingContext metadataBuildingContext) {
+        this.metadataBuildingContext = metadataBuildingContext;
     }
 
+    public ServiceRegistry getServiceRegistry() {
+        return metadataBuildingContext.getBuildingOptions().getServiceRegistry();
+    }
 
     public String getClassName() {
         return className;
@@ -88,8 +95,15 @@ public abstract class PersistentClass implements Serializable {
             return null;
         }
 
-
-        return mappedClass;
+        try {
+            if (mappedClass == null) {
+                mappedClass = metadataBuildingContext.getBootstrapContext().getClassLoaderAccess()
+                        .classForName(className);
+            }
+            return mappedClass;
+        } catch (ClassLoadingException e) {
+            throw new MappingException("entity class not found: " + className, e);
+        }
 
     }
 
@@ -150,20 +164,19 @@ public abstract class PersistentClass implements Serializable {
 
     public abstract boolean isDiscriminatorInsertable();
 
-    public abstract Iterator getPropertyClosureIterator();
+    //    public abstract Iterator getPropertyClosureIterator();
 
-    public abstract Iterator getTableClosureIterator();
+    //    public abstract Iterator getTableClosureIterator();
 
-    public abstract Iterator getKeyClosureIterator();
+    //    public abstract Iterator getKeyClosureIterator();
 
+    //    protected void addSubclassJoin(Join join) {
+    //        subclassJoins.add(join);
+    //    }
 
-    protected void addSubclassJoin(Join join) {
-        subclassJoins.add(join);
-    }
-
-    protected void addSubclassTable(Table subclassTable) {
-        subclassTables.add(subclassTable);
-    }
+    //    protected void addSubclassTable(Table subclassTable) {
+    //        subclassTables.add(subclassTable);
+    //    }
 
     public void setEntityName(String entityName) {
         this.entityName = entityName == null ? null : entityName.intern();

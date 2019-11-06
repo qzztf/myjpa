@@ -18,6 +18,7 @@
         <module>spring-data-myjpa</module>
         <module>spring-orm-myjpa</module>
         <module>myjpa-spring-boot</module>
+        <module>myjpa-tkmapper</module>
     </modules>
 
 

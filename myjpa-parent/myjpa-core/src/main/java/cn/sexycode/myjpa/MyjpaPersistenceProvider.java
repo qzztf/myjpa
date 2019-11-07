@@ -101,7 +101,7 @@ public class MyjpaPersistenceProvider implements PersistenceProvider {
             InputStream configStream = Resources
                     .getResourceAsStream(ClassLoader.getSystemClassLoader(), Consts.DEFAULT_CFG_FILE);
             if (configStream != null) {
-                return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, properties).build(configStream, prop);
+                return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, prop).build(configStream, prop);
             }
             return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, properties)
                     .build(((MyjpaConfiguration) getConfig(properties)));

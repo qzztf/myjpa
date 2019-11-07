@@ -8,6 +8,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import java.util.List;
+
 /**
  *
  * @author qinzaizhen
@@ -18,7 +20,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @MapperScan("cn.sexycode.mybatis.jpa.samples.dao")
 public class MyJpaSamplesApplication {
     public static void main(String[] args) {
-        User user = SpringApplication.run(MyJpaSamplesApplication.class, args).getBeanFactory().getBean(UserDao.class).getOne("1");
-        System.out.println("user: " +user);
+        List<User> byFullName = SpringApplication.run(MyJpaSamplesApplication.class, args).getBeanFactory()
+                .getBean(UserDao.class).findByFullName("1");
+        //        User user = (User) byFullName;
+        //        System.out.println("user: " +user);
+        System.out.println("user: " + byFullName);
     }
 }

@@ -115,7 +115,8 @@ public class SessionFactoryBuilderImpl implements SessionFactoryBuilder {
 
                     // if we get here, either we were asked to not use JDBC metadata or accessing the JDBC metadata failed.
                     return new JdbcEnvironmentImpl(getServiceRegistry(), dialectFactory
-                            .buildDialect(PropertiesUtil.getString(AvailableSettings.DIALECT, properties), null));
+                            .buildDialect(PropertiesUtil.getString(AvailableSettings.DIALECT, properties, "MYSQL"),
+                                    null));
                 }
             };
             BootstrapContextImpl bootstrapContext = new BootstrapContextImpl(new StandardServiceRegistry() {

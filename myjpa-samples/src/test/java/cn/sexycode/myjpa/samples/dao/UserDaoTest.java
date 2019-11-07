@@ -48,15 +48,15 @@ public class UserDaoTest {
 
     @Test
     public void jpaTest() {
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("jpa");
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyJPA");
         EntityManager entityManager = entityManagerFactory.createEntityManager();
 
         User user = new User();
         user.setId("11");
-        ModelProxy persistModel = new ModelProxy<>(user, "UserDao.save");
+        ModelProxy persistModel = new ModelProxy<>(user, "cn.sexycode.myjpa.samples.dao.UserDao.save");
         entityManager.persist(persistModel);
 
-        ModelProxy findModelProxy = new ModelProxy<>("11", "UserDao.findById");
+        ModelProxy findModelProxy = new ModelProxy<>("11", "cn.sexycode.myjpa.samples.dao.UserDao.findById");
         System.out.println("插入后查找: " + entityManager.find(User.class, findModelProxy));
 
         user.setFullName("qzz");

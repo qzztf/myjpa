@@ -115,7 +115,7 @@ public class SessionFactoryBuilderImpl implements SessionFactoryBuilder {
 
                     // if we get here, either we were asked to not use JDBC metadata or accessing the JDBC metadata failed.
                     return new JdbcEnvironmentImpl(getServiceRegistry(), dialectFactory
-                            .buildDialect(PropertiesUtil.getString(AvailableSettings.DIALECT, properties, "MYSQL"),
+                            .buildDialect(PropertiesUtil.getString(AvailableSettings.DIALECT, properties, "cn.sexycode.sql.dialect.H2Dialect"),
                                     null));
                 }
             };

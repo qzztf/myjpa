@@ -24,6 +24,7 @@ public class MyJpaSamplesApplication {
                 .getBean(UserDao.class).findByFullName("1");
         //        User user = (User) byFullName;
         //        System.out.println("user: " +user);
+        //User.findByFullName
         System.out.println("user: " + byFullName);
     }
 }

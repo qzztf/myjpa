@@ -1,5 +1,6 @@
 package cn.sexycode.myjpa.session;
 
+import cn.sexycode.myjpa.query.MybatisQueryImpl;
 import cn.sexycode.myjpa.transaction.MyjpaTransactionImpl;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.transaction.Transaction;
@@ -106,7 +107,7 @@ public class SessionImpl implements Session {
 
     @Override
     public Query createQuery(String qlString) {
-        return null;
+        return new MybatisQueryImpl(this, qlString);
     }
 
     @Override
@@ -126,17 +127,17 @@ public class SessionImpl implements Session {
 
     @Override
     public <T> TypedQuery<T> createQuery(String qlString, Class<T> resultClass) {
-        return null;
+        return new MybatisQueryImpl(this, qlString, resultClass);
     }
 
     @Override
     public Query createNamedQuery(String name) {
-        return null;
+        return new MybatisQueryImpl(this, name);
     }
 
     @Override
     public <T> TypedQuery<T> createNamedQuery(String name, Class<T> resultClass) {
-        return null;
+        return new MybatisQueryImpl(this, name, resultClass);
     }
 
     @Override

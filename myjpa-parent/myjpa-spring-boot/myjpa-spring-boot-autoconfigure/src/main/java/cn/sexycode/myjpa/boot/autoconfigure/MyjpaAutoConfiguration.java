@@ -28,4 +28,5 @@ import javax.sql.DataSource;
         JpaRepositoryConfigExtension.class})*/
 @ConditionalOnProperty(prefix = "spring.data.jpa.repositories", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class MyjpaAutoConfiguration {
+
 }

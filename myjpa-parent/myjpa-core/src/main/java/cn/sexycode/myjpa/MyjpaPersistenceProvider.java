@@ -3,6 +3,7 @@ package cn.sexycode.myjpa;
 import cn.sexycode.myjpa.boot.ParsedPersistenceXmlDescriptor;
 import cn.sexycode.myjpa.boot.PersistenceXmlParser;
 import cn.sexycode.myjpa.boot.ProviderChecker;
+import cn.sexycode.myjpa.mybatis.MyjpaConfiguration;
 import cn.sexycode.myjpa.session.SessionFactoryBuilderImpl;
 import cn.sexycode.util.core.object.ObjectUtils;
 import org.apache.ibatis.io.Resources;
@@ -114,8 +115,7 @@ public class MyjpaPersistenceProvider implements PersistenceProvider {
     }
 
     private Configuration getConfig(Map properties) {
-
-        return new MyjpaConfiguration();
+        return new MyjpaConfiguration(properties);
     }
 
     protected static Map wrap(Map properties) {

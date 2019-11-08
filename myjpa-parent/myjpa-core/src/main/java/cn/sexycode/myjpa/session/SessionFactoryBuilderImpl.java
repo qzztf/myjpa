@@ -1,18 +1,14 @@
 package cn.sexycode.myjpa.session;
 
 import cn.sexycode.myjpa.AvailableSettings;
-import cn.sexycode.myjpa.MyjpaConfiguration;
 import cn.sexycode.myjpa.binding.*;
 import cn.sexycode.myjpa.boot.BootstrapContextImpl;
+import cn.sexycode.myjpa.mybatis.MyjpaConfiguration;
 import cn.sexycode.sql.dialect.DialectFactory;
-import cn.sexycode.sql.dialect.DialectFactoryImpl;
-import cn.sexycode.sql.dialect.StandardDialectResolver;
 import cn.sexycode.sql.dialect.function.SQLFunction;
 import cn.sexycode.sql.jdbc.JdbcEnvironment;
 import cn.sexycode.sql.jdbc.JdbcEnvironmentImpl;
-import cn.sexycode.util.core.cls.classloading.ClassLoaderService;
-import cn.sexycode.util.core.cls.classloading.ClassLoaderServiceImpl;
-import cn.sexycode.util.core.factory.selector.StrategySelectorImpl;
+import cn.sexycode.util.core.factory.BeanFactoryUtil;
 import cn.sexycode.util.core.file.scan.ScanEnvironment;
 import cn.sexycode.util.core.properties.PropertiesUtil;
 import cn.sexycode.util.core.service.Service;
@@ -84,28 +80,8 @@ public class SessionFactoryBuilderImpl implements SessionFactoryBuilder {
 
                 @Override
                 public ServiceRegistry getServiceRegistry() {
-                    ServiceRegistry serviceRegistry = new StandardServiceRegistry() {
-                        private Map<Class, Service> serviceMap = new HashMap<Class, Service>() {{
-                            put(ClassLoaderService.class, new ClassLoaderServiceImpl());
-                            put(DialectFactory.class, new DialectFactoryImpl(new StandardDialectResolver(),
-                                    new StrategySelectorImpl((ClassLoaderService) get(ClassLoaderService.class))));
-                        }};
-
-                        @Override
-                        public ServiceRegistry getParentServiceRegistry() {
-                            return null;
-                        }
-
-                        @Override
-                        public <R extends Service> R getService(Class<R> aClass) {
-                            return (R) serviceMap.get(aClass);
-                        }
-
-                        @Override
-                        public void close() {
-
-                        }
-                    };
+                    ServiceRegistry serviceRegistry = BeanFactoryUtil.getBeanFactory()
+                            .getBean(StandardServiceRegistry.class);
                     return serviceRegistry;
                 }
 

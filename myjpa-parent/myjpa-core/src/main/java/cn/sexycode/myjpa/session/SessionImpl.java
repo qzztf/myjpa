@@ -1,7 +1,8 @@
 package cn.sexycode.myjpa.session;
 
-import cn.sexycode.myjpa.query.MybatisQueryImpl;
+import cn.sexycode.myjpa.query.QueryFactory;
 import cn.sexycode.myjpa.transaction.MyjpaTransactionImpl;
+import cn.sexycode.util.core.factory.BeanFactoryUtil;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.transaction.Transaction;
 
@@ -107,12 +108,12 @@ public class SessionImpl implements Session {
 
     @Override
     public Query createQuery(String qlString) {
-        return new MybatisQueryImpl(this, qlString);
+        return BeanFactoryUtil.getBeanFactory().getBean(QueryFactory.class).createQuery(this, qlString);
     }
 
     @Override
     public <T> TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery) {
-        return null;
+        return BeanFactoryUtil.getBeanFactory().getBean(QueryFactory.class).createQuery(this, criteriaQuery);
     }
 
     @Override
@@ -127,17 +128,17 @@ public class SessionImpl implements Session {
 
     @Override
     public <T> TypedQuery<T> createQuery(String qlString, Class<T> resultClass) {
-        return new MybatisQueryImpl(this, qlString, resultClass);
+        return BeanFactoryUtil.getBeanFactory().getBean(QueryFactory.class).createQuery(this, qlString, resultClass);
     }
 
     @Override
     public Query createNamedQuery(String name) {
-        return new MybatisQueryImpl(this, name);
+        return BeanFactoryUtil.getBeanFactory().getBean(QueryFactory.class).createNamedQuery(this, name);
     }
 
     @Override
     public <T> TypedQuery<T> createNamedQuery(String name, Class<T> resultClass) {
-        return new MybatisQueryImpl(this, name, resultClass);
+        return BeanFactoryUtil.getBeanFactory().getBean(QueryFactory.class).createNamedQuery(this, name, resultClass);
     }
 
     @Override

@@ -1,8 +1,24 @@
 package cn.sexycode.myjpa.boot.autoconfigure;
 
 import cn.sexycode.myjpa.orm.vendor.MyjpaVendorAdapter;
+import cn.sexycode.myjpa.query.DefaultQueryFactory;
+import cn.sexycode.myjpa.query.QueryFactory;
+import cn.sexycode.sql.dialect.DialectFactory;
+import cn.sexycode.sql.dialect.DialectFactoryImpl;
+import cn.sexycode.sql.dialect.StandardDialectResolver;
+import cn.sexycode.util.core.cls.classloading.ClassLoaderService;
+import cn.sexycode.util.core.cls.classloading.ClassLoaderServiceImpl;
+import cn.sexycode.util.core.factory.BeanFactoryUtil;
+import cn.sexycode.util.core.factory.selector.StrategySelectorImpl;
+import cn.sexycode.util.core.service.Service;
+import cn.sexycode.util.core.service.ServiceRegistry;
+import cn.sexycode.util.core.service.StandardServiceRegistry;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
@@ -11,6 +27,7 @@ import org.springframework.boot.jdbc.SchemaManagementProvider;
 import org.springframework.boot.jdbc.metadata.CompositeDataSourcePoolMetadataProvider;
 import org.springframework.boot.jdbc.metadata.DataSourcePoolMetadata;
 import org.springframework.boot.jdbc.metadata.DataSourcePoolMetadataProvider;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jndi.JndiLocatorDelegate;
 import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
@@ -18,10 +35,7 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.util.ClassUtils;
 
 import javax.sql.DataSource;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * {@link JpaBaseConfiguration} implementation for MyJpa
@@ -29,7 +43,7 @@ import java.util.Map;
  */
 @Configuration
 @ConditionalOnSingleCandidate(DataSource.class)
-public class MyjpaConfiguration extends JpaBaseConfiguration {
+public class MyjpaConfiguration extends JpaBaseConfiguration implements BeanFactoryAware {
 
 //	private static final Log logger = LogFactory.getLog(HibernateJpaConfiguration.class);
 
@@ -58,6 +72,8 @@ public class MyjpaConfiguration extends JpaBaseConfiguration {
     private SqlSessionFactory sessionFactory;
 //	private final List<HibernatePropertiesCustomizer> hibernatePropertiesCustomizers;
 
+    private BeanFactory beanFactory;
+
     MyjpaConfiguration(DataSource dataSource, JpaProperties jpaProperties,
                        ObjectProvider<JtaTransactionManager> jtaTransactionManager,
                        ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers,
@@ -77,8 +93,46 @@ public class MyjpaConfiguration extends JpaBaseConfiguration {
 				physicalNamingStrategy.getIfAvailable(),
 				implicitNamingStrategy.getIfAvailable(),
 				hibernatePropertiesCustomizers.getIfAvailable(Collections::emptyList));*/
+        BeanFactoryUtil.setBeanFactory(new cn.sexycode.util.core.factory.BeanFactory() {
+            @Override
+            public <T> T getBean(Class<T> clazz) {
+                return beanFactory.getBean(clazz);
+            }
+        });
     }
 
+    @Bean("standardServiceRegistry")
+    @ConditionalOnMissingBean
+    public StandardServiceRegistry serviceRegistry() {
+        return new StandardServiceRegistry() {
+            private Map<Class, Service> serviceMap = new HashMap<Class, Service>() {{
+                put(ClassLoaderService.class, new ClassLoaderServiceImpl());
+                put(DialectFactory.class, new DialectFactoryImpl(new StandardDialectResolver(),
+                        new StrategySelectorImpl((ClassLoaderService) get(ClassLoaderService.class))));
+            }};
+
+            @Override
+            public ServiceRegistry getParentServiceRegistry() {
+                return null;
+            }
+
+            @Override
+            public <R extends Service> R getService(Class<R> aClass) {
+                return (R) serviceMap.get(aClass);
+            }
+
+            @Override
+            public void close() {
+
+            }
+        };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public QueryFactory queryFactory() {
+        return new DefaultQueryFactory();
+    }
 /*
 	private List<HibernatePropertiesCustomizer> determineHibernatePropertiesCustomizers(
 			PhysicalNamingStrategy physicalNamingStrategy,
@@ -94,6 +148,12 @@ public class MyjpaConfiguration extends JpaBaseConfiguration {
 		return hibernatePropertiesCustomizers;
 	}
 */
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        super.setBeanFactory(beanFactory);
+        this.beanFactory = beanFactory;
+    }
 
     @Override
     protected AbstractJpaVendorAdapter createJpaVendorAdapter() {

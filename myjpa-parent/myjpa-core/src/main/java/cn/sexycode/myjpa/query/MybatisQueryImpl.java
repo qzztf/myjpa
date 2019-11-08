@@ -1,33 +1,42 @@
 package cn.sexycode.myjpa.query;
 
 import cn.sexycode.myjpa.session.Session;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.session.SqlSession;
 
 import javax.persistence.*;
+import javax.persistence.metamodel.Metamodel;
 import java.util.*;
 
 /**
  * @author Steve Ebersole
  */
 public class MybatisQueryImpl<R> implements TypedQuery<R> {
-	private final String queryString;
+    private final String qlString;
 	private Session session;
 	private Class<R> resultClass;
 
+    private MappedStatement mappedStatement;
+
+    private List<Parameter<?>> parameters = new LinkedList<>();
 	public MybatisQueryImpl(
-			Session session,
-			String queryString) {
-		this(session, queryString, null);
+			Session session, String qlString) {
+        this(session, qlString, null);
 	}
 
 	public MybatisQueryImpl(Session session, String qlString, Class<R> resultClass) {
-		this.queryString = qlString;
+        this.qlString = qlString;
 		this.resultClass = resultClass;
 		this.session = session;
+        SqlSession sqlSession = session.getSession();
+        this.mappedStatement = sqlSession.getConfiguration().getMappedStatement(qlString);
+        Metamodel metamodel = session.getEntityManagerFactory().getMetamodel();
+        //		EntityType<R> entity = metamodel.entity(resultClass);
 	}
 
 
 	public String getQueryString() {
-		return queryString;
+        return qlString;
 	}
 
 	@Override

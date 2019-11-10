@@ -1,0 +1,71 @@
+/*
+ * Hibernate, Relational Persistence for Idiomatic Java
+ *
+ * License: GNU Lesser General Public License (LGPL), version 2.1 or later.
+ * See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
+ */
+package cn.sexycode.myjpa.query.criteria.internal.expression;
+
+import cn.sexycode.myjpa.query.criteria.internal.CriteriaBuilderImpl;
+import cn.sexycode.myjpa.query.criteria.internal.ParameterRegistry;
+import cn.sexycode.myjpa.query.criteria.internal.compile.ExplicitParameterInfo;
+import cn.sexycode.myjpa.query.criteria.internal.compile.RenderingContext;
+
+import javax.persistence.criteria.ParameterExpression;
+import java.io.Serializable;
+
+/**
+ * Defines a parameter specification, or the information about a parameter (where it occurs, what is
+ * its type, etc).
+ *
+ * @author Steve Ebersole
+ */
+public class ParameterExpressionImpl<T> extends ExpressionImpl<T> implements ParameterExpression<T>, Serializable {
+    private final String name;
+
+    private final Integer position;
+
+    public ParameterExpressionImpl(CriteriaBuilderImpl criteriaBuilder, Class<T> javaType, String name) {
+        super(criteriaBuilder, javaType);
+        this.name = name;
+        this.position = null;
+    }
+
+    public ParameterExpressionImpl(CriteriaBuilderImpl criteriaBuilder, Class<T> javaType, Integer position) {
+        super(criteriaBuilder, javaType);
+        this.name = null;
+        this.position = position;
+    }
+
+    public ParameterExpressionImpl(CriteriaBuilderImpl criteriaBuilder, Class<T> javaType) {
+        super(criteriaBuilder, javaType);
+        this.name = null;
+        this.position = null;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public Integer getPosition() {
+        return position;
+    }
+
+    @Override
+    public Class<T> getParameterType() {
+        return getJavaType();
+    }
+
+    @Override
+    public void registerParameters(ParameterRegistry registry) {
+        registry.registerParameter(this);
+    }
+
+    @Override
+    public String render(RenderingContext renderingContext) {
+        final ExplicitParameterInfo parameterInfo = renderingContext.registerExplicitParameter(this);
+        return parameterInfo.render();
+    }
+}

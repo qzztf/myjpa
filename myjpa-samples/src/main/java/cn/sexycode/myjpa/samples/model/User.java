@@ -19,7 +19,7 @@ public class User {
     @Id
     private String id;
 
-    @Column
+    @Column(name = "full_name")
     private String fullName;
 
 //    private Integer age;

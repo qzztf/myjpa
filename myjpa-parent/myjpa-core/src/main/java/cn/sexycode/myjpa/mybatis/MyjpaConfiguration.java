@@ -17,10 +17,10 @@ public class MyjpaConfiguration extends Configuration {
     }
 
     public MyjpaConfiguration(Configuration configuration) {
+        this.configuration = configuration;
         if (ObjectUtils.isEmpty(configuration)) {
             this.configuration = new Configuration();
         }
-        this.configuration = configuration;
     }
 
     public MyjpaConfiguration(Map properties) {
@@ -28,7 +28,12 @@ public class MyjpaConfiguration extends Configuration {
         if (!ObjectUtils.isEmpty(properties)) {
             Properties prop = new Properties();
             prop.putAll(properties);
-            this.configuration.setVariables(prop);
+            if (ObjectUtils.isEmpty(this.configuration.getVariables())) {
+                this.configuration.setVariables(prop);
+            } else {
+                this.configuration.getVariables().putAll(prop);
+            }
+
         }
     }
 

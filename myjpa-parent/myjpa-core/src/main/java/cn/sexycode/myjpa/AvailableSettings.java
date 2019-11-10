@@ -1779,17 +1779,17 @@ public interface AvailableSettings {
      * <p>
      * However, to increase the likelihood of JDBC statement caching,
      * you might want to use bind parameters for numeric values too.
-     * The {@link org.hibernate.query.criteria.LiteralHandlingMode#BIND} mode will use bind variables for any literal value.
+     * The {@link cn.sexycode.myjpa.query.criteria.LiteralHandlingMode#BIND} mode will use bind variables for any literal value.
      * <p>
-     * The {@link org.hibernate.query.criteria.LiteralHandlingMode#INLINE} mode will inline literal values as-is.
-     * To prevent SQL injection, never use {@link org.hibernate.query.criteria.LiteralHandlingMode#INLINE} with String variables.
-     * Always use constants with the {@link org.hibernate.query.criteria.LiteralHandlingMode#INLINE} mode.
+     * The {@link cn.sexycode.myjpa.query.criteria.LiteralHandlingMode#INLINE} mode will inline literal values as-is.
+     * To prevent SQL injection, never use {@link cn.sexycode.myjpa.query.criteria.LiteralHandlingMode#INLINE} with String variables.
+     * Always use constants with the {@link cn.sexycode.myjpa.query.criteria.LiteralHandlingMode#INLINE} mode.
      * </p>
-     * Valid options are defined by the {@link org.hibernate.query.criteria.LiteralHandlingMode} enum.
+     * Valid options are defined by the {@link cn.sexycode.myjpa.query.criteria.LiteralHandlingMode} enum.
      * </p>
-     * The default value is {@link org.hibernate.query.criteria.LiteralHandlingMode#AUTO}
+     * The default value is {@link cn.sexycode.myjpa.query.criteria.LiteralHandlingMode#AUTO}
      *
-     * @see org.hibernate.query.criteria.LiteralHandlingMode
+     * @see cn.sexycode.myjpa.query.criteria.LiteralHandlingMode
      * @since 5.2.12
      */
     String CRITERIA_LITERAL_HANDLING_MODE = "hibernate.criteria.literal_handling_mode";

@@ -12,7 +12,10 @@ import cn.sexycode.myjpa.query.criteria.internal.expression.function.*;
 import cn.sexycode.myjpa.query.criteria.internal.path.PluralAttributePath;
 import cn.sexycode.myjpa.query.criteria.internal.path.RootImpl;
 import cn.sexycode.myjpa.query.criteria.internal.predicate.*;
+import cn.sexycode.myjpa.query.criteria.internal.predicate.ComparisonPredicate.ComparisonOperator;
 import cn.sexycode.myjpa.session.SessionFactoryImpl;
+import cn.sexycode.util.core.collection.CollectionUtils;
+import cn.sexycode.util.core.str.StringUtils;
 
 import javax.persistence.Tuple;
 import javax.persistence.criteria.*;
@@ -83,7 +86,7 @@ public class CriteriaBuilderImpl implements HibernateCriteriaBuilder, Serializab
      *                                  or array-valued compound selection item.&quot;</i>
      */
     void checkMultiselect(List<Selection<?>> selections) {
-        final HashSet<String> aliases = new HashSet<String>(CollectionHelper.determineProperSizing(selections.size()));
+        final HashSet<String> aliases = new HashSet<String>(CollectionUtils.determineProperSizing(selections.size()));
 
         for (Selection<?> selection : selections) {
             if (selection.isCompoundSelection()) {
@@ -96,7 +99,7 @@ public class CriteriaBuilderImpl implements HibernateCriteriaBuilder, Serializab
                             "Selection items in a multi-select cannot contain compound tuple-valued elements");
                 }
             }
-            if (StringHelper.isNotEmpty(selection.getAlias())) {
+            if (StringUtils.isNotEmpty(selection.getAlias())) {
                 boolean added = aliases.add(selection.getAlias());
                 if (!added) {
                     throw new IllegalArgumentException(

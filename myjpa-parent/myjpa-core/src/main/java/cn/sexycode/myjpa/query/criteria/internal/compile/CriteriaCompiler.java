@@ -1,23 +1,23 @@
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later.
- * See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
- */
 package cn.sexycode.myjpa.query.criteria.internal.compile;
 
-import cn.sexycode.myjpa.query.criteria.LiteralHandlingMode;
 import cn.sexycode.myjpa.query.criteria.internal.expression.function.FunctionExpression;
 import cn.sexycode.myjpa.session.Session;
+import cn.sexycode.myjpa.session.SessionFactory;
 import cn.sexycode.sql.dialect.Dialect;
 import cn.sexycode.sql.mapping.ast.Clause;
+import cn.sexycode.util.core.collection.Stack;
+import cn.sexycode.util.core.collection.StandardStack;
+import cn.sexycode.util.core.service.ServiceRegistry;
+import cn.sexycode.util.core.str.StringUtils;
 
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.ParameterExpression;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Compiles a JPA criteria query into an executable {@link TypedQuery}.  Its single contract is the {@link #compile}
@@ -45,12 +45,14 @@ public class CriteriaCompiler implements Serializable {
         final Map<ParameterExpression<?>, ExplicitParameterInfo<?>> explicitParameterInfoMap = new HashMap<>();
         final List<ImplicitParameterBinding> implicitParameterBindings = new ArrayList<>();
 
-        final EntityManagerFactory sessionFactory = entityManager.getEntityManagerFactory();
+        final SessionFactory sessionFactory = entityManager.getSessionFactory();
 
-        final LiteralHandlingMode criteriaLiteralHandlingMode = sessionFactory.getSessionFactoryOptions()
-                .getCriteriaLiteralHandlingMode();
+    /*    final LiteralHandlingMode criteriaLiteralHandlingMode = sessionFactory.getSessionFactoryOptions()
+                .getCriteriaLiteralHandlingMode();*/
 
-        final Dialect dialect = sessionFactory.getServiceRegistry().getService(JdbcServices.class).getDialect();
+        ServiceRegistry serviceRegistry = sessionFactory.getServiceRegistry();
+        final Dialect dialect = null;
+//                serviceRegistry.getService(JdbcEnvironment.class).getDialect();
 
         RenderingContext renderingContext = new RenderingContext() {
             private int aliasCount;
@@ -84,7 +86,7 @@ public class CriteriaCompiler implements Serializable {
             public ExplicitParameterInfo registerExplicitParameter(ParameterExpression<?> criteriaQueryParameter) {
                 ExplicitParameterInfo parameterInfo = explicitParameterInfoMap.get(criteriaQueryParameter);
                 if (parameterInfo == null) {
-                    if (StringHelper.isNotEmpty(criteriaQueryParameter.getName())) {
+                    if (StringUtils.isNotEmpty(criteriaQueryParameter.getName())) {
                         parameterInfo = new ExplicitParameterInfo(criteriaQueryParameter.getName(), null,
                                 criteriaQueryParameter.getJavaType());
                     } else if (criteriaQueryParameter.getPosition() != null) {
@@ -121,7 +123,7 @@ public class CriteriaCompiler implements Serializable {
                 return parameterName;
             }
 
-            public String getCastType(Class javaType) {
+            /*public String getCastType(Class javaType) {
                 SessionFactoryImplementor factory = entityManager.getFactory();
                 Type hibernateType = factory.getTypeResolver().heuristicType(javaType.getName());
                 if (hibernateType == null) {
@@ -129,17 +131,17 @@ public class CriteriaCompiler implements Serializable {
                             "Could not convert java type [" + javaType.getName() + "] to Hibernate type");
                 }
                 return hibernateType.getName();
-            }
+            }*/
 
             @Override
             public Dialect getDialect() {
                 return dialect;
             }
 
-            @Override
+           /* @Override
             public LiteralHandlingMode getCriteriaLiteralHandlingMode() {
                 return criteriaLiteralHandlingMode;
-            }
+            }*/
         };
 
         return criteria.interpret(renderingContext)

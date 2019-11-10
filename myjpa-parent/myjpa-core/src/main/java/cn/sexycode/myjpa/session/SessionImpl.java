@@ -33,6 +33,10 @@ public class SessionImpl implements Session {
         return sqlSession;
     }
 
+    @Override
+    public SessionFactory getSessionFactory() {
+        return (SessionFactory) entityManagerFactory;
+    }
 
     @Override
     public <T> T find(Class<T> entityClass, Object primaryKey, Map<String, Object> properties) {

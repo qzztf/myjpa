@@ -1,18 +1,12 @@
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later.
- * See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
- */
 package cn.sexycode.myjpa.query.criteria.internal.compile;
 
 import cn.sexycode.myjpa.query.criteria.LiteralHandlingMode;
 import cn.sexycode.myjpa.query.criteria.internal.expression.function.FunctionExpression;
 import cn.sexycode.sql.dialect.Dialect;
 import cn.sexycode.sql.mapping.ast.Clause;
+import cn.sexycode.util.core.collection.Stack;
 
 import javax.persistence.criteria.ParameterExpression;
-import java.util.Stack;
 
 /**
  * Used to provide a context and services to the rendering.
@@ -50,7 +44,7 @@ public interface RenderingContext {
      * @param javaType The java type.
      * @return The cast type name.
      */
-    String getCastType(Class javaType);
+//    String getCastType(Class javaType);
 
     /**
      * Current Dialect.

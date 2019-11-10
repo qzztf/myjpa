@@ -91,7 +91,7 @@ public class LiteralExpression<T> extends ExpressionImpl<T> implements Serializa
             case INLINE: {
                 Object literalValue = literal;
                 if (String.class.equals(literal.getClass())) {
-                    literalValue = renderingContext.getDialect().inlineLiteral((String) literal);
+//                    literalValue = renderingContext.getDialect().inlineLiteral((String) literal);
                 }
 
                 ValueHandler valueHandler = ValueHandlerFactory.determineAppropriateHandler((Class) literal.getClass());

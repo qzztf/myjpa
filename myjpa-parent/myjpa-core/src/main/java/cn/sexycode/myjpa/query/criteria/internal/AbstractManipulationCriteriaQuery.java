@@ -8,8 +8,10 @@ package cn.sexycode.myjpa.query.criteria.internal;
 
 import cn.sexycode.myjpa.query.criteria.internal.compile.*;
 import cn.sexycode.myjpa.query.criteria.internal.path.RootImpl;
+import cn.sexycode.myjpa.session.Session;
 import cn.sexycode.sql.mapping.ast.Clause;
 
+import javax.persistence.Query;
 import javax.persistence.criteria.*;
 import javax.persistence.metamodel.EntityType;
 import java.util.HashMap;
@@ -88,13 +90,13 @@ public abstract class AbstractManipulationCriteriaQuery<T> implements Compilable
         return new CriteriaInterpretation() {
             @Override
             @SuppressWarnings("unchecked")
-            public QueryImplementor buildCompiledQuery(SharedSessionContractImplementor entityManager,
+            public Query buildCompiledQuery(Session entityManager,
                     final InterpretedParameterMetadata interpretedParameterMetadata) {
 
                 final Map<String, Class> implicitParameterTypes = extractTypeMap(
                         interpretedParameterMetadata.implicitParameterBindings());
 
-                QueryImplementor query = entityManager
+                Query query = entityManager
                         .createQuery(jpaqlString, null, null, new HibernateEntityManagerImplementor.QueryOptions() {
                             @Override
                             public List<ValueHandlerFactory.ValueHandler> getValueHandlers() {

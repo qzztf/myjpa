@@ -21,6 +21,8 @@ public interface Session extends EntityManager, Closeable {
      */
     SqlSession getSession();
 
+    SessionFactory getSessionFactory();
+
     @Override
     default void flush() {
         LOGGER.finer("flush method not support.");

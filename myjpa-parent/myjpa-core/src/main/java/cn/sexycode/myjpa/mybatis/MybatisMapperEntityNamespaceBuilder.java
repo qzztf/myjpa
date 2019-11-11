@@ -7,12 +7,15 @@ import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.builder.annotation.MapperAnnotationBuilder;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.Entity;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,7 +28,7 @@ import java.util.stream.Stream;
  * @since 2017-01-04
  */
 public class MybatisMapperEntityNamespaceBuilder extends MapperAnnotationBuilder {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(MybatisMapperEntityNamespaceBuilder.class);
     private final Configuration configuration;
 
     private final MapperBuilderAssistant assistant;
@@ -58,44 +61,48 @@ public class MybatisMapperEntityNamespaceBuilder extends MapperAnnotationBuilder
             if (!ObjectUtils.isEmpty(aClass)) {
                 if (!ObjectUtils.isEmpty(aClass.getAnnotation(Entity.class))) {
                     for (Method method : type.getMethods()) {
-                        MappedStatement mappedStatement = configuration
-                                .getMappedStatement(type + "." + method.getName());
-                        if (!ObjectUtils.isEmpty(mappedStatement)) {
-                            MappedStatement.Builder statementBuilder = new MappedStatement.Builder(configuration,
-                                    aClass.getName() + "." + method.getName(), mappedStatement.getSqlSource(),
-                                    mappedStatement.getSqlCommandType()).resource(mappedStatement.getResource())
-                                    .fetchSize(mappedStatement.getFetchSize()).timeout(mappedStatement.getTimeout())
-                                    .statementType(mappedStatement.getStatementType())
-                                    .keyGenerator(mappedStatement.getKeyGenerator())
-                                    .keyProperty(StringUtils.join(",", mappedStatement.getKeyProperties()))
-                                    .keyColumn(StringUtils.join(",", mappedStatement.getKeyColumns()))
-                                    .databaseId(mappedStatement.getDatabaseId()).lang(mappedStatement.getLang())
-                                    .resultOrdered(mappedStatement.isResultOrdered())
-                                    .resultSets(StringUtils.join(",", mappedStatement.getResultSets()))
-                                    .resultMaps(mappedStatement.getResultMaps())
-                                    .resultSetType(mappedStatement.getResultSetType())
-                                    .flushCacheRequired(mappedStatement.isFlushCacheRequired())
-                                    .useCache(mappedStatement.isUseCache()).cache(mappedStatement.getCache());
-                            statementBuilder.parameterMap(mappedStatement.getParameterMap());
-                            configuration.addMappedStatement(statementBuilder.build());
+                        try {
+                            MappedStatement mappedStatement = configuration
+                                    .getMappedStatement(type.getName() + "." + method.getName());
+                            if (!ObjectUtils.isEmpty(mappedStatement)) {
+                                MappedStatement.Builder statementBuilder = new MappedStatement.Builder(configuration,
+                                        aClass.getName() + "." + method.getName(), mappedStatement.getSqlSource(),
+                                        mappedStatement.getSqlCommandType()).resource(mappedStatement.getResource())
+                                        .fetchSize(mappedStatement.getFetchSize()).timeout(mappedStatement.getTimeout())
+                                        .statementType(mappedStatement.getStatementType())
+                                        .keyGenerator(mappedStatement.getKeyGenerator())
+                                        .keyProperty(StringUtils.join(",", Optional.ofNullable(mappedStatement.getKeyProperties()).orElse(new String[0])))
+                                        .keyColumn(StringUtils.join(",", Optional.ofNullable(mappedStatement.getKeyColumns()).orElse(new String[0])))
+                                        .databaseId(mappedStatement.getDatabaseId()).lang(mappedStatement.getLang())
+                                        .resultOrdered(mappedStatement.isResultOrdered())
+                                        .resultSets(StringUtils.join(",", Optional.ofNullable(mappedStatement.getResultSets()).orElse(new String[0])))
+                                        .resultMaps(mappedStatement.getResultMaps())
+                                        .resultSetType(mappedStatement.getResultSetType())
+                                        .flushCacheRequired(mappedStatement.isFlushCacheRequired())
+                                        .useCache(mappedStatement.isUseCache()).cache(mappedStatement.getCache());
+                                statementBuilder.parameterMap(mappedStatement.getParameterMap());
+                                configuration.addMappedStatement(statementBuilder.build());
 
-                            statementBuilder = new MappedStatement.Builder(configuration,
-                                    aClass.getSimpleName() + "." + method.getName(), mappedStatement.getSqlSource(),
-                                    mappedStatement.getSqlCommandType()).resource(mappedStatement.getResource())
-                                    .fetchSize(mappedStatement.getFetchSize()).timeout(mappedStatement.getTimeout())
-                                    .statementType(mappedStatement.getStatementType())
-                                    .keyGenerator(mappedStatement.getKeyGenerator())
-                                    .keyProperty(StringUtils.join(",", mappedStatement.getKeyProperties()))
-                                    .keyColumn(StringUtils.join(",", mappedStatement.getKeyColumns()))
-                                    .databaseId(mappedStatement.getDatabaseId()).lang(mappedStatement.getLang())
-                                    .resultOrdered(mappedStatement.isResultOrdered())
-                                    .resultSets(StringUtils.join(",", mappedStatement.getResultSets()))
-                                    .resultMaps(mappedStatement.getResultMaps())
-                                    .resultSetType(mappedStatement.getResultSetType())
-                                    .flushCacheRequired(mappedStatement.isFlushCacheRequired())
-                                    .useCache(mappedStatement.isUseCache()).cache(mappedStatement.getCache());
-                            statementBuilder.parameterMap(mappedStatement.getParameterMap());
-                            configuration.addMappedStatement(statementBuilder.build());
+                                statementBuilder = new MappedStatement.Builder(configuration,
+                                        aClass.getSimpleName() + "." + method.getName(), mappedStatement.getSqlSource(),
+                                        mappedStatement.getSqlCommandType()).resource(mappedStatement.getResource())
+                                        .fetchSize(mappedStatement.getFetchSize()).timeout(mappedStatement.getTimeout())
+                                        .statementType(mappedStatement.getStatementType())
+                                        .keyGenerator(mappedStatement.getKeyGenerator())
+                                        .keyProperty(StringUtils.join(",", Optional.ofNullable(mappedStatement.getKeyProperties()).orElse(new String[0])))
+                                        .keyColumn(StringUtils.join(",", Optional.ofNullable(mappedStatement.getKeyColumns()).orElse(new String[0])))
+                                        .databaseId(mappedStatement.getDatabaseId()).lang(mappedStatement.getLang())
+                                        .resultOrdered(mappedStatement.isResultOrdered())
+                                        .resultSets(StringUtils.join(",", Optional.ofNullable(mappedStatement.getResultSets()).orElse(new String[0])))
+                                        .resultMaps(mappedStatement.getResultMaps())
+                                        .resultSetType(mappedStatement.getResultSetType())
+                                        .flushCacheRequired(mappedStatement.isFlushCacheRequired())
+                                        .useCache(mappedStatement.isUseCache()).cache(mappedStatement.getCache());
+                                statementBuilder.parameterMap(mappedStatement.getParameterMap());
+                                configuration.addMappedStatement(statementBuilder.build());
+                            }
+                        } catch (Exception e) {
+                            LOGGER.info("添加实体类命名空间statement失败", e);
                         }
                     }
                 }

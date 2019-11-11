@@ -1,5 +1,6 @@
 package cn.sexycode.myjpa.session;
 
+import cn.sexycode.myjpa.binding.ModelProxy;
 import org.apache.ibatis.session.SqlSession;
 
 import javax.persistence.EntityManager;

@@ -18,12 +18,13 @@ public class MyjpaTest {
         EntityManager em = entityManagerFactory.createEntityManager();
         em.getTransaction().begin();
         User user = new User();
+        user.setId("1");
         user.setName("qzz");
         //以上两行为新建状态
         //托管状态
         em.persist(user);
         //事务提交或调用flush()方法后会同步到数据库
-        em.getTransaction().commit();
+//        em.getTransaction().commit();
         //根据主键获取对象
         //System.err.println(em.find(User.class,1));
         //System.err.println(em.getReference(User.class,1));

@@ -487,113 +487,125 @@ public class MyjpaConfiguration extends Configuration {
     public boolean hasKeyGenerator(String id) {
         return keyGenerators.containsKey(id);
     }
-
+    @Override
     public void addCache(Cache cache) {
         caches.put(cache.getId(), cache);
     }
-
+    @Override
     public Collection<String> getCacheNames() {
         return caches.keySet();
     }
-
+    @Override
     public Collection<Cache> getCaches() {
         return caches.values();
     }
-
+    @Override
     public Cache getCache(String id) {
-        return caches.get(id);
+        return configuration.getCache(id);
     }
-
+    @Override
     public boolean hasCache(String id) {
-        return caches.containsKey(id);
+        return configuration.hasCache(id);
     }
-
+    @Override
     public void addResultMap(ResultMap rm) {
-        resultMaps.put(rm.getId(), rm);
-        checkLocallyForDiscriminatedNestedResultMaps(rm);
-        checkGloballyForDiscriminatedNestedResultMaps(rm);
+        configuration.addResultMap(rm);
     }
-
+    @Override
     public Collection<String> getResultMapNames() {
-        return resultMaps.keySet();
+        return configuration.getResultMapNames();
     }
-
+    @Override
     public Collection<ResultMap> getResultMaps() {
-        return resultMaps.values();
+        return configuration.getResultMaps();
     }
-
+    @Override
     public ResultMap getResultMap(String id) {
-        return resultMaps.get(id);
+        return configuration.getResultMap(id);
     }
-
+    @Override
     public boolean hasResultMap(String id) {
-        return resultMaps.containsKey(id);
+        return configuration.hasResultMap(id);
     }
 
+    @Override
     public void addParameterMap(ParameterMap pm) {
-        parameterMaps.put(pm.getId(), pm);
+        configuration.addParameterMap(pm);
     }
 
+    @Override
     public Collection<String> getParameterMapNames() {
-        return parameterMaps.keySet();
+        return configuration.getParameterMapNames();
     }
 
+    @Override
     public Collection<ParameterMap> getParameterMaps() {
-        return parameterMaps.values();
+        return configuration.getParameterMaps();
     }
 
+    @Override
     public ParameterMap getParameterMap(String id) {
-        return parameterMaps.get(id);
+        return configuration.getParameterMap(id);
     }
 
+    @Override
     public boolean hasParameterMap(String id) {
-        return parameterMaps.containsKey(id);
+        return configuration.hasParameterMap(id);
     }
 
+    @Override
     public void addMappedStatement(MappedStatement ms) {
-        mappedStatements.put(ms.getId(), ms);
+        configuration.addMappedStatement(ms);
     }
 
+    @Override
     public Collection<String> getMappedStatementNames() {
-        buildAllStatements();
-        return mappedStatements.keySet();
+        return configuration.getMappedStatementNames();
     }
 
+    @Override
     public Collection<MappedStatement> getMappedStatements() {
-        buildAllStatements();
-        return mappedStatements.values();
+        return configuration.getMappedStatements();
     }
 
+    @Override
     public Collection<XMLStatementBuilder> getIncompleteStatements() {
-        return incompleteStatements;
+        return configuration.getIncompleteStatements();
     }
 
+    @Override
     public void addIncompleteStatement(XMLStatementBuilder incompleteStatement) {
-        incompleteStatements.add(incompleteStatement);
+        configuration.addIncompleteStatement(incompleteStatement);
     }
 
+    @Override
     public Collection<CacheRefResolver> getIncompleteCacheRefs() {
-        return incompleteCacheRefs;
+        return configuration.getIncompleteCacheRefs();
     }
 
+    @Override
     public void addIncompleteCacheRef(CacheRefResolver incompleteCacheRef) {
-        incompleteCacheRefs.add(incompleteCacheRef);
+        configuration.addIncompleteCacheRef(incompleteCacheRef);
     }
 
+    @Override
     public Collection<ResultMapResolver> getIncompleteResultMaps() {
-        return incompleteResultMaps;
+        return configuration.getIncompleteResultMaps();
     }
 
+    @Override
     public void addIncompleteResultMap(ResultMapResolver resultMapResolver) {
-        incompleteResultMaps.add(resultMapResolver);
+        configuration.addIncompleteResultMap(resultMapResolver);
     }
 
+    @Override
     public void addIncompleteMethod(MethodResolver builder) {
-        incompleteMethods.add(builder);
+        configuration.addIncompleteMethod(builder);
     }
 
+    @Override
     public Collection<MethodResolver> getIncompleteMethods() {
-        return incompleteMethods;
+        return configuration.getIncompleteMethods();
     }
 
     @Override
@@ -606,126 +618,54 @@ public class MyjpaConfiguration extends Configuration {
         return configuration.getMappedStatement(id, validateIncompleteStatements);
     }
 
+    @Override
     public Map<String, XNode> getSqlFragments() {
-        return sqlFragments;
+        return configuration.getSqlFragments();
     }
 
+    @Override
     public void addInterceptor(Interceptor interceptor) {
-        interceptorChain.addInterceptor(interceptor);
+        configuration.addInterceptor(interceptor);
     }
 
+    @Override
     public void addMappers(String packageName, Class<?> superType) {
         mybatisMapperRegistry.addMappers(packageName, superType);
     }
 
+    @Override
     public void addMappers(String packageName) {
         mybatisMapperRegistry.addMappers(packageName);
     }
 
+    @Override
     public <T> void addMapper(Class<T> type) {
         mybatisMapperRegistry.addMapper(type);
     }
 
+    @Override
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
         return mybatisMapperRegistry.getMapper(type, sqlSession);
     }
 
+    @Override
     public boolean hasMapper(Class<?> type) {
         return mybatisMapperRegistry.hasMapper(type);
     }
 
+    @Override
     public boolean hasStatement(String statementName) {
-        return hasStatement(statementName, true);
+        return configuration.hasStatement(statementName);
     }
 
+    @Override
     public boolean hasStatement(String statementName, boolean validateIncompleteStatements) {
-        if (validateIncompleteStatements) {
-            buildAllStatements();
-        }
-        return mappedStatements.containsKey(statementName);
+        return configuration.hasStatement(statementName,validateIncompleteStatements);
     }
 
+    @Override
     public void addCacheRef(String namespace, String referencedNamespace) {
-        cacheRefMap.put(namespace, referencedNamespace);
+        configuration.addCacheRef(namespace, referencedNamespace);
     }
-
-    /*
-     * Parses all the unprocessed statement nodes in the cache. It is recommended
-     * to call this method once all the mappers are added as it provides fail-fast
-     * statement validation.
-     */
-    protected void buildAllStatements() {
-        if (!incompleteResultMaps.isEmpty()) {
-            synchronized (incompleteResultMaps) {
-                // This always throws a BuilderException.
-                incompleteResultMaps.iterator().next().resolve();
-            }
-        }
-        if (!incompleteCacheRefs.isEmpty()) {
-            synchronized (incompleteCacheRefs) {
-                // This always throws a BuilderException.
-                incompleteCacheRefs.iterator().next().resolveCacheRef();
-            }
-        }
-        if (!incompleteStatements.isEmpty()) {
-            synchronized (incompleteStatements) {
-                // This always throws a BuilderException.
-                incompleteStatements.iterator().next().parseStatementNode();
-            }
-        }
-        if (!incompleteMethods.isEmpty()) {
-            synchronized (incompleteMethods) {
-                // This always throws a BuilderException.
-                incompleteMethods.iterator().next().resolve();
-            }
-        }
-    }
-
-    /*
-     * Extracts namespace from fully qualified statement id.
-     *
-     * @param statementId
-     * @return namespace or null when id does not contain period.
-     */
-    protected String extractNamespace(String statementId) {
-        int lastPeriod = statementId.lastIndexOf('.');
-        return lastPeriod > 0 ? statementId.substring(0, lastPeriod) : null;
-    }
-
-    // Slow but a one time cost. A better solution is welcome.
-    protected void checkGloballyForDiscriminatedNestedResultMaps(ResultMap rm) {
-        if (rm.hasNestedResultMaps()) {
-            for (Map.Entry<String, ResultMap> entry : resultMaps.entrySet()) {
-                Object value = entry.getValue();
-                if (value instanceof ResultMap) {
-                    ResultMap entryResultMap = (ResultMap) value;
-                    if (!entryResultMap.hasNestedResultMaps() && entryResultMap.getDiscriminator() != null) {
-                        Collection<String> discriminatedResultMapNames = entryResultMap.getDiscriminator()
-                                .getDiscriminatorMap().values();
-                        if (discriminatedResultMapNames.contains(rm.getId())) {
-                            entryResultMap.forceNestedResultMaps();
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // Slow but a one time cost. A better solution is welcome.
-    protected void checkLocallyForDiscriminatedNestedResultMaps(ResultMap rm) {
-        if (!rm.hasNestedResultMaps() && rm.getDiscriminator() != null) {
-            for (Map.Entry<String, String> entry : rm.getDiscriminator().getDiscriminatorMap().entrySet()) {
-                String discriminatedResultMapName = entry.getValue();
-                if (hasResultMap(discriminatedResultMapName)) {
-                    ResultMap discriminatedResultMap = resultMaps.get(discriminatedResultMapName);
-                    if (discriminatedResultMap.hasNestedResultMaps()) {
-                        rm.forceNestedResultMaps();
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
 
 }

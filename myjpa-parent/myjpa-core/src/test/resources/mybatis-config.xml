@@ -28,6 +28,6 @@
     </environments>
     <!-- 配置映射文件：用来配置sql语句和结果集类型等 -->
     <mappers>
-        <!--        <mapper resource="UserMapper.xml"/>-->
+        <mapper resource="UserMapper.xml"/>
     </mappers>
 </configuration>

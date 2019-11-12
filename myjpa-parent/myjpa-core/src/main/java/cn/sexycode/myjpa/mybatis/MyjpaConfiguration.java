@@ -45,12 +45,11 @@ import java.util.*;
 public class MyjpaConfiguration extends Configuration {
     private Configuration configuration;
 
-    private Metadata metadata;
 
     private MybatisMapperRegistry mybatisMapperRegistry;
 
     public MyjpaConfiguration() {
-        this((Configuration) null);
+        this(null);
     }
 
     public MyjpaConfiguration(Configuration configuration) {
@@ -60,10 +59,12 @@ public class MyjpaConfiguration extends Configuration {
         this.configuration = configuration;
         mybatisMapperRegistry = new MybatisMapperRegistry(this);
         ObjectUtils.copyProperties(configuration, this);
+
+        mybatisMapperRegistry.initEntityMapper();
     }
 
-    public MyjpaConfiguration(Map properties) {
-        this();
+    public MyjpaConfiguration(Configuration configuration, Map properties) {
+        this(configuration);
         if (!ObjectUtils.isEmpty(properties)) {
             Properties prop = new Properties();
             prop.putAll(properties);
@@ -74,6 +75,7 @@ public class MyjpaConfiguration extends Configuration {
             }
         }
     }
+
 
     public Configuration getConfiguration() {
         return configuration;

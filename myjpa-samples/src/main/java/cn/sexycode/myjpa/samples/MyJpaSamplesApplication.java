@@ -30,6 +30,6 @@ public class MyJpaSamplesApplication {
         //        User user = (User) byFullName;
         //        System.out.println("user: " +user);
         //User.findByFullName
-        System.out.println("user: " + byFullName);
+        System.out.println("user: " + userDao.save(new User()));
     }
 }

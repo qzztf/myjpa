@@ -70,4 +70,8 @@ public class MybatisMapperRegistry extends MapperRegistry {
     public Collection<Class<?>> getMappers() {
         return Collections.unmodifiableCollection(knownMappers.keySet());
     }
+
+    void initEntityMapper() {
+        innerMapperRegistry.getMappers().forEach(this::addMapper);
+    }
 }

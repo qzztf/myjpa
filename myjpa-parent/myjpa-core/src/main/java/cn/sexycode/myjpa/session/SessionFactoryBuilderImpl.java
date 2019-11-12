@@ -130,10 +130,11 @@ public class SessionFactoryBuilderImpl implements SessionFactoryBuilder {
         if (Objects.isNull(sqlSessionFactory)) {
             this.sqlSessionFactory = sqlSessionFactoryBuilder.build(config);
         }
-        return new SessionFactoryImpl(metadata, sqlSessionFactory);
+    return new SessionFactoryImpl(metadata, sqlSessionFactory);
     }
 
     public SessionFactory build(InputStream inputStream, Properties properties) {
-        return new SessionFactoryImpl(metadata, sqlSessionFactoryBuilder.build(inputStream, properties));
+        SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(inputStream, properties);
+        return new SessionFactoryImpl(metadata, sqlSessionFactory);
     }
 }

@@ -96,7 +96,7 @@ public class MyjpaPersistenceProvider implements PersistenceProvider {
             }
             if (sessionFactory != null) {
                 return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, properties)
-                        .sqlSessionFactory(sessionFactory).build((MyjpaConfiguration) getConfig(properties));
+                        .sqlSessionFactory(sessionFactory).build((MyjpaConfiguration) getConfig(sessionFactory.getConfiguration(), properties));
             }
 
             InputStream configStream = Resources
@@ -105,7 +105,7 @@ public class MyjpaPersistenceProvider implements PersistenceProvider {
                 return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, prop).build(configStream, prop);
             }
             return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, properties)
-                    .build(((MyjpaConfiguration) getConfig(properties)));
+                    .build(((MyjpaConfiguration) getConfig(null, properties)));
         } catch (PersistenceException pe) {
             throw pe;
         } catch (Exception e) {
@@ -114,8 +114,8 @@ public class MyjpaPersistenceProvider implements PersistenceProvider {
         }
     }
 
-    private Configuration getConfig(Map properties) {
-        return new MyjpaConfiguration(properties);
+    private Configuration getConfig(Configuration configuration, Map properties) {
+        return new MyjpaConfiguration(configuration, properties);
     }
 
     protected static Map wrap(Map properties) {

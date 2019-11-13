@@ -26,10 +26,11 @@ public class MyJpaSamplesApplication {
     public static void main(String[] args) {
         UserDao userDao = SpringApplication.run(MyJpaSamplesApplication.class, args).getBeanFactory()
                 .getBean(UserDao.class);
-        List<User> byFullName = userDao.findByFullName("1");
+//        List<User> byFullName = userDao.findByFullName("1");
         //        User user = (User) byFullName;
         //        System.out.println("user: " +user);
         //User.findByFullName
+
         System.out.println("user: " + userDao.save(new User()));
     }
 }

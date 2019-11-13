@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.provider.PersistenceProvider;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -76,11 +77,14 @@ public class MyjpaRepositoryImpl<T, ID> implements JpaSpecificationExecutor<T>, 
 
     }
 
+    @Transactional
     @Override
     public <S extends T> S save(S entity) {
-        return null;
+        em.persist(entity);
+        return entity;
     }
 
+    @Transactional
     @Override
     public <S extends T> List<S> saveAll(Iterable<S> entities) {
         return null;

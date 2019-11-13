@@ -43,21 +43,21 @@ public class SessionAdaptor {
                 Method invokeMethod = methodMapping.get(method);
                 if (param.getClass().isAssignableFrom(ModelProxy.class)) {
                     ModelProxy modelProxy = (ModelProxy) param;
-                    return invokeMethod.invoke(session.getSession(), modelProxy.getStatement(), modelProxy.getModel());
+                    return invokeMethod.invoke(session, modelProxy.getStatement(), modelProxy.getModel());
                 } else {
                     String statementId = param.getClass().getCanonicalName() + "." + method;
                     MappedStatement mappedStatement = null;
                     try {
-                        mappedStatement = session.getSession().getConfiguration() .getMappedStatement(statementId);
+                        mappedStatement = session.getConfiguration() .getMappedStatement(statementId);
                     } catch (Exception e) {
                         // ignore;
                         LOGGER.debug("获取MappedStatement失败", e);
                     }
                     if (!ObjectUtils.isEmpty(mappedStatement)){
-                        return invokeMethod.invoke(session.getSession(), statementId, param);
+                        return invokeMethod.invoke(session, statementId, param);
                     }else {
                         statementId = param.getClass().getCanonicalName() + "." + invokeMethod.getName();
-                        return invokeMethod.invoke(session.getSession(), statementId, param);
+                        return invokeMethod.invoke(session, statementId, param);
                     }
                 }
             } catch (IllegalAccessException | InvocationTargetException e) {

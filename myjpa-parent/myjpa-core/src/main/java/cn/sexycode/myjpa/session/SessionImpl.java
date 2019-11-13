@@ -3,6 +3,8 @@ package cn.sexycode.myjpa.session;
 import cn.sexycode.myjpa.query.QueryFactory;
 import cn.sexycode.myjpa.transaction.MyjpaTransactionImpl;
 import cn.sexycode.util.core.factory.BeanFactoryUtil;
+import org.apache.ibatis.mapping.Environment;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.transaction.Transaction;
 
@@ -19,13 +21,13 @@ import java.util.Map;
  * @author qzz
  */
 public class SessionImpl implements Session {
-    private final EntityManagerFactory entityManagerFactory;
+    private final SessionFactory sessionFactory;
 
     private SqlSession sqlSession;
 
-    public SessionImpl(SqlSession sqlSession, EntityManagerFactory entityManagerFactory) {
+    public SessionImpl(SqlSession sqlSession, SessionFactory sessionFactory) {
         this.sqlSession = sqlSession;
-        this.entityManagerFactory = entityManagerFactory;
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
@@ -33,6 +35,10 @@ public class SessionImpl implements Session {
         return sqlSession;
     }
 
+    @Override
+    public Configuration getConfiguration() {
+        return sessionFactory.getConfiguration();
+    }
 
     @Override
     public <T> T find(Class<T> entityClass, Object primaryKey, Map<String, Object> properties) {
@@ -199,14 +205,15 @@ public class SessionImpl implements Session {
 
     @Override
     public EntityTransaction getTransaction() {
-        Transaction transaction = sqlSession.getConfiguration().getEnvironment().getTransactionFactory()
-                .newTransaction(sqlSession.getConnection());
+        Environment environment = getConfiguration().getEnvironment();
+        Transaction transaction = environment.getTransactionFactory()
+                .newTransaction(environment.getDataSource(), null, true);
         return  new MyjpaTransactionImpl(transaction);
     }
 
     @Override
     public EntityManagerFactory getEntityManagerFactory() {
-        return entityManagerFactory;
+        return sessionFactory;
     }
 
     @Override
@@ -216,7 +223,7 @@ public class SessionImpl implements Session {
 
     @Override
     public Metamodel getMetamodel() {
-        return entityManagerFactory.getMetamodel();
+        return sessionFactory.getMetamodel();
     }
 
     @Override

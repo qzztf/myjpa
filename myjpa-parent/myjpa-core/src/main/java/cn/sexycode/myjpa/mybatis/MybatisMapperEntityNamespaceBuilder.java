@@ -68,7 +68,7 @@ public class MybatisMapperEntityNamespaceBuilder extends MapperAnnotationBuilder
                             if (!ObjectUtils.isEmpty(mappedStatement)) {
                                 String id = aClass.getName() + "." + method.getName();
                                 addEntityMappedStatement(id, method, mappedStatement);
-                                id = Optional.of(entity.name()).orElse(aClass.getSimpleName()) + "." + method.getName();
+                                id = Optional.ofNullable(StringUtils.nullIfEmpty(entity.name())).orElse(aClass.getSimpleName()) + "." + method.getName();
                                 addEntityMappedStatement(id, method, mappedStatement);
                             }
                         } catch (Exception e) {

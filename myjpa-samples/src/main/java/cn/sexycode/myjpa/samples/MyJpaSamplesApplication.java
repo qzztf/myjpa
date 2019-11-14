@@ -31,6 +31,8 @@ public class MyJpaSamplesApplication {
         //        System.out.println("user: " +user);
         //User.findByFullName
 
-        System.out.println("user: " + userDao.save(new User()));
+        User user = new User();
+        user.setFullName("qzz");
+        System.out.println("user: " + userDao.save(user));
     }
 }

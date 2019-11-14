@@ -2,7 +2,7 @@ package cn.sexycode.myjpa.session;
 
 import cn.sexycode.myjpa.binding.Metadata;
 import cn.sexycode.myjpa.metamodel.internal.MetamodelImpl;
-import cn.sexycode.myjpa.mybatis.MyjpaConfiguration;
+import cn.sexycode.myjpa.transaction.MyjpaTransactionImpl;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.Executor;
@@ -55,7 +55,7 @@ public class SessionFactoryImpl extends DefaultSqlSessionFactory implements Sess
 
     @Override
     public EntityManager createEntityManager() {
-        return new SessionImpl(openSession(), this);
+        return (EntityManager) openSession();
     }
 
     @Override
@@ -174,7 +174,8 @@ public class SessionFactoryImpl extends DefaultSqlSessionFactory implements Sess
             final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
             tx = transactionFactory.newTransaction(environment.getDataSource(), level, autoCommit);
             final Executor executor = configuration.newExecutor(tx, execType);
-            return new DefaultSqlSession(configuration, executor, autoCommit);
+            return new SessionImpl(new DefaultSqlSession(configuration, executor, autoCommit), this, new MyjpaTransactionImpl(tx));
+//            return new DefaultSqlSession(configuration, executor, autoCommit);
         } catch (Exception e) {
             closeTransaction(tx); // may have fetched a connection so lets call close()
             throw ExceptionFactory.wrapException("Error opening session.  Cause: " + e, e);
@@ -197,7 +198,8 @@ public class SessionFactoryImpl extends DefaultSqlSessionFactory implements Sess
             final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
             final Transaction tx = transactionFactory.newTransaction(connection);
             final Executor executor = configuration.newExecutor(tx, execType);
-            return new DefaultSqlSession(configuration, executor, autoCommit);
+//            return new DefaultSqlSession(configuration, executor, autoCommit);
+            return new SessionImpl(new DefaultSqlSession(configuration, executor, autoCommit), this, new MyjpaTransactionImpl(tx));
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error opening session.  Cause: " + e, e);
         } finally {

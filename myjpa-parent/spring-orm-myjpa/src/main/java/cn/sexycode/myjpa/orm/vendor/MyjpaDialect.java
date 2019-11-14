@@ -84,7 +84,8 @@ public class MyjpaDialect extends DefaultJpaDialect {
         // As of Spring 4.1.2, we're using a custom ConnectionHandle for lazy retrieval
         // of the underlying Connection (allowing for deferred internal transaction begin
         // within the EclipseLink EntityManager)
-        return new MyjpaConnectionHandle(entityManager);
+//        return new MyjpaConnectionHandle(entityManager);
+        return null;
     }
 
     private static class SessionTransactionData {

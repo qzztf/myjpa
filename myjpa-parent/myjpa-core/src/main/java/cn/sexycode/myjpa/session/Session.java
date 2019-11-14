@@ -235,6 +235,9 @@ public interface Session extends EntityManager,SqlSession, Closeable {
         return getSession().getMapper(type);
     }
 
+    /**
+     * @return Connection
+     */
     @Override
     default Connection getConnection() {
         return getSession().getConnection();

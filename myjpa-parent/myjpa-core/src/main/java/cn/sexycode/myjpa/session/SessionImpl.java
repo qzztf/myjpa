@@ -1,6 +1,7 @@
 package cn.sexycode.myjpa.session;
 
 import cn.sexycode.myjpa.query.QueryFactory;
+import cn.sexycode.myjpa.transaction.MyjpaTransaction;
 import cn.sexycode.myjpa.transaction.MyjpaTransactionImpl;
 import cn.sexycode.util.core.factory.BeanFactoryUtil;
 import org.apache.ibatis.mapping.Environment;
@@ -14,6 +15,7 @@ import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.metamodel.Metamodel;
+import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
@@ -23,11 +25,14 @@ import java.util.Map;
 public class SessionImpl implements Session {
     private final SessionFactory sessionFactory;
 
+    private final MyjpaTransaction myjpaTransaction;
+
     private SqlSession sqlSession;
 
-    public SessionImpl(SqlSession sqlSession, SessionFactory sessionFactory) {
+    public SessionImpl(SqlSession sqlSession, SessionFactory sessionFactory, MyjpaTransaction myjpaTransaction) {
         this.sqlSession = sqlSession;
         this.sessionFactory = sessionFactory;
+        this.myjpaTransaction = myjpaTransaction;
     }
 
     @Override
@@ -194,7 +199,7 @@ public class SessionImpl implements Session {
 
     @Override
     public <T> T unwrap(Class<T> cls) {
-        if (this.getClass().isAssignableFrom(cls)) {
+        if (cls.isAssignableFrom(this.getClass())) {
             return ((T) this);
         }
         throw new PersistenceException("cannot unwrap");
@@ -208,10 +213,7 @@ public class SessionImpl implements Session {
 
     @Override
     public EntityTransaction getTransaction() {
-        Environment environment = getConfiguration().getEnvironment();
-        Transaction transaction = environment.getTransactionFactory()
-                .newTransaction(environment.getDataSource(), null, true);
-        return  new MyjpaTransactionImpl(transaction);
+        return  myjpaTransaction;
     }
 
     @Override

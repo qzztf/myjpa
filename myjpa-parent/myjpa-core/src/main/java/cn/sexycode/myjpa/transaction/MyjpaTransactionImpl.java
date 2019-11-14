@@ -2,6 +2,8 @@ package cn.sexycode.myjpa.transaction;
 
 import org.apache.ibatis.transaction.Transaction;
 
+import javax.persistence.PersistenceException;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
@@ -19,11 +21,16 @@ public class MyjpaTransactionImpl implements MyjpaTransaction {
     }
 
     @Override
+    public Connection getConnection() throws SQLException {
+        return mybatisTransaction.getConnection();
+    }
+
+    @Override
     public void commit() {
         try {
             mybatisTransaction.commit();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new PersistenceException(e);
         }
     }
 
@@ -34,6 +41,16 @@ public class MyjpaTransactionImpl implements MyjpaTransaction {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void close() throws SQLException {
+        mybatisTransaction.close();
+    }
+
+    @Override
+    public Integer getTimeout() throws SQLException {
+        return mybatisTransaction.getTimeout();
     }
 
     @Override

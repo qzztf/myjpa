@@ -80,7 +80,8 @@ public class MyjpaRepositoryImpl<T, ID> implements JpaSpecificationExecutor<T>, 
     @Transactional
     @Override
     public <S extends T> S save(S entity) {
-        em.persist(entity);
+        ModelProxy findModelProxy = new ModelProxy<>(entity, repositoryInterface.getCanonicalName() + ".save");
+        em.persist(findModelProxy);
         return entity;
     }
 

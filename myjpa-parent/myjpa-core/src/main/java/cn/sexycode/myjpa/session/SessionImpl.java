@@ -194,7 +194,10 @@ public class SessionImpl implements Session {
 
     @Override
     public <T> T unwrap(Class<T> cls) {
-        return null;
+        if (this.getClass().isAssignableFrom(cls)) {
+            return ((T) this);
+        }
+        throw new PersistenceException("cannot unwrap");
     }
 
     @Override

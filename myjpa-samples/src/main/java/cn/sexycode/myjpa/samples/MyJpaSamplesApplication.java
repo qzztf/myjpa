@@ -34,5 +34,6 @@ public class MyJpaSamplesApplication {
         User user = new User();
         user.setFullName("qzz");
         System.out.println("user: " + userDao.save(user));
+        System.out.println("user: " + userDao.findById("3"));
     }
 }

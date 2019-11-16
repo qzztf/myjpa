@@ -4,11 +4,11 @@ spring:
     username: root
     password: 123456
 
-logging:
-  level:
-    org.springframework.data: debug
-    org.springframework.orm: debug
-    org.mybatis: debug
-    root: info
+#logging:
+#  level:
+#    org.springframework.data: debug
+#    org.springframework.orm: debug
+#    org.mybatis: debug
+#    root: info
 mybatis-plus:
   mapper-locations: UserMapper.xml

@@ -28,8 +28,7 @@ public class MybatisQueryImpl<R> implements TypedQuery<R> {
         this.qlString = qlString;
 		this.resultClass = resultClass;
 		this.session = session;
-        SqlSession sqlSession = session.getSession();
-        this.mappedStatement = sqlSession.getConfiguration().getMappedStatement(qlString);
+        this.mappedStatement = session.getConfiguration().getMappedStatement(qlString);
         Metamodel metamodel = session.getEntityManagerFactory().getMetamodel();
         //		EntityType<R> entity = metamodel.entity(resultClass);
 	}

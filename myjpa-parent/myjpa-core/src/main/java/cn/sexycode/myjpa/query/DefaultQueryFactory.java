@@ -24,10 +24,9 @@ public class DefaultQueryFactory implements QueryFactory {
 
     @Override
     public Query createNamedQuery(Session session, String name) {
-        SqlSession sqlSession = session.getSession();
         MappedStatement mappedStatement = null;
         try {
-            mappedStatement = sqlSession.getConfiguration().getMappedStatement(name);
+            mappedStatement = session.getConfiguration().getMappedStatement(name);
         } catch (Exception e) {
             LOGGER.debug("获取MappedStatement失败", e);
             return null;
@@ -40,8 +39,7 @@ public class DefaultQueryFactory implements QueryFactory {
 
     @Override
     public <T> TypedQuery<T> createNamedQuery(Session session, String name, Class<T> resultClass) {
-        SqlSession sqlSession = session.getSession();
-        MappedStatement mappedStatement = sqlSession.getConfiguration().getMappedStatement(name);
+        MappedStatement mappedStatement = session.getConfiguration().getMappedStatement(name);
         if (ObjectUtils.isEmpty(mappedStatement)) {
             return null;
         }

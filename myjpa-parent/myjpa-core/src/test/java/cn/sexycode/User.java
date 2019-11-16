@@ -9,6 +9,8 @@ import javax.persistence.Table;
 public class User {
     @Column(name = "full_name")
     private String name;
+    @Column(name = "id")
+    private String id;
 
     public void setName(String name) {
         this.name = name;
@@ -16,5 +18,13 @@ public class User {
 
     public String getName() {
         return name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

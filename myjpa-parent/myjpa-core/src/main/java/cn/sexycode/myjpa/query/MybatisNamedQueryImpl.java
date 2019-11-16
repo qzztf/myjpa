@@ -30,8 +30,10 @@ public class MybatisNamedQueryImpl<R> implements TypedQuery<R> {
         this.name = name;
         this.resultClass = resultClass;
         this.session = session;
-        SqlSession sqlSession = session.getSession();
-        this.mappedStatement = sqlSession.getConfiguration().getMappedStatement(name);
+        this.mappedStatement = session.getConfiguration().getMappedStatement(name);
+        mappedStatement.getParameterMap().getParameterMappings().forEach(mapping -> {
+            mapping.getExpression();
+        });
         Metamodel metamodel = session.getEntityManagerFactory().getMetamodel();
         //		EntityType<R> entity = metamodel.entity(resultClass);
     }
@@ -42,7 +44,7 @@ public class MybatisNamedQueryImpl<R> implements TypedQuery<R> {
 
     @Override
     public List<R> getResultList() {
-        return null;
+        return session.selectList(mappedStatement.getId(), new HashMap<>(0));
     }
 
     @Override
@@ -87,37 +89,37 @@ public class MybatisNamedQueryImpl<R> implements TypedQuery<R> {
 
     @Override
     public <T> TypedQuery<R> setParameter(Parameter<T> param, T value) {
-        return null;
+        return this;
     }
 
     @Override
     public TypedQuery<R> setParameter(Parameter<Calendar> param, Calendar value, TemporalType temporalType) {
-        return null;
+        return this;
     }
 
     @Override
     public TypedQuery<R> setParameter(Parameter<Date> param, Date value, TemporalType temporalType) {
-        return null;
+        return this;
     }
 
     @Override
     public TypedQuery<R> setParameter(String name, Object value) {
-        return null;
+        return this;
     }
 
     @Override
     public TypedQuery<R> setParameter(String name, Calendar value, TemporalType temporalType) {
-        return null;
+        return this;
     }
 
     @Override
     public TypedQuery<R> setParameter(String name, Date value, TemporalType temporalType) {
-        return null;
+        return this;
     }
 
     @Override
     public TypedQuery<R> setParameter(int position, Object value) {
-        return null;
+        return this;
     }
 
     @Override
@@ -132,7 +134,7 @@ public class MybatisNamedQueryImpl<R> implements TypedQuery<R> {
 
     @Override
     public Set<Parameter<?>> getParameters() {
-        return null;
+        return new HashSet<>(parameters);
     }
 
     @Override

@@ -4,6 +4,7 @@ import cn.sexycode.myjpa.AvailableSettings;
 import cn.sexycode.myjpa.binding.*;
 import cn.sexycode.myjpa.boot.BootstrapContextImpl;
 import cn.sexycode.myjpa.mybatis.MyjpaConfiguration;
+import cn.sexycode.myjpa.mybatis.SqlSessionFactoryBuilder;
 import cn.sexycode.sql.dialect.DialectFactory;
 import cn.sexycode.sql.dialect.function.SQLFunction;
 import cn.sexycode.sql.jdbc.JdbcEnvironment;
@@ -15,7 +16,6 @@ import cn.sexycode.util.core.service.Service;
 import cn.sexycode.util.core.service.ServiceRegistry;
 import cn.sexycode.util.core.service.StandardServiceRegistry;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,10 +130,11 @@ public class SessionFactoryBuilderImpl implements SessionFactoryBuilder {
         if (Objects.isNull(sqlSessionFactory)) {
             this.sqlSessionFactory = sqlSessionFactoryBuilder.build(config);
         }
-        return new SessionFactoryImpl(metadata, sqlSessionFactory);
+    return new SessionFactoryImpl(metadata, sqlSessionFactory, config);
     }
 
     public SessionFactory build(InputStream inputStream, Properties properties) {
-        return new SessionFactoryImpl(metadata, sqlSessionFactoryBuilder.build(inputStream, properties));
+        SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(inputStream, properties);
+        return new SessionFactoryImpl(metadata, sqlSessionFactory);
     }
 }

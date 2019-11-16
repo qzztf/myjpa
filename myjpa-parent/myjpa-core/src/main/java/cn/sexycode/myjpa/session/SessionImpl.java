@@ -1,8 +1,11 @@
 package cn.sexycode.myjpa.session;
 
 import cn.sexycode.myjpa.query.QueryFactory;
+import cn.sexycode.myjpa.transaction.MyjpaTransaction;
 import cn.sexycode.myjpa.transaction.MyjpaTransactionImpl;
 import cn.sexycode.util.core.factory.BeanFactoryUtil;
+import org.apache.ibatis.mapping.Environment;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.transaction.Transaction;
 
@@ -12,6 +15,7 @@ import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.metamodel.Metamodel;
+import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
@@ -19,13 +23,16 @@ import java.util.Map;
  * @author qzz
  */
 public class SessionImpl implements Session {
-    private final EntityManagerFactory entityManagerFactory;
+    private final SessionFactory sessionFactory;
+
+    private final MyjpaTransaction myjpaTransaction;
 
     private SqlSession sqlSession;
 
-    public SessionImpl(SqlSession sqlSession, EntityManagerFactory entityManagerFactory) {
+    public SessionImpl(SqlSession sqlSession, SessionFactory sessionFactory, MyjpaTransaction myjpaTransaction) {
         this.sqlSession = sqlSession;
-        this.entityManagerFactory = entityManagerFactory;
+        this.sessionFactory = sessionFactory;
+        this.myjpaTransaction = myjpaTransaction;
     }
 
     @Override
@@ -36,6 +43,10 @@ public class SessionImpl implements Session {
     @Override
     public SessionFactory getSessionFactory() {
         return (SessionFactory) entityManagerFactory;
+    }
+    @Override
+    public Configuration getConfiguration() {
+        return sessionFactory.getConfiguration();
     }
 
     @Override
@@ -192,7 +203,10 @@ public class SessionImpl implements Session {
 
     @Override
     public <T> T unwrap(Class<T> cls) {
-        return null;
+        if (cls.isAssignableFrom(this.getClass())) {
+            return ((T) this);
+        }
+        throw new PersistenceException("cannot unwrap");
     }
 
     @Override
@@ -203,14 +217,12 @@ public class SessionImpl implements Session {
 
     @Override
     public EntityTransaction getTransaction() {
-        Transaction transaction = sqlSession.getConfiguration().getEnvironment().getTransactionFactory()
-                .newTransaction(sqlSession.getConnection());
-        return  new MyjpaTransactionImpl(transaction);
+        return  myjpaTransaction;
     }
 
     @Override
     public EntityManagerFactory getEntityManagerFactory() {
-        return entityManagerFactory;
+        return sessionFactory;
     }
 
     @Override
@@ -220,7 +232,7 @@ public class SessionImpl implements Session {
 
     @Override
     public Metamodel getMetamodel() {
-        return entityManagerFactory.getMetamodel();
+        return sessionFactory.getMetamodel();
     }
 
     @Override

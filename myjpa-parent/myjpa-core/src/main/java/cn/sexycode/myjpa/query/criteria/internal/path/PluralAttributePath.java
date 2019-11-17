@@ -8,6 +8,8 @@ package cn.sexycode.myjpa.query.criteria.internal.path;
 
 import cn.sexycode.myjpa.query.criteria.internal.CriteriaBuilderImpl;
 import cn.sexycode.myjpa.query.criteria.internal.PathSource;
+import cn.sexycode.myjpa.session.SessionFactory;
+import cn.sexycode.util.core.exception.AssertionFailure;
 
 import javax.persistence.metamodel.*;
 import java.io.Serializable;
@@ -21,19 +23,19 @@ import java.io.Serializable;
 public class PluralAttributePath<X> extends AbstractPathImpl<X> implements Serializable {
     private final PluralAttribute<?, X, ?> attribute;
 
-    private final CollectionPersister persister;
+//    private final CollectionPersister persister;
 
     public PluralAttributePath(CriteriaBuilderImpl criteriaBuilder, PathSource source,
             PluralAttribute<?, X, ?> attribute) {
         super(criteriaBuilder, attribute.getJavaType(), source);
         this.attribute = attribute;
-        this.persister = resolvePersister(criteriaBuilder, attribute);
+//        this.persister = resolvePersister(criteriaBuilder, attribute);
     }
 
-    private CollectionPersister resolvePersister(CriteriaBuilderImpl criteriaBuilder, PluralAttribute attribute) {
-        SessionFactoryImplementor sfi = criteriaBuilder.getEntityManagerFactory().getSessionFactory();
+   /* private CollectionPersister resolvePersister(CriteriaBuilderImpl criteriaBuilder, PluralAttribute attribute) {
+        SessionFactory sfi = criteriaBuilder.getEntityManagerFactory();
         return sfi.getCollectionPersister(resolveRole(attribute));
-    }
+    }*/
 
     private String resolveRole(PluralAttribute attribute) {
         switch (attribute.getDeclaringType().getPersistenceType()) {
@@ -93,11 +95,11 @@ public class PluralAttributePath<X> extends AbstractPathImpl<X> implements Seria
         return attribute;
     }
 
-    @SuppressWarnings({ "UnusedDeclaration" })
+   /* @SuppressWarnings({ "UnusedDeclaration" })
     public CollectionPersister getPersister() {
         return persister;
     }
-
+*/
     @Override
     protected boolean canBeDereferenced() {
         // cannot be dereferenced

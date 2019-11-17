@@ -1,9 +1,3 @@
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later.
- * See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
- */
 package cn.sexycode.myjpa.query.criteria.internal;
 
 import cn.sexycode.myjpa.query.criteria.HibernateCriteriaBuilder;
@@ -13,6 +7,7 @@ import cn.sexycode.myjpa.query.criteria.internal.path.PluralAttributePath;
 import cn.sexycode.myjpa.query.criteria.internal.path.RootImpl;
 import cn.sexycode.myjpa.query.criteria.internal.predicate.*;
 import cn.sexycode.myjpa.query.criteria.internal.predicate.ComparisonPredicate.ComparisonOperator;
+import cn.sexycode.myjpa.session.SessionFactory;
 import cn.sexycode.myjpa.session.SessionFactoryImpl;
 import cn.sexycode.util.core.collection.CollectionUtils;
 import cn.sexycode.util.core.str.StringUtils;
@@ -31,9 +26,9 @@ import java.util.function.BiFunction;
  * @author Steve Ebersole
  */
 public class CriteriaBuilderImpl implements HibernateCriteriaBuilder, Serializable {
-    private final SessionFactoryImpl sessionFactory;
+    private final SessionFactory sessionFactory;
 
-    public CriteriaBuilderImpl(SessionFactoryImpl sessionFactory) {
+    public CriteriaBuilderImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
@@ -42,7 +37,7 @@ public class CriteriaBuilderImpl implements HibernateCriteriaBuilder, Serializab
      *
      * @return The underlying {@link SessionFactoryImpl}
      */
-    public SessionFactoryImpl getEntityManagerFactory() {
+    public SessionFactory getEntityManagerFactory() {
         return sessionFactory;
     }
 

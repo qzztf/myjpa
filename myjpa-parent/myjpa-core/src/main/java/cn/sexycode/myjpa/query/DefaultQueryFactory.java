@@ -1,5 +1,7 @@
 package cn.sexycode.myjpa.query;
 
+import cn.sexycode.myjpa.query.criteria.internal.compile.CompilableCriteria;
+import cn.sexycode.myjpa.query.criteria.internal.compile.CriteriaCompiler;
 import cn.sexycode.myjpa.session.Session;
 import cn.sexycode.util.core.object.ObjectUtils;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -53,6 +55,7 @@ public class DefaultQueryFactory implements QueryFactory {
 
     @Override
     public <T> TypedQuery<T> createQuery(Session session, CriteriaQuery<T> criteriaQuery) {
-        return null;
+        CriteriaCompiler criteriaCompiler = new CriteriaCompiler(session);
+        return (TypedQuery<T>) criteriaCompiler.compile( (CompilableCriteria) criteriaQuery );
     }
 }

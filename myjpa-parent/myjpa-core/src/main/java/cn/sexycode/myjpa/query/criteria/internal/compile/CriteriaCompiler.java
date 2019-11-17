@@ -5,6 +5,7 @@ import cn.sexycode.myjpa.session.Session;
 import cn.sexycode.myjpa.session.SessionFactory;
 import cn.sexycode.sql.dialect.Dialect;
 import cn.sexycode.sql.mapping.ast.Clause;
+import cn.sexycode.sql.type.Type;
 import cn.sexycode.util.core.collection.Stack;
 import cn.sexycode.util.core.collection.StandardStack;
 import cn.sexycode.util.core.service.ServiceRegistry;
@@ -63,6 +64,7 @@ public class CriteriaCompiler implements Serializable {
 
             private final Stack<FunctionExpression> functionContextStack = new StandardStack<>();
 
+            @Override
             public String generateAlias() {
                 return "generatedAlias" + aliasCount++;
             }
@@ -103,17 +105,21 @@ public class CriteriaCompiler implements Serializable {
                 return parameterInfo;
             }
 
+            @Override
             public String registerLiteralParameterBinding(final Object literal, final Class javaType) {
                 final String parameterName = generateParameterName();
                 final ImplicitParameterBinding binding = new ImplicitParameterBinding() {
+                    @Override
                     public String getParameterName() {
                         return parameterName;
                     }
 
+                    @Override
                     public Class getJavaType() {
                         return javaType;
                     }
 
+                    @Override
                     public void bind(TypedQuery typedQuery) {
                         typedQuery.setParameter(parameterName, literal);
                     }
@@ -123,15 +129,15 @@ public class CriteriaCompiler implements Serializable {
                 return parameterName;
             }
 
-            /*public String getCastType(Class javaType) {
-                SessionFactoryImplementor factory = entityManager.getFactory();
+            public String getCastType(Class javaType) {
+                SessionFactory factory = entityManager.getSessionFactory();
                 Type hibernateType = factory.getTypeResolver().heuristicType(javaType.getName());
                 if (hibernateType == null) {
                     throw new IllegalArgumentException(
                             "Could not convert java type [" + javaType.getName() + "] to Hibernate type");
                 }
                 return hibernateType.getName();
-            }*/
+            }
 
             @Override
             public Dialect getDialect() {

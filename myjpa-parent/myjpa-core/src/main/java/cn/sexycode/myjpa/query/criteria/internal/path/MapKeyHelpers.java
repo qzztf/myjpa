@@ -1,9 +1,3 @@
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later.
- * See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
- */
 package cn.sexycode.myjpa.query.criteria.internal.path;
 
 import cn.sexycode.myjpa.query.criteria.internal.CriteriaBuilderImpl;
@@ -11,6 +5,7 @@ import cn.sexycode.myjpa.query.criteria.internal.MapJoinImplementor;
 import cn.sexycode.myjpa.query.criteria.internal.PathImplementor;
 import cn.sexycode.myjpa.query.criteria.internal.PathSource;
 import cn.sexycode.myjpa.query.criteria.internal.compile.RenderingContext;
+import cn.sexycode.myjpa.session.SessionFactory;
 
 import javax.persistence.metamodel.*;
 import java.io.Serializable;
@@ -169,9 +164,9 @@ public class MapKeyHelpers {
     public static class MapKeyAttribute<K> implements SingularAttribute<Map<K, ?>, K>, Bindable<K>, Serializable {
         private final MapAttribute<?, K, ?> attribute;
 
-        private final CollectionPersister mapPersister;
+//        private final CollectionPersister mapPersister;
 
-        private final org.hibernate.type.Type mapKeyType;
+//        private final  Type mapKeyType;
 
         private final Type<K> jpaType;
 
@@ -179,7 +174,7 @@ public class MapKeyHelpers {
 
         private final Class<K> jpaBinableJavaType;
 
-        private final PersistentAttributeType persistentAttributeType;
+//        private final PersistentAttributeType persistentAttributeType;
 
         public MapKeyAttribute(CriteriaBuilderImpl criteriaBuilder, MapAttribute<?, K, ?> attribute) {
             this.attribute = attribute;
@@ -190,19 +185,19 @@ public class MapKeyHelpers {
                     : BindableType.SINGULAR_ATTRIBUTE;
 
             String guessedRoleName = determineRole(attribute);
-            SessionFactoryImplementor sfi = criteriaBuilder.getEntityManagerFactory().getSessionFactory();
-            mapPersister = sfi.getCollectionPersister(guessedRoleName);
+            SessionFactory sfi = criteriaBuilder.getEntityManagerFactory() ;
+           /* mapPersister = sfi.getCollectionPersister(guessedRoleName);
             if (mapPersister == null) {
                 throw new IllegalStateException("Could not locate collection persister [" + guessedRoleName + "]");
             }
             mapKeyType = mapPersister.getIndexType();
             if (mapKeyType == null) {
                 throw new IllegalStateException("Could not determine map-key type [" + guessedRoleName + "]");
-            }
+            }*/
 
-            this.persistentAttributeType = mapKeyType.isEntityType()
+            /*this.persistentAttributeType = mapKeyType.isEntityType()
                     ? PersistentAttributeType.MANY_TO_ONE
-                    : mapKeyType.isComponentType() ? PersistentAttributeType.EMBEDDED : PersistentAttributeType.BASIC;
+                    : mapKeyType.isComponentType() ? PersistentAttributeType.EMBEDDED : PersistentAttributeType.BASIC;*/
         }
 
         private String determineRole(MapAttribute<?, K, ?> attribute) {
@@ -217,7 +212,8 @@ public class MapKeyHelpers {
 
         @Override
         public PersistentAttributeType getPersistentAttributeType() {
-            return persistentAttributeType;
+            return null;
+//            return persistentAttributeType;
         }
 
         @Override
@@ -239,7 +235,8 @@ public class MapKeyHelpers {
 
         @Override
         public boolean isAssociation() {
-            return mapKeyType.isEntityType();
+//            return mapKeyType.isEntityType();
+            return false;
         }
 
         @Override

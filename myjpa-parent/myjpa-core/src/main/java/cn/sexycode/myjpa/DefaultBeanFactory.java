@@ -1,5 +1,7 @@
 package cn.sexycode.myjpa;
 
+import cn.sexycode.myjpa.query.DefaultQueryFactory;
+import cn.sexycode.myjpa.query.QueryFactory;
 import cn.sexycode.sql.dialect.DialectFactory;
 import cn.sexycode.sql.dialect.DialectFactoryImpl;
 import cn.sexycode.sql.dialect.StandardDialectResolver;
@@ -39,6 +41,7 @@ public class DefaultBeanFactory implements BeanFactory {
 
             }
         });
+        put(QueryFactory.class, new DefaultQueryFactory());
     }};
 
     @Override

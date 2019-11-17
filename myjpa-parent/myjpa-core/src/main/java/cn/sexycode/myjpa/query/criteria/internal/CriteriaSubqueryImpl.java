@@ -238,11 +238,11 @@ public class CriteriaSubqueryImpl<T> extends ExpressionImpl<T> implements Subque
 
     @Override
     public String render(RenderingContext renderingContext) {
-        if (criteriaBuilder().getEntityManagerFactory().getSessionFactoryOptions().getJpaCompliance()
+        /*if (criteriaBuilder().getEntityManagerFactory().getSessionFactoryOptions().getJpaCompliance()
                 .isJpaQueryComplianceEnabled() && renderingContext.getClauseStack().getCurrent() == Clause.SELECT) {
             throw new IllegalStateException("The JPA specification does not support subqueries in select clauses. "
                     + "Please disable the JPA query compliance if you want to use this feature.");
-        }
+        }*/
 
         StringBuilder subqueryBuffer = new StringBuilder("(");
         queryStructure.render(subqueryBuffer, renderingContext);

@@ -7,11 +7,14 @@
 package cn.sexycode.myjpa.query.criteria.internal;
 
 import cn.sexycode.myjpa.query.criteria.internal.compile.*;
+import cn.sexycode.myjpa.session.Session;
 import cn.sexycode.sql.mapping.ast.Clause;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.Query;
 import javax.persistence.Tuple;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import javax.persistence.metamodel.EntityType;
 import java.io.Serializable;
@@ -262,58 +265,18 @@ public class CriteriaQueryImpl<T> extends AbstractNode implements CriteriaQuery<
 
         final String jpaqlString = jpaqlBuffer.toString();
 
-        log.debugf("Rendered criteria query -> %s", jpaqlString);
+        log.debug("Rendered criteria query -> {}", jpaqlString);
 
         return new CriteriaInterpretation() {
             @Override
             @SuppressWarnings("unchecked")
-            public QueryImplementor buildCompiledQuery(SharedSessionContractImplementor entityManager,
+            public Query buildCompiledQuery(Session entityManager,
                     final InterpretedParameterMetadata parameterMetadata) {
 
                 final Map<String, Class> implicitParameterTypes = extractTypeMap(
                         parameterMetadata.implicitParameterBindings());
 
-                QueryImplementor<T> jpaqlQuery = entityManager.createQuery(jpaqlString, getResultType(), getSelection(),
-                        new HibernateEntityManagerImplementor.QueryOptions() {
-                            @Override
-                            public List<ValueHandlerFactory.ValueHandler> getValueHandlers() {
-                                SelectionImplementor selection = (SelectionImplementor) queryStructure.getSelection();
-                                return selection == null ? null : selection.getValueHandlers();
-                            }
-
-                            @Override
-                            public Map<String, Class> getNamedParameterExplicitTypes() {
-                                return implicitParameterTypes;
-                            }
-
-                            @Override
-                            public ResultMetadataValidator getResultMetadataValidator() {
-                                return new HibernateEntityManagerImplementor.QueryOptions.ResultMetadataValidator() {
-                                    @Override
-                                    public void validate(Type[] returnTypes) {
-                                        SelectionImplementor selection = (SelectionImplementor) queryStructure
-                                                .getSelection();
-                                        if (selection != null) {
-                                            if (selection.isCompoundSelection()) {
-                                                if (returnTypes.length != selection.getCompoundSelectionItems()
-                                                        .size()) {
-                                                    throw new IllegalStateException(
-                                                            "Number of return values [" + returnTypes.length
-                                                                    + "] did not match expected [" + selection
-                                                                    .getCompoundSelectionItems().size() + "]");
-                                                }
-                                            } else {
-                                                if (returnTypes.length > 1) {
-                                                    throw new IllegalStateException(
-                                                            "Number of return values [" + returnTypes.length
-                                                                    + "] did not match expected [1]");
-                                                }
-                                            }
-                                        }
-                                    }
-                                };
-                            }
-                        });
+                TypedQuery<T> jpaqlQuery = entityManager.createQuery(jpaqlString, getResultType());
 
                 for (ImplicitParameterBinding implicitParameterBinding : parameterMetadata
                         .implicitParameterBindings()) {

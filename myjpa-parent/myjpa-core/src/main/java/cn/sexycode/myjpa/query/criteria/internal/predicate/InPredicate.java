@@ -13,6 +13,8 @@ import cn.sexycode.myjpa.query.criteria.internal.ValueHandlerFactory;
 import cn.sexycode.myjpa.query.criteria.internal.compile.RenderingContext;
 import cn.sexycode.myjpa.query.criteria.internal.expression.LiteralExpression;
 import cn.sexycode.myjpa.query.criteria.internal.expression.ParameterExpressionImpl;
+import cn.sexycode.myjpa.session.SessionFactory;
+import cn.sexycode.sql.type.Type;
 
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Subquery;
@@ -146,8 +148,8 @@ public class InPredicate<T> extends AbstractSimplePredicate implements CriteriaB
             // technically we only need to CAST (afaik) if expression and all values are parameters.
             // but checking for that condition could take long time on a lon value list
             final ParameterExpressionImpl parameterExpression = (ParameterExpressionImpl) exp;
-            final SessionFactoryImplementor sfi = criteriaBuilder().getEntityManagerFactory()
-                    .unwrap(SessionFactoryImplementor.class);
+            final SessionFactory sfi = criteriaBuilder().getEntityManagerFactory()
+                    .unwrap(SessionFactory.class);
             final Type mappingType = sfi.getTypeResolver()
                     .heuristicType(parameterExpression.getParameterType().getName());
             buffer.append("cast(").append(parameterExpression.render(renderingContext)).append(" as ")

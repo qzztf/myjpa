@@ -1,5 +1,6 @@
 package cn.sexycode.myjpa.session;
 
+import cn.sexycode.sql.type.TypeResolver;
 import org.apache.ibatis.session.Configuration;
 
 import cn.sexycode.util.core.factory.BeanFactoryUtil;
@@ -20,5 +21,9 @@ public interface SessionFactory extends EntityManagerFactory, Referenceable, Ser
     Configuration getConfiguration();
     default ServiceRegistry getServiceRegistry(){
         return BeanFactoryUtil.getBeanFactory().getBean(ServiceRegistry.class);
+    }
+
+    default TypeResolver getTypeResolver(){
+        return new TypeResolver();
     }
 }

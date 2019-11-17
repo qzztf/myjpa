@@ -1,9 +1,3 @@
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later.
- * See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
- */
 package cn.sexycode.myjpa.query.criteria.internal;
 
 import cn.sexycode.myjpa.query.criteria.internal.compile.*;
@@ -87,7 +81,8 @@ public abstract class AbstractManipulationCriteriaQuery<T> implements Compilable
     @Override
     public CriteriaInterpretation interpret(RenderingContext renderingContext) {
         final String jpaqlString = renderQuery(renderingContext);
-        return new CriteriaInterpretation() {
+        return null;
+        /*return new CriteriaInterpretation() {
             @Override
             @SuppressWarnings("unchecked")
             public Query buildCompiledQuery(Session entityManager,
@@ -129,7 +124,7 @@ public abstract class AbstractManipulationCriteriaQuery<T> implements Compilable
                 }
                 return map;
             }
-        };
+        };*/
     }
 
     protected abstract String renderQuery(RenderingContext renderingContext);

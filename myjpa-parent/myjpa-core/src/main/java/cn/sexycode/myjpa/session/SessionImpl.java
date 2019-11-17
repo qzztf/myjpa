@@ -1,6 +1,7 @@
 package cn.sexycode.myjpa.session;
 
 import cn.sexycode.myjpa.query.QueryFactory;
+import cn.sexycode.myjpa.query.criteria.internal.CriteriaBuilderImpl;
 import cn.sexycode.myjpa.transaction.MyjpaTransaction;
 import cn.sexycode.myjpa.transaction.MyjpaTransactionImpl;
 import cn.sexycode.util.core.factory.BeanFactoryUtil;
@@ -42,7 +43,7 @@ public class SessionImpl implements Session {
 
     @Override
     public SessionFactory getSessionFactory() {
-        return (SessionFactory) entityManagerFactory;
+        return sessionFactory;
     }
     @Override
     public Configuration getConfiguration() {
@@ -227,7 +228,7 @@ public class SessionImpl implements Session {
 
     @Override
     public CriteriaBuilder getCriteriaBuilder() {
-        return null;
+        return new CriteriaBuilderImpl(this.sessionFactory);
     }
 
     @Override

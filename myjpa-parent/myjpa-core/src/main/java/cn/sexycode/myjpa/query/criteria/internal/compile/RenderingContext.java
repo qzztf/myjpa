@@ -44,7 +44,7 @@ public interface RenderingContext {
      * @param javaType The java type.
      * @return The cast type name.
      */
-//    String getCastType(Class javaType);
+    String getCastType(Class javaType);
 
     /**
      * Current Dialect.

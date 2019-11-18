@@ -1,37 +1,41 @@
 package cn.sexycode.myjpa.metamodel.internal;
 
-import cn.sexycode.myjpa.mapping.PersistentClass;
-
-import javax.persistence.metamodel.EntityType;
 import java.io.Serializable;
+import javax.persistence.metamodel.EntityType;
+
+import cn.sexycode.myjpa.mapping.PersistentClass;
+import cn.sexycode.myjpa.metamodel.EntityTypeDescriptor;
+import cn.sexycode.myjpa.metamodel.IdentifiableTypeDescriptor;
+import cn.sexycode.myjpa.metamodel.internal.AbstractIdentifiableType;
+import cn.sexycode.myjpa.session.SessionFactory;
 
 /**
  * Defines the Hibernate implementation of the JPA {@link EntityType} contract.
  *
+ * @author Steve Ebersole
+ * @author Emmanuel Bernard
  */
-public class EntityTypeImpl<X>  extends AbstractIdentifiableType<X> implements EntityType<X>, Serializable {
+public class EntityTypeImpl<J>
+		extends AbstractIdentifiableType<J>
+		implements EntityTypeDescriptor<J>, Serializable {
 	private final String jpaEntityName;
 
 	@SuppressWarnings("unchecked")
-    public EntityTypeImpl(Class javaType, AbstractIdentifiableType<? super X> superType,
-            PersistentClass persistentClass) {
+	public EntityTypeImpl(
+			Class javaType,
+			IdentifiableTypeDescriptor<? super J> superType,
+			PersistentClass persistentClass,
+			SessionFactory sessionFactory) {
 		super(
-				javaType,
-				javaType.getCanonicalName(),
-				superType,
-				false,
-				true,
-				false
-		);/*super(
 				javaType,
 				persistentClass.getEntityName(),
 				superType,
-				persistentClass.getDeclaredIdentifierMapper() != null || ( superType != null && superType.hasIdClass() ),
+				/*persistentClass.getDeclaredIdentifierMapper() != null || ( superType != null && superType.hasIdClass() )*/false,
 				persistentClass.hasIdentifierProperty(),
-				persistentClass.isVersioned()
-		);*/
-        //		this.jpaEntityName = "";
-        this.jpaEntityName = persistentClass.getJpaEntityName();
+				persistentClass.isVersioned(),
+				sessionFactory
+		);
+		this.jpaEntityName = persistentClass.getJpaEntityName();
 	}
 
 	@Override
@@ -45,12 +49,45 @@ public class EntityTypeImpl<X>  extends AbstractIdentifiableType<X> implements E
 	}
 
 	@Override
-	public Class<X> getBindableJavaType() {
+	public Class<J> getBindableJavaType() {
 		return getJavaType();
 	}
 
 	@Override
 	public PersistenceType getPersistenceType() {
 		return PersistenceType.ENTITY;
+	}
+
+	@Override
+	public IdentifiableTypeDescriptor<? super J> getSuperType() {
+		return super.getSuperType();
+	}
+/*
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <S extends J> SubGraphImplementor<S> makeSubGraph(Class<S> subType) {
+		if ( ! getBindableJavaType().isAssignableFrom( subType ) ) {
+			throw new IllegalArgumentException(
+					String.format(
+							"Entity type [%s] cannot be treated as requested sub-type [%s]",
+							getName(),
+							subType.getName()
+					)
+			);
+		}
+
+		return new SubGraphImpl( this, true, sessionFactory() );
+	}
+
+	@Override
+	public SubGraphImplementor<J> makeSubGraph() {
+		return makeSubGraph( getBindableJavaType() );
+	}
+*/
+
+	@Override
+	public String toString() {
+		return getName();
 	}
 }

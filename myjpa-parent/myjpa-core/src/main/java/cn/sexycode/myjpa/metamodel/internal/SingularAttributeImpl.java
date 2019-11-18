@@ -1,51 +1,71 @@
 package cn.sexycode.myjpa.metamodel.internal;
 
-import javax.persistence.metamodel.SingularAttribute;
-import javax.persistence.metamodel.Type;
+import cn.sexycode.myjpa.metamodel.ManagedTypeDescriptor;
+import cn.sexycode.myjpa.metamodel.SimpleTypeDescriptor;
+import cn.sexycode.myjpa.metamodel.SingularPersistentAttribute;
+import cn.sexycode.myjpa.util.GraphHelper;
+
 import java.io.Serializable;
 import java.lang.reflect.Member;
+import java.util.function.Supplier;
 
 /**
- * @author qinzaizhen
+ * @author Emmanuel Bernard
+ * @author Steve Ebersole
  */
-public class SingularAttributeImpl<X, Y>
-        extends AbstractAttribute<X, Y>
-        implements SingularAttribute<X, Y>, Serializable {
+public class SingularAttributeImpl<D, J>
+        extends AbstractAttribute<D, J>
+        implements SingularPersistentAttribute<D, J>, Serializable {
     private final boolean isIdentifier;
     private final boolean isVersion;
     private final boolean isOptional;
-    private final Type<Y> attributeType;
+
+    private final SimpleTypeDescriptor<J> attributeType;
+
+    // NOTE : delay access for timing reasons
+    private final DelayedKeyTypeAccess graphKeyTypeAccess = new DelayedKeyTypeAccess();
 
     public SingularAttributeImpl(
+            ManagedTypeDescriptor<D> declaringType,
             String name,
-            Class<Y> javaType,
-            AbstractManagedType<X> declaringType,
+            PersistentAttributeType attributeNature,
+            SimpleTypeDescriptor<J> attributeType,
             Member member,
             boolean isIdentifier,
             boolean isVersion,
-            boolean isOptional,
-            Type<Y> attributeType,
-            PersistentAttributeType persistentAttributeType) {
-        super(name, javaType, declaringType, member, persistentAttributeType);
+            boolean isOptional) {
+        super( declaringType, name, attributeNature, attributeType, member );
         this.isIdentifier = isIdentifier;
         this.isVersion = isVersion;
         this.isOptional = isOptional;
+
         this.attributeType = attributeType;
     }
 
+    @Override
+    public SimpleTypeDescriptor<J> getValueGraphType() {
+        return attributeType;
+    }
+
+    @Override
+    public SimpleTypeDescriptor<J> getKeyGraphType() {
+        return graphKeyTypeAccess.get();
+    }
+
+
+
     /**
-     * Subclass used to simply instantiation of singular attributes representing an entity's
+     * Subclass used to simplify instantiation of singular attributes representing an entity's
      * identifier.
      */
-    public static class Identifier<X, Y> extends SingularAttributeImpl<X, Y> {
+    public static class Identifier<D, J> extends SingularAttributeImpl<D, J> {
         public Identifier(
+                ManagedTypeDescriptor<D> declaringType,
                 String name,
-                Class<Y> javaType,
-                AbstractManagedType<X> declaringType,
+                SimpleTypeDescriptor<J> attributeType,
                 Member member,
-                Type<Y> attributeType,
-                PersistentAttributeType persistentAttributeType) {
-            super(name, javaType, declaringType, member, true, false, false, attributeType, persistentAttributeType);
+                PersistentAttributeType attributeNature) {
+            super( declaringType, name, attributeNature, attributeType, member, true, false, false );
         }
     }
 
@@ -53,15 +73,14 @@ public class SingularAttributeImpl<X, Y>
      * Subclass used to simply instantiation of singular attributes representing an entity's
      * version.
      */
-    public static class Version<X, Y> extends SingularAttributeImpl<X, Y> {
+    public static class Version<X,Y> extends SingularAttributeImpl<X,Y> {
         public Version(
+                ManagedTypeDescriptor<X> declaringType,
                 String name,
-                Class<Y> javaType,
-                AbstractManagedType<X> declaringType,
-                Member member,
-                Type<Y> attributeType,
-                PersistentAttributeType persistentAttributeType) {
-            super(name, javaType, declaringType, member, false, true, false, attributeType, persistentAttributeType);
+                PersistentAttributeType attributeNature,
+                SimpleTypeDescriptor<Y> attributeType,
+                Member member) {
+            super( declaringType, name, attributeNature, attributeType, member, false, true, false );
         }
     }
 
@@ -81,7 +100,7 @@ public class SingularAttributeImpl<X, Y>
     }
 
     @Override
-    public Type<Y> getType() {
+    public SimpleTypeDescriptor<J> getType() {
         return attributeType;
     }
 
@@ -102,7 +121,21 @@ public class SingularAttributeImpl<X, Y>
     }
 
     @Override
-    public Class<Y> getBindableJavaType() {
+    public Class<J> getBindableJavaType() {
         return attributeType.getJavaType();
+    }
+
+    private class DelayedKeyTypeAccess implements Supplier<SimpleTypeDescriptor<J>>, Serializable {
+        private boolean resolved;
+        private SimpleTypeDescriptor<J> type;
+
+        @Override
+        public SimpleTypeDescriptor<J> get() {
+            if ( ! resolved ) {
+                type = GraphHelper.resolveKeyTypeDescriptor( SingularAttributeImpl.this );
+                resolved = true;
+            }
+            return type;
+        }
     }
 }

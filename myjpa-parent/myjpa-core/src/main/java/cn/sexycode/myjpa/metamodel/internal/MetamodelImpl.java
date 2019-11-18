@@ -70,7 +70,7 @@ public class MetamodelImpl implements Metamodel, Serializable {
         if (embeddableType == null) {
             EmbeddableTypeImpl type = new EmbeddableTypeImpl(
                     cls,
-                    null
+                    null, sessionFactory
             );
             jpaEmbeddableTypeMap.put(cls, type);
             embeddableType = type;

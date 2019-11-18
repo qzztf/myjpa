@@ -1,6 +1,8 @@
 package cn.sexycode.myjpa.metamodel.internal;
 
 
+import cn.sexycode.myjpa.session.SessionFactory;
+
 import javax.persistence.metamodel.EmbeddableType;
 import java.io.Serializable;
 
@@ -14,8 +16,8 @@ public class EmbeddableTypeImpl<X>
 	private final AbstractManagedType parent;
 //	private final ComponentType hibernateType;
 
-	public EmbeddableTypeImpl(Class<X> javaType, AbstractManagedType parent) {
-		super( javaType, null, null );
+	public EmbeddableTypeImpl(Class<X> javaType, AbstractManagedType parent, SessionFactory sessionFactory) {
+		super( javaType, null, null , sessionFactory);
 		this.parent = parent;
 //		this.hibernateType = hibernateType;
 	}

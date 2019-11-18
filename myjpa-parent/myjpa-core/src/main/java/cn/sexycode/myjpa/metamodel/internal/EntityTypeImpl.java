@@ -30,8 +30,8 @@ public class EntityTypeImpl<X>  extends AbstractIdentifiableType<X> implements E
 				persistentClass.hasIdentifierProperty(),
 				persistentClass.isVersioned()
 		);*/
-		this.jpaEntityName = "";
-//		this.jpaEntityName = persistentClass.getJpaEntityName();
+        //		this.jpaEntityName = "";
+        this.jpaEntityName = persistentClass.getJpaEntityName();
 	}
 
 	@Override

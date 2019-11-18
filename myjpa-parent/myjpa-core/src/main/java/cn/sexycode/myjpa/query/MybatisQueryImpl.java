@@ -1,8 +1,6 @@
 package cn.sexycode.myjpa.query;
 
 import cn.sexycode.myjpa.session.Session;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.session.SqlSession;
 
 import javax.persistence.*;
 import javax.persistence.metamodel.Metamodel;
@@ -16,7 +14,7 @@ public class MybatisQueryImpl<R> implements TypedQuery<R> {
 	private Session session;
 	private Class<R> resultClass;
 
-    private MappedStatement mappedStatement;
+	//    private MappedStatement mappedStatement;
 
     private List<Parameter<?>> parameters = new LinkedList<>();
 	public MybatisQueryImpl(
@@ -28,7 +26,6 @@ public class MybatisQueryImpl<R> implements TypedQuery<R> {
         this.qlString = qlString;
 		this.resultClass = resultClass;
 		this.session = session;
-        this.mappedStatement = session.getConfiguration().getMappedStatement(qlString);
         Metamodel metamodel = session.getEntityManagerFactory().getMetamodel();
         //		EntityType<R> entity = metamodel.entity(resultClass);
 	}

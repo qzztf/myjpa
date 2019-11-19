@@ -2,10 +2,12 @@ package cn.sexycode.myjpa.mapping;
 
 import cn.sexycode.myjpa.binding.MetadataBuildingContext;
 import cn.sexycode.sql.mapping.KeyValue;
+import cn.sexycode.sql.mapping.Table;
 import cn.sexycode.sql.mapping.Value;
+import cn.sexycode.util.core.collection.SingletonIterator;
 import cn.sexycode.util.core.str.StringUtils;
 
-import javax.persistence.Table;
+import java.util.Iterator;
 
 /**
  * The root class of an inheritance hierarchy
@@ -66,43 +68,35 @@ public class RootClass extends PersistentClass {
     public Table getTable() {
         return table;
     }
-/*
 
     @Override
     public Property getIdentifierProperty() {
         return identifierProperty;
     }
-*/
 
-/*
     @Override
     public Property getDeclaredIdentifierProperty() {
         return declaredIdentifierProperty;
     }
-*/
 
     public void setDeclaredIdentifierProperty(Property declaredIdentifierProperty) {
         this.declaredIdentifierProperty = declaredIdentifierProperty;
     }
-/*
 
     @Override
     public KeyValue getIdentifier() {
         return identifier;
     }
-*/
 
     @Override
     public boolean hasIdentifierProperty() {
         return identifierProperty != null;
     }
-/*
 
     @Override
     public Value getDiscriminator() {
         return discriminator;
     }
-*/
 
     @Override
     public boolean isInherited() {
@@ -117,30 +111,26 @@ public class RootClass extends PersistentClass {
     public void setPolymorphic(boolean polymorphic) {
         this.polymorphic = polymorphic;
     }
-/*
 
     @Override
     public RootClass getRootClass() {
         return this;
     }
-*/
 
- /*   @Override
+    @Override
     public Iterator getPropertyClosureIterator() {
-        return null;
-//        return getPropertyIterator();
-    }*/
+        //        return null;
+        return getPropertyIterator();
+    }
 
-   /* @Override
+    @Override
     public Iterator getTableClosureIterator() {
         return new SingletonIterator( getTable() );
     }
-
     @Override
     public Iterator getKeyClosureIterator() {
         return new SingletonIterator( getKey() );
     }
-*/
   /*  @Override
     public void addSubclass(Subclass subclass) throws MappingException {
         super.addSubclass( subclass );
@@ -152,16 +142,15 @@ public class RootClass extends PersistentClass {
         return explicitPolymorphism;
     }
 
-    /*  @Override
+    @Override
       public Property getVersion() {
           return version;
       }
 
-      @Override
-      public Property getDeclaredVersion() {
-          return declaredVersion;
-      }
-  */
+    @Override
+    public Property getDeclaredVersion() {
+        return declaredVersion;
+    }
     public void setDeclaredVersion(Property declaredVersion) {
         this.declaredVersion = declaredVersion;
     }
@@ -180,7 +169,7 @@ public class RootClass extends PersistentClass {
         return mutable;
     }
 
-    /*  @Override
+    @Override
       public boolean hasEmbeddedIdentifier() {
           return embeddedIdentifier;
       }
@@ -199,17 +188,15 @@ public class RootClass extends PersistentClass {
       public void setEntityPersisterClass(Class persister) {
           this.entityPersisterClass = persister;
       }
-  */
     @Override
     public PersistentClass getSuperclass() {
         return null;
     }
 
-    /*  @Override
+    @Override
       public KeyValue getKey() {
           return getIdentifier();
       }
-  */
     public void setDiscriminator(Value discriminator) {
         this.discriminator = discriminator;
     }

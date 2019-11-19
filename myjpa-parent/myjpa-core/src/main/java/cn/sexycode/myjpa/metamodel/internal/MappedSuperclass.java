@@ -31,7 +31,7 @@ public class MappedSuperclass {
 	private Class mappedClass;
 	private Property identifierProperty;
 	private Property version;
-	private Component identifierMapper;
+    //	private Component identifierMapper;
 
 	public MappedSuperclass(MappedSuperclass superMappedSuperclass, PersistentClass superPersistentClass) {
 		this.superMappedSuperclass = superMappedSuperclass;
@@ -138,6 +138,7 @@ public class MappedSuperclass {
 	public void setDeclaredVersion(Property prop) {
 		this.version = prop;
 	}
+/*
 
 	public Component getIdentifierMapper() {
 		//get direct identifiermapper or the one from the super mappedSuperclass
@@ -161,6 +162,7 @@ public class MappedSuperclass {
 	public void setDeclaredIdentifierMapper(Component identifierMapper) {
 		this.identifierMapper = identifierMapper;
 	}
+*/
 
 	/**
 	 * Check to see if this MappedSuperclass defines a property with the given name.

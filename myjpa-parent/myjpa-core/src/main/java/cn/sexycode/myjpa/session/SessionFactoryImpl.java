@@ -1,6 +1,7 @@
 package cn.sexycode.myjpa.session;
 
 import cn.sexycode.myjpa.binding.Metadata;
+import cn.sexycode.myjpa.metamodel.internal.JpaMetaModelPopulationSetting;
 import cn.sexycode.myjpa.metamodel.internal.MetamodelImpl;
 import cn.sexycode.myjpa.transaction.MyjpaTransactionImpl;
 import org.apache.ibatis.exceptions.ExceptionFactory;
@@ -45,7 +46,7 @@ public class SessionFactoryImpl extends DefaultSqlSessionFactory implements Sess
         this.sessionFactory = sessionFactory;
         this.configuration = Optional.ofNullable(config).orElse(sessionFactory.getConfiguration());
         this.metamodel = new MetamodelImpl(this);
-        metamodel.initialize(metadata);
+        metamodel.initialize(metadata, JpaMetaModelPopulationSetting.ENABLED);
     }
 
     @Override

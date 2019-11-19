@@ -1,15 +1,13 @@
 package cn.sexycode.myjpa.binding;
 
+import cn.sexycode.myjpa.mapping.MappedSuperclass;
 import cn.sexycode.myjpa.mapping.PersistentClass;
 import cn.sexycode.sql.dialect.function.SQLFunction;
 import cn.sexycode.sql.model.Database;
 import cn.sexycode.sql.type.TypeResolver;
 
-import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Container for configuration data collected during binding the metamodel.
@@ -42,5 +40,9 @@ public class MetadataImpl implements Metadata, Serializable {
         return entityBindingMap.get(entityName);
     }
 
+    @Override
+    public Set<MappedSuperclass> getMappedSuperclassMappingsCopy() {
+        return new HashSet<>(mappedSuperclassMap.values());
+    }
 
 }

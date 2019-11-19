@@ -1,6 +1,7 @@
 package cn.sexycode.myjpa.binding;
 
 import cn.sexycode.myjpa.MyjpaException;
+import cn.sexycode.myjpa.mapping.MappedSuperclass;
 import cn.sexycode.myjpa.mapping.PersistentClass;
 import cn.sexycode.myjpa.session.SessionFactory;
 import cn.sexycode.myjpa.session.SessionFactoryBuilder;
@@ -12,7 +13,6 @@ import cn.sexycode.sql.model.Identifier;
 import cn.sexycode.sql.type.TypeResolver;
 import cn.sexycode.util.core.cls.XClass;
 
-import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.util.*;
 
@@ -44,6 +44,7 @@ public interface InFlightMetadataCollector extends Metadata {
 
     void validate() throws MappingException;
 
+    @Override
     Set<MappedSuperclass> getMappedSuperclassMappingsCopy();
 
     SessionFactoryBuilder getSessionFactoryBuilder();

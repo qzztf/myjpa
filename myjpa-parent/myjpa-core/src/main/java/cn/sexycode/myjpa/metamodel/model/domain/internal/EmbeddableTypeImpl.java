@@ -6,12 +6,9 @@
  */
 package cn.sexycode.myjpa.metamodel.model.domain.internal;
 
-import org.hibernate.engine.spi.SessionFactory;
-import org.hibernate.graph.internal.SubGraphImpl;
-import org.hibernate.graph.spi.SubGraphImplementor;
-import org.hibernate.metamodel.model.domain.spi.EmbeddedTypeDescriptor;
-import org.hibernate.metamodel.model.domain.spi.ManagedTypeDescriptor;
-import org.hibernate.type.ComponentType;
+import cn.sexycode.myjpa.metamodel.model.domain.spi.EmbeddedTypeDescriptor;
+import cn.sexycode.myjpa.metamodel.model.domain.spi.ManagedTypeDescriptor;
+import cn.sexycode.myjpa.session.SessionFactory;
 
 import java.io.Serializable;
 
@@ -26,13 +23,13 @@ public class EmbeddableTypeImpl<J> extends AbstractManagedType<J> implements Emb
 
     private final ManagedTypeDescriptor<?> parent;
 
-    private final ComponentType hibernateType;
+    //    private final ComponentType hibernateType;
 
-    public EmbeddableTypeImpl(Class<J> javaType, ManagedTypeDescriptor<?> parent, ComponentType hibernateType,
+    public EmbeddableTypeImpl(Class<J> javaType, ManagedTypeDescriptor<?> parent/*, ComponentType hibernateType*/,
             SessionFactory sessionFactory) {
         super(javaType, null, null, sessionFactory);
         this.parent = parent;
-        this.hibernateType = hibernateType;
+        //        this.hibernateType = hibernateType;
     }
 
     @Override
@@ -44,9 +41,9 @@ public class EmbeddableTypeImpl<J> extends AbstractManagedType<J> implements Emb
         return parent;
     }
 
-    public ComponentType getHibernateType() {
+    /*public ComponentType getHibernateType() {
         return hibernateType;
-    }
+    }*/
 
     @Override
     @SuppressWarnings("unchecked")

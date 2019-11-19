@@ -1,13 +1,12 @@
 package cn.sexycode.myjpa.metamodel.spi;
 
+import cn.sexycode.myjpa.metamodel.model.domain.spi.EmbeddedTypeDescriptor;
 import cn.sexycode.myjpa.metamodel.model.domain.spi.EntityTypeDescriptor;
+import cn.sexycode.myjpa.metamodel.model.domain.spi.ManagedTypeDescriptor;
 import cn.sexycode.myjpa.session.SessionFactory;
+import cn.sexycode.myjpa.type.TypeConfiguration;
 
-import javax.persistence.EntityGraph;
 import javax.persistence.metamodel.Metamodel;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -25,7 +24,7 @@ public interface MetamodelImplementor extends Metamodel {
 
     SessionFactory getSessionFactory();
 
-    Collection<EntityNameResolver> getEntityNameResolvers();
+    //    Collection<EntityNameResolver> getEntityNameResolvers();
 
     /**
      * Locate an EntityPersister by the entity class.  The passed Class might refer to either
@@ -36,7 +35,7 @@ public interface MetamodelImplementor extends Metamodel {
      * @return The located EntityPersister, never {@code null}
      * @throws org.hibernate.UnknownEntityTypeException If a matching EntityPersister cannot be located
      */
-    EntityPersister locateEntityPersister(Class byClass);
+    //    EntityPersister locateEntityPersister(Class byClass);
 
     /**
      * Locate the entity persister by name.
@@ -45,7 +44,7 @@ public interface MetamodelImplementor extends Metamodel {
      * @return The located EntityPersister, never {@code null}
      * @throws org.hibernate.UnknownEntityTypeException If a matching EntityPersister cannot be located
      */
-    EntityPersister locateEntityPersister(String byName);
+    //    EntityPersister locateEntityPersister(String byName);
 
     /**
      * Locate the persister for an entity by the entity class.
@@ -54,7 +53,7 @@ public interface MetamodelImplementor extends Metamodel {
      * @return The entity persister
      * @throws MappingException Indicates persister for that class could not be found.
      */
-    EntityPersister entityPersister(Class entityClass);
+    //    EntityPersister entityPersister(Class entityClass);
 
     /**
      * Locate the persister for an entity by the entity-name
@@ -63,14 +62,14 @@ public interface MetamodelImplementor extends Metamodel {
      * @return The persister
      * @throws MappingException Indicates persister could not be found with that name.
      */
-    EntityPersister entityPersister(String entityName);
+    //    EntityPersister entityPersister(String entityName);
 
     /**
      * Get all entity persisters as a Map, which entity name its the key and the persister is the value.
      *
      * @return The Map contains all entity persisters.
      */
-    Map<String, EntityPersister> entityPersisters();
+    //    Map<String, EntityPersister> entityPersisters();
 
     /**
      * Get the persister object for a collection role.
@@ -79,14 +78,14 @@ public interface MetamodelImplementor extends Metamodel {
      * @return The persister
      * @throws MappingException Indicates persister could not be found with that role.
      */
-    CollectionPersister collectionPersister(String role);
+    //    CollectionPersister collectionPersister(String role);
 
     /**
      * Get all collection persisters as a Map, which collection role as the key and the persister is the value.
      *
      * @return The Map contains all collection persisters.
      */
-    Map<String, CollectionPersister> collectionPersisters();
+    //    Map<String, CollectionPersister> collectionPersisters();
 
     /**
      * Retrieves a set of all the collection roles in which the given entity is a participant, as either an
@@ -109,34 +108,33 @@ public interface MetamodelImplementor extends Metamodel {
      *
      * @return All of the entity names
      */
-    String[] getAllCollectionRoles();
+    //    String[] getAllCollectionRoles();
 
-    <T> void addNamedEntityGraph(String graphName, RootGraphImplementor<T> entityGraph);
+    //    <T> void addNamedEntityGraph(String graphName, RootGraphImplementor<T> entityGraph);
 
     /**
      * @deprecated Use {@link #addNamedEntityGraph(String, RootGraphImplementor)} instead.
      */
-    @Deprecated
-    <T> void addNamedEntityGraph(String graphName, EntityGraph<T> entityGraph);
+    //    @Deprecated
+    //    <T> void addNamedEntityGraph(String graphName, EntityGraph<T> entityGraph);
 
-    <T> RootGraphImplementor<T> findEntityGraphByName(String name);
+    //    <T> RootGraphImplementor<T> findEntityGraphByName(String name);
 
-    <T> List<RootGraphImplementor<? super T>> findEntityGraphsByJavaType(Class<T> entityClass);
+    //    <T> List<RootGraphImplementor<? super T>> findEntityGraphsByJavaType(Class<T> entityClass);
 
     /**
      * @deprecated Use {@link #findEntityGraphsByJavaType(Class)} instead.
      */
-    @Deprecated
+   /* @Deprecated
     default <T> List<EntityGraph<? super T>> findEntityGraphsByType(Class<T> entityClass) {
         return (List) findEntityGraphsByJavaType(entityClass);
-    }
+    }*/
 
     void close();
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Co-variant returns
 
-    @Override
     <X> EntityTypeDescriptor<X> entity(String entityName);
 
     @Override
@@ -148,8 +146,8 @@ public interface MetamodelImplementor extends Metamodel {
     @Override
     <X> EmbeddedTypeDescriptor<X> embeddable(Class<X> cls);
 
-    @Override
+    /*@Override
     default EntityTypeDescriptor getEntityTypeByName(String entityName) {
         return entity(entityName);
-    }
+    }*/
 }

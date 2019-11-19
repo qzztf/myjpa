@@ -1,15 +1,8 @@
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later
- * See the lgpl.txt file in the root directory or http://www.gnu.org/licenses/lgpl-2.1.html
- */
 package cn.sexycode.myjpa.metamodel.model.domain.spi;
 
-import org.hibernate.boot.registry.classloading.spi.ClassLoaderService;
-import org.hibernate.engine.spi.SessionFactory;
-import org.hibernate.metamodel.spi.MetamodelImplementor;
-import org.hibernate.persister.entity.EntityPersister;
+import cn.sexycode.myjpa.metamodel.spi.MetamodelImplementor;
+import cn.sexycode.myjpa.session.SessionFactory;
+import cn.sexycode.util.core.cls.classloading.ClassLoaderService;
 
 /**
  * Helper containing utilities useful for domain model handling

@@ -1,7 +1,7 @@
 
 package cn.sexycode.myjpa.util;
 
-import cn.sexycode.myjpa.metamodel.*;
+import cn.sexycode.myjpa.metamodel.model.domain.spi.*;
 
 /**
  * Helper containing utilities useful for graph handling

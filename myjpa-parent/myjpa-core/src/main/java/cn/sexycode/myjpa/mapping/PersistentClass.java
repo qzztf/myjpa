@@ -2,8 +2,6 @@ package cn.sexycode.myjpa.mapping;
 
 import cn.sexycode.myjpa.binding.MappingException;
 import cn.sexycode.myjpa.binding.MetadataBuildingContext;
-import cn.sexycode.myjpa.metamodel.internal.FilterConfiguration;
-import cn.sexycode.myjpa.metamodel.internal.MappedSuperclass;
 import cn.sexycode.sql.mapping.*;
 import cn.sexycode.sql.type.Mapping;
 import cn.sexycode.util.core.exception.ClassLoadingException;
@@ -19,7 +17,7 @@ import java.util.*;
  *
  * @author Gavin King
  */
-public abstract class PersistentClass implements AttributeContainer, Serializable, Filterable, MetaAttributable {
+public abstract class PersistentClass implements AttributeContainer, Serializable, MetaAttributable {
     private static final Alias PK_ALIAS = new Alias(15, "PK");
 
     public static final String NULL_DISCRIMINATOR_MAPPING = "null";
@@ -67,7 +65,7 @@ public abstract class PersistentClass implements AttributeContainer, Serializabl
 
     private final java.util.List<Join> subclassJoins = new ArrayList<>();
 
-    private final java.util.List<FilterConfiguration> filters = new ArrayList<>();
+    //    private final java.util.List<FilterConfiguration> filters = new ArrayList<>();
 
     protected final java.util.Set<String> synchronizedTables = new HashSet<>();
 
@@ -641,14 +639,17 @@ public abstract class PersistentClass implements AttributeContainer, Serializabl
         return NULL_DISCRIMINATOR_MAPPING.equals(getDiscriminatorValue());
     }
 
+    @Override
     public java.util.Map getMetaAttributes() {
         return metaAttributes;
     }
 
+    @Override
     public void setMetaAttributes(java.util.Map metas) {
         this.metaAttributes = metas;
     }
 
+    @Override
     public MetaAttribute getMetaAttribute(String name) {
         return metaAttributes == null ? null : (MetaAttribute) metaAttributes.get(name);
     }
@@ -787,7 +788,7 @@ public abstract class PersistentClass implements AttributeContainer, Serializabl
           return deleteCheckStyle;
       }
   */
-    public void addFilter(String name, String condition, boolean autoAliasInjection,
+  /*  public void addFilter(String name, String condition, boolean autoAliasInjection,
             java.util.Map<String, String> aliasTableMap, java.util.Map<String, String> aliasEntityMap) {
         filters.add(new FilterConfiguration(name, condition, autoAliasInjection, aliasTableMap, aliasEntityMap, this));
     }
@@ -796,7 +797,7 @@ public abstract class PersistentClass implements AttributeContainer, Serializabl
     public java.util.List getFilters() {
         return filters;
     }
-
+*/
     public boolean isForceDiscriminator() {
         return false;
     }

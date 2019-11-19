@@ -1,5 +1,6 @@
 package cn.sexycode.myjpa.binding;
 
+import cn.sexycode.myjpa.mapping.MappedSuperclass;
 import cn.sexycode.myjpa.mapping.PersistentClass;
 import cn.sexycode.myjpa.session.SessionFactory;
 import cn.sexycode.myjpa.session.SessionFactoryBuilder;
@@ -21,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
-import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

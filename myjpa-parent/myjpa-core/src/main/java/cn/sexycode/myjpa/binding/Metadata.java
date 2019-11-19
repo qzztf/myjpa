@@ -1,8 +1,10 @@
 package cn.sexycode.myjpa.binding;
 
+import cn.sexycode.myjpa.mapping.MappedSuperclass;
 import cn.sexycode.myjpa.mapping.PersistentClass;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Represents the ORM model as determined from all provided mapping sources.
@@ -32,5 +34,6 @@ public interface Metadata {
      */
     PersistentClass getEntityBinding(String entityName);
 
+    Set<MappedSuperclass> getMappedSuperclassMappingsCopy();
 
 }

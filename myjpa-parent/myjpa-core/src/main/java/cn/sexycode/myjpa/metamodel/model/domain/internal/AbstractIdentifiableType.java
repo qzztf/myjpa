@@ -1,13 +1,7 @@
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later
- * See the lgpl.txt file in the root directory or http://www.gnu.org/licenses/lgpl-2.1.html
- */
 package cn.sexycode.myjpa.metamodel.model.domain.internal;
 
-import org.hibernate.engine.spi.SessionFactory;
-import org.hibernate.metamodel.model.domain.spi.*;
+import cn.sexycode.myjpa.metamodel.model.domain.spi.*;
+import cn.sexycode.myjpa.session.SessionFactory;
 
 import javax.persistence.metamodel.IdentifiableType;
 import javax.persistence.metamodel.SingularAttribute;
@@ -58,7 +52,7 @@ public abstract class AbstractIdentifiableType<J> extends AbstractManagedType<J>
 
     @Override
     public IdentifiableTypeDescriptor.InFlightAccess<J> getInFlightAccess() {
-        return super.getInFlightAccess();
+        return (IdentifiableTypeDescriptor.InFlightAccess<J>) super.getInFlightAccess();
     }
 
     public boolean hasIdClass() {
@@ -127,7 +121,7 @@ public abstract class AbstractIdentifiableType<J> extends AbstractManagedType<J>
             throw new IllegalArgumentException("The id attribute is not declared on this type [" + getTypeName() + "]");
         }
         checkType(id, javaType);
-        return id;
+        return (SingularPersistentAttribute<J, Y>) id;
     }
 
     @Override
@@ -247,7 +241,7 @@ public abstract class AbstractIdentifiableType<J> extends AbstractManagedType<J>
     public <Y> SingularPersistentAttribute<J, Y> getDeclaredVersion(Class<Y> javaType) {
         checkDeclaredVersion();
         checkType(versionAttribute, javaType);
-        return versionAttribute;
+        return (SingularPersistentAttribute<J, Y>) versionAttribute;
     }
 
     private void checkDeclaredVersion() {

@@ -1,10 +1,12 @@
 package cn.sexycode.myjpa.mapping;
 
-import cn.sexycode.myjpa.binding.MappingException;
+import cn.sexycode.myjpa.MyjpaException;
+import cn.sexycode.sql.mapping.MappingException;
 import cn.sexycode.sql.mapping.Value;
 import cn.sexycode.sql.type.Mapping;
 import cn.sexycode.sql.type.Type;
 import cn.sexycode.util.core.collection.ArrayHelper;
+import cn.sexycode.util.core.service.ServiceRegistry;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -16,33 +18,21 @@ import java.util.Iterator;
  */
 public class Property implements Serializable, MetaAttributable {
     private String name;
-
     private Value value;
-
     private String cascade;
-
     private boolean updateable = true;
-
     private boolean insertable = true;
-
     private boolean selectable = true;
-
     private boolean optimisticLocked = true;
 
+    //    private ValueGeneration valueGenerationStrategy;
     private String propertyAccessorName;
-
     private boolean lazy;
-
     private String lazyGroup;
-
     private boolean optional;
-
     private java.util.Map metaAttributes;
-
     private PersistentClass persistentClass;
-
     private boolean naturalIdentifier;
-
     private boolean lob;
 
     public boolean isBackRef() {
@@ -76,61 +66,68 @@ public class Property implements Serializable, MetaAttributable {
         return name;
     }
 
+    /*public boolean isComposite() {
+        return value instanceof Component;
+    }*/
+
     public Value getValue() {
         return value;
     }
+/*
+    public boolean isPrimitive(Class clazz) {
+        return getGetter(clazz).getReturnType().isPrimitive();
+    }
 
-    /*
-        public CascadeStyle getCascadeStyle() throws MappingException {
-            Type type = value.getType();
-            if ( type.isComponentType() ) {
-                return getCompositeCascadeStyle( (CompositeType) type, cascade );
-            }
-            else if ( type.isCollectionType() ) {
-                return getCollectionCascadeStyle( ( (Collection) value ).getElement().getType(), cascade );
-            }
-            else {
-                return getCascadeStyle( cascade );
-            }
+    public CascadeStyle getCascadeStyle() throws MappingException {
+        Type type = value.getType();
+        if ( type.isComponentType() ) {
+            return getCompositeCascadeStyle( (CompositeType) type, cascade );
         }
-
-        private static CascadeStyle getCompositeCascadeStyle(CompositeType compositeType, String cascade) {
-            if ( compositeType.isAnyType() ) {
-                return getCascadeStyle( cascade );
-            }
-            int length = compositeType.getSubtypes().length;
-            for ( int i=0; i<length; i++ ) {
-                if ( compositeType.getCascadeStyle(i) != CascadeStyles.NONE ) {
-                    return CascadeStyles.ALL;
-                }
-            }
+        else if ( type.isCollectionType() ) {
+            return getCollectionCascadeStyle( ( (Collection) value ).getElement().getType(), cascade );
+        }
+        else {
             return getCascadeStyle( cascade );
         }
+    }
 
-        private static CascadeStyle getCollectionCascadeStyle(Type elementType, String cascade) {
-            if ( elementType.isComponentType() ) {
-                return getCompositeCascadeStyle( (CompositeType) elementType, cascade );
-            }
-            else {
-                return getCascadeStyle( cascade );
+    private static CascadeStyle getCompositeCascadeStyle(CompositeType compositeType, String cascade) {
+        if ( compositeType.isAnyType() ) {
+            return getCascadeStyle( cascade );
+        }
+        int length = compositeType.getSubtypes().length;
+        for ( int i=0; i<length; i++ ) {
+            if ( compositeType.getCascadeStyle(i) != CascadeStyles.NONE ) {
+                return CascadeStyles.ALL;
             }
         }
+        return getCascadeStyle( cascade );
+    }
 
-        private static CascadeStyle getCascadeStyle(String cascade) {
-            if ( cascade==null || cascade.equals("none") ) {
-                return CascadeStyles.NONE;
-            }
-            else {
-                StringTokenizer tokens = new StringTokenizer(cascade, ", ");
-                CascadeStyle[] styles = new CascadeStyle[ tokens.countTokens() ] ;
-                int i=0;
-                while ( tokens.hasMoreTokens() ) {
-                    styles[i++] = CascadeStyles.getCascadeStyle( tokens.nextToken() );
-                }
-                return new CascadeStyles.MultipleCascadeStyle(styles);
-            }
+    private static CascadeStyle getCollectionCascadeStyle(Type elementType, String cascade) {
+        if ( elementType.isComponentType() ) {
+            return getCompositeCascadeStyle( (CompositeType) elementType, cascade );
         }
-        */
+        else {
+            return getCascadeStyle( cascade );
+        }
+    }
+
+    private static CascadeStyle getCascadeStyle(String cascade) {
+        if ( cascade==null || cascade.equals("none") ) {
+            return CascadeStyles.NONE;
+        }
+        else {
+            StringTokenizer tokens = new StringTokenizer(cascade, ", ");
+            CascadeStyle[] styles = new CascadeStyle[ tokens.countTokens() ] ;
+            int i=0;
+            while ( tokens.hasMoreTokens() ) {
+                styles[i++] = CascadeStyles.getCascadeStyle( tokens.nextToken() );
+            }
+            return new CascadeStyles.MultipleCascadeStyle(styles);
+        }
+    }*/
+
     public String getCascade() {
         return cascade;
     }
@@ -159,14 +156,14 @@ public class Property implements Serializable, MetaAttributable {
         final boolean[] columnInsertability = value.getColumnInsertability();
         return insertable && (columnInsertability.length == 0 || !ArrayHelper.isAllFalse(columnInsertability));
     }
-/*
-	public ValueGeneration getValueGenerationStrategy() {
-		return valueGenerationStrategy;
-	}
 
-	public void setValueGenerationStrategy(ValueGeneration valueGenerationStrategy) {
-		this.valueGenerationStrategy = valueGenerationStrategy;
-	}*/
+   /* public ValueGeneration getValueGenerationStrategy() {
+        return valueGenerationStrategy;
+    }
+
+    public void setValueGenerationStrategy(ValueGeneration valueGenerationStrategy) {
+        this.valueGenerationStrategy = valueGenerationStrategy;
+    }*/
 
     public void setUpdateable(boolean mutable) {
         this.updateable = mutable;
@@ -195,14 +192,17 @@ public class Property implements Serializable, MetaAttributable {
         return propertyAccessorName == null || "property".equals(propertyAccessorName);
     }
 
+    @Override
     public java.util.Map getMetaAttributes() {
         return metaAttributes;
     }
 
+    @Override
     public MetaAttribute getMetaAttribute(String attributeName) {
         return metaAttributes == null ? null : (MetaAttribute) metaAttributes.get(attributeName);
     }
 
+    @Override
     public void setMetaAttributes(java.util.Map metas) {
         this.metaAttributes = metas;
     }
@@ -221,12 +221,12 @@ public class Property implements Serializable, MetaAttributable {
 
     /**
      * Is this property lazy in the "bytecode" sense?
-     * <p>
+     *
      * Lazy here means whether we should push *something* to the entity
      * instance for this field in its "base fetch group".  Mainly it affects
      * whether we should list this property's columns in the SQL select
      * for the owning entity when we load its "base fetch group".
-     * <p>
+     *
      * The "something" we push varies based on the nature (basic, etc) of
      * the property.
      *
@@ -235,16 +235,17 @@ public class Property implements Serializable, MetaAttributable {
      * {@link EnhancementHelper#includeInBaseFetchGroup} is used internally to make that
      * decision to account for {@link org.hibernate.cfg.AvailableSettings#ALLOW_ENHANCEMENT_AS_PROXY}
      */
-/*	public boolean isLazy() {
-		if ( value instanceof ToOne ) {
-			// For a many-to-one, this is always false.  Whether the
-			// association is EAGER, PROXY or NO-PROXY we want the fk
-			// selected
-			return false;
-		}
+  /*  public boolean isLazy() {
+        if ( value instanceof ToOne ) {
+            // For a many-to-one, this is always false.  Whether the
+            // association is EAGER, PROXY or NO-PROXY we want the fk
+            // selected
+            return false;
+        }
 
-		return lazy;
-	}*/
+        return lazy;
+    }*/
+
     public String getLazyGroup() {
         return lazyGroup;
     }
@@ -285,21 +286,43 @@ public class Property implements Serializable, MetaAttributable {
         this.selectable = selectable;
     }
 
-/*
-	public String getAccessorPropertyName( EntityMode mode ) {
-		return getName();
-	}
-
-	protected ServiceRegistry resolveServiceRegistry() {
-		if ( getPersistentClass() != null ) {
-			return getPersistentClass().getServiceRegistry();
-		}
-		if ( getValue() != null ) {
-			return getValue().getServiceRegistry();
-		}
-		throw new HibernateException( "Could not resolve ServiceRegistry" );
-	}
+   /* public String getAccessorPropertyName( EntityMode mode ) {
+        return getName();
+    }
 */
+
+    // todo : remove
+   /* public PropertyAccessStrategy getPropertyAccessStrategy(Class clazz) throws MappingException {
+        String accessName = getPropertyAccessorName();
+        if ( accessName == null ) {
+            if ( clazz == null || java.util.Map.class.equals( clazz ) ) {
+                accessName = "map";
+            }
+            else {
+                accessName = "property";
+            }
+        }
+
+        final EntityMode entityMode = clazz == null || java.util.Map.class.equals( clazz )
+                ? EntityMode.MAP
+                : EntityMode.POJO;
+
+        return resolveServiceRegistry().getService( PropertyAccessStrategyResolver.class ).resolvePropertyAccessStrategy(
+                clazz,
+                accessName,
+                entityMode
+        );
+    }*/
+
+    protected ServiceRegistry resolveServiceRegistry() {
+        if (getPersistentClass() != null) {
+            return getPersistentClass().getServiceRegistry();
+        }
+        /*if ( getValue() != null ) {
+            return getValue().getServiceRegistry();
+        }*/
+        throw new MyjpaException("Could not resolve ServiceRegistry");
+    }
 
     public boolean isNaturalIdentifier() {
         return naturalIdentifier;

@@ -881,7 +881,7 @@ public interface AvailableSettings {
     /**
      * Indicates if exception handling for a SessionFactory built via Hibernate's native bootstrapping
      * should behave the same as native exception handling in Hibernate ORM 5.1, When set to {@code true},
-     * {@link HibernateException} will not be wrapped or converted according to the JPA specification.
+     * {@link MyjpaException} will not be wrapped or converted according to the JPA specification.
      * <p/>
      * This setting will be ignored for a SessionFactory built via JPA bootstrapping.
      * <p/>
@@ -1916,7 +1916,7 @@ public interface AvailableSettings {
      * is to be updated via a bulk update statement.
      * <p>
      * If the ({@link ImmutableEntityUpdateQueryHandlingMode#EXCEPTION}) mode is used, then a
-     * {@link HibernateException} is thrown instead.
+     * {@link MyjpaException} is thrown instead.
      * </p>
      * Valid options are defined by the {@link ImmutableEntityUpdateQueryHandlingMode} enum.
      * </p>

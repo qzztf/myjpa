@@ -1,14 +1,6 @@
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later
- * See the lgpl.txt file in the root directory or http://www.gnu.org/licenses/lgpl-2.1.html
- */
 package cn.sexycode.myjpa.metamodel.model.domain.spi;
 
-import org.hibernate.graph.Graph;
-import org.hibernate.graph.spi.SubGraphImplementor;
-import org.hibernate.metamodel.model.domain.ManagedDomainType;
+import cn.sexycode.myjpa.metamodel.model.domain.ManagedDomainType;
 
 import javax.persistence.metamodel.*;
 
@@ -35,7 +27,7 @@ public interface ManagedTypeDescriptor<J> extends SimpleTypeDescriptor<J>, Manag
      * @apiNote Note that this is *not* the same as the type's
      * {@linkplain #getDefaultGraph "default" graph}
      */
-    SubGraphImplementor<J> makeSubGraph();
+    //    SubGraphImplementor<J> makeSubGraph();
 
     /**
      * The default graph for this type.  Generally this is used to
@@ -44,14 +36,14 @@ public interface ManagedTypeDescriptor<J> extends SimpleTypeDescriptor<J>, Manag
      * @apiNote The return is immutable ({@link Graph#isMutable()} == {@code false}) -
      * use a {@linkplain Graph#makeCopy mutable copy}
      */
-    default SubGraphImplementor<J> getDefaultGraph() {
+    /*default SubGraphImplementor<J> getDefaultGraph() {
         throw new UnsupportedOperationException("Not yet implemented - " + getClass().getName());
-    }
+    }*/
 
     /**
      * Make a sub-graph based on one of this type's sub-types
      */
-    <S extends J> SubGraphImplementor<S> makeSubGraph(Class<S> subType);
+    //    <S extends J> SubGraphImplementor<S> makeSubGraph(Class<S> subType);
 
     <S extends J> ManagedTypeDescriptor<S> findSubType(String subTypeName);
 

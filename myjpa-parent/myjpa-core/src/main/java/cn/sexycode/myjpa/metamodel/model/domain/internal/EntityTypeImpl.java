@@ -6,12 +6,10 @@
  */
 package cn.sexycode.myjpa.metamodel.model.domain.internal;
 
-import org.hibernate.engine.spi.SessionFactory;
-import org.hibernate.graph.internal.SubGraphImpl;
-import org.hibernate.graph.spi.SubGraphImplementor;
-import org.hibernate.mapping.PersistentClass;
-import org.hibernate.metamodel.model.domain.spi.EntityTypeDescriptor;
-import org.hibernate.metamodel.model.domain.spi.IdentifiableTypeDescriptor;
+import cn.sexycode.myjpa.mapping.PersistentClass;
+import cn.sexycode.myjpa.metamodel.model.domain.spi.EntityTypeDescriptor;
+import cn.sexycode.myjpa.metamodel.model.domain.spi.IdentifiableTypeDescriptor;
+import cn.sexycode.myjpa.session.SessionFactory;
 
 import javax.persistence.metamodel.EntityType;
 import java.io.Serializable;

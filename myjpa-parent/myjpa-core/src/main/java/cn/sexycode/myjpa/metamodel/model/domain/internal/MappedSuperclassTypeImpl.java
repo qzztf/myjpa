@@ -1,17 +1,9 @@
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later
- * See the lgpl.txt file in the root directory or http://www.gnu.org/licenses/lgpl-2.1.html
- */
 package cn.sexycode.myjpa.metamodel.model.domain.internal;
 
-import org.hibernate.cfg.NotYetImplementedException;
-import org.hibernate.engine.spi.SessionFactory;
-import org.hibernate.graph.spi.SubGraphImplementor;
-import org.hibernate.mapping.MappedSuperclass;
-import org.hibernate.metamodel.model.domain.spi.IdentifiableTypeDescriptor;
-import org.hibernate.metamodel.model.domain.spi.MappedSuperclassTypeDescriptor;
+import cn.sexycode.myjpa.mapping.MappedSuperclass;
+import cn.sexycode.myjpa.metamodel.model.domain.spi.IdentifiableTypeDescriptor;
+import cn.sexycode.myjpa.metamodel.model.domain.spi.MappedSuperclassTypeDescriptor;
+import cn.sexycode.myjpa.session.SessionFactory;
 
 /**
  * @author Emmanuel Bernard
@@ -22,7 +14,8 @@ public class MappedSuperclassTypeImpl<X> extends AbstractIdentifiableType<X>
     public MappedSuperclassTypeImpl(Class<X> javaType, MappedSuperclass mappedSuperclass,
             IdentifiableTypeDescriptor<? super X> superType, SessionFactory sessionFactory) {
         super(javaType, javaType.getName(), superType,
-                mappedSuperclass.getDeclaredIdentifierMapper() != null || (superType != null && superType.hasIdClass()),
+                /*mappedSuperclass.getDeclaredIdentifierMapper() != null ||*/
+                (superType != null && superType.hasIdClass()),
                 mappedSuperclass.hasIdentifierProperty(), mappedSuperclass.isVersioned(), sessionFactory);
     }
 
@@ -31,8 +24,8 @@ public class MappedSuperclassTypeImpl<X> extends AbstractIdentifiableType<X>
         return PersistenceType.MAPPED_SUPERCLASS;
     }
 
-    @Override
+   /* @Override
     public <S extends X> SubGraphImplementor<S> makeSubGraph(Class<S> subType) {
         throw new NotYetImplementedException();
-    }
+    }*/
 }

@@ -1,12 +1,6 @@
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later
- * See the lgpl.txt file in the root directory or http://www.gnu.org/licenses/lgpl-2.1.html
- */
 package cn.sexycode.myjpa.metamodel.model.domain;
 
-import org.hibernate.internal.util.StringHelper;
+import cn.sexycode.util.core.str.StringUtils;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -38,7 +32,7 @@ public class NavigableRole implements Serializable {
             final String prefix;
             if (parent != null) {
                 final String resolvedParent = parent.getFullPath();
-                if (StringHelper.isEmpty(resolvedParent)) {
+                if (StringUtils.isEmpty(resolvedParent)) {
                     prefix = "";
                 } else {
                     prefix = resolvedParent + '.';
@@ -76,7 +70,7 @@ public class NavigableRole implements Serializable {
     }
 
     public boolean isRoot() {
-        return parent == null && StringHelper.isEmpty(navigableName);
+        return parent == null && StringUtils.isEmpty(navigableName);
     }
 
     @Override

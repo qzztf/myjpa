@@ -6,7 +6,7 @@
  */
 package cn.sexycode.myjpa.metamodel.model.domain;
 
-import org.hibernate.HibernateException;
+import cn.sexycode.myjpa.MyjpaException;
 
 import javax.persistence.metamodel.BasicType;
 import java.util.Objects;
@@ -27,7 +27,7 @@ public interface BasicDomainType<J> extends SimpleDomainType<J>, BasicType<J> {
         return PersistenceType.BASIC;
     }
 
-    default boolean areEqual(J x, J y) throws HibernateException {
+    default boolean areEqual(J x, J y) throws MyjpaException {
         return Objects.equals(x, y);
     }
 }

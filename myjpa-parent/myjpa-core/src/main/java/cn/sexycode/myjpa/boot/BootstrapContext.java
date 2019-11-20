@@ -1,7 +1,7 @@
 package cn.sexycode.myjpa.boot;
 
-import cn.sexycode.myjpa.binding.MetadataBuildingOptions;
 import cn.sexycode.sql.dialect.function.SQLFunction;
+import cn.sexycode.util.core.cls.ReflectionManager;
 import cn.sexycode.util.core.cls.classloading.ClassLoaderAccess;
 import cn.sexycode.util.core.file.ArchiveDescriptorFactory;
 import cn.sexycode.util.core.file.scan.ScanEnvironment;
@@ -92,4 +92,6 @@ public interface BootstrapContext {
      * @todo verify this ^^
      */
     void release();
+
+    ReflectionManager getReflectionManager();
 }

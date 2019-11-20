@@ -1,19 +1,24 @@
-package cn.sexycode.myjpa.binding;
+package cn.sexycode.myjpa.cfg;
 
+import cn.sexycode.myjpa.binding.*;
 import cn.sexycode.myjpa.mapping.PersistentClass;
 import cn.sexycode.myjpa.mapping.RootClass;
+import cn.sexycode.sql.mapping.Constraint;
+import cn.sexycode.util.core.cls.XAnnotatedElement;
 import cn.sexycode.util.core.cls.XClass;
 import cn.sexycode.util.core.cls.XPackage;
+import cn.sexycode.util.core.cls.XProperty;
 import cn.sexycode.util.core.exception.AnnotationException;
 import cn.sexycode.util.core.exception.AssertionFailure;
 import cn.sexycode.util.core.exception.ClassLoadingException;
+import cn.sexycode.util.core.str.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.persistence.criteria.Fetch;
+import javax.persistence.criteria.Join;
+import java.util.*;
 
 /**
  * JSR 175 annotation binder which reads the annotations from classes, applies the
@@ -635,9 +640,8 @@ public final class AnnotationBinder {
         return inheritanceStatePerClass;
     }
 
-    /*
 
-        private static void processIdPropertiesIfNotAlready(
+        /*private static void processIdPropertiesIfNotAlready(
                 Map<XClass, InheritanceState> inheritanceStatePerClass,
                 MetadataBuildingContext context,
                 PersistentClass persistentClass,
@@ -682,25 +686,25 @@ public final class AnnotationBinder {
                                 + ") in entity annotated with @IdClass:" + persistentClass.getEntityName()
                 );
             }
-        }
+        }*/
 
-        private static boolean mapAsIdClass(
-                Map<XClass, InheritanceState> inheritanceStatePerClass,
-                InheritanceState inheritanceState,
-                PersistentClass persistentClass,
-                EntityBinder entityBinder,
-                PropertyHolder propertyHolder,
-                InheritanceState.ElementsToProcess elementsToProcess,
-                Set<String> idPropertiesIfIdClass,
-                MetadataBuildingContext context) {
-            *//*
+	/*private static boolean mapAsIdClass(
+            Map<XClass, InheritanceState> inheritanceStatePerClass,
+            InheritanceState inheritanceState,
+            PersistentClass persistentClass,
+            EntityBinder entityBinder,
+            PropertyHolder propertyHolder,
+            InheritanceState.ElementsToProcess elementsToProcess,
+            Set<String> idPropertiesIfIdClass,
+            MetadataBuildingContext context) {*/
+	/*
      * We are looking for @IdClass
      * In general we map the id class as identifier using the mapping metadata of the main entity's properties
      * and we create an identifier mapper containing the id properties of the main entity
      *
      * In JPA 2, there is a shortcut if the id class is the Pk of the associated class pointed to by the id
      * it ought to be treated as an embedded and not a real IdClass (at least in the Hibernate's internal way
-     */
+	 */
 /*
 		XClass classWithIdClass = inheritanceState.getClassWithIdClass( false );
 		if ( classWithIdClass != null ) {
@@ -888,7 +892,8 @@ public final class AnnotationBinder {
     /*
      * Process the filters defined on the given class, as well as all filters defined
      * on the MappedSuperclass(s) in the inheritance hierarchy
-     *//*
+	 */
+    /*
 
 	private static void bindFilters(
 			XClass annotatedClass,
@@ -1060,13 +1065,16 @@ public final class AnnotationBinder {
 		}
 	}
 
-	*//**
+	*/
+
+	/**
      * @param elements List of {@code ProperyData} instances
      * @param propertyContainer Metadata about a class and its properties
      *
      * @return the number of id properties found while iterating the elements of {@code annotatedClass} using
      *         the determined access strategy, {@code false} otherwise.
-     *//*
+	 */
+
 	static int addElementsOfClass(
 			List<PropertyData> elements,
 			PropertyContainer propertyContainer,
@@ -1110,28 +1118,28 @@ public final class AnnotationBinder {
 				context.getBootstrapContext().getReflectionManager()
 		);
 
-		*//*
+		/**
      * put element annotated by @Id in front
      * since it has to be parsed before any association by Hibernate
-     *//*
+		 */
 		final XAnnotatedElement element = propertyAnnotatedElement.getProperty();
 		if ( element.isAnnotationPresent( Id.class ) || element.isAnnotationPresent( EmbeddedId.class ) ) {
 			inFlightPropertyDataList.add( 0, propertyAnnotatedElement );
-			*//**
+			/**
      * The property must be put in hibernate.properties as it's a system wide property. Fixable?
      * TODO support true/false/default on the property instead of present / not present
      * TODO is @Column mandatory?
      * TODO add method support
-     *//*
-			if ( context.getBuildingOptions().isSpecjProprietarySyntaxEnabled() ) {
+			 */
+			//			if ( context.getBuildingOptions().isSpecjProprietarySyntaxEnabled() ) {
 				if ( element.isAnnotationPresent( Id.class ) && element.isAnnotationPresent( Column.class ) ) {
 					String columnName = element.getAnnotation( Column.class ).name();
 					for ( XProperty prop : declaringClass.getDeclaredProperties( AccessType.FIELD.getType() ) ) {
 						if ( !prop.isAnnotationPresent( MapsId.class ) ) {
-							*//**
+							/**
      * The detection of a configured individual JoinColumn differs between Annotation
      * and XML configuration processing.
-     *//*
+							 */
 							boolean isRequiredAnnotationPresent = false;
 							JoinColumns groupAnnotation = prop.getAnnotation( JoinColumns.class );
 							if ( (prop.isAnnotationPresent( JoinColumn.class )
@@ -1157,35 +1165,35 @@ public final class AnnotationBinder {
 										//TODO we should get the right accessor but the same as id would do
 										context.getBootstrapContext().getReflectionManager()
 								);
-								context.getMetadataCollector().addPropertyAnnotatedWithMapsIdSpecj(
+								/*context.getMetadataCollector().addPropertyAnnotatedWithMapsIdSpecj(
 										entity,
 										specJPropertyData,
 										element.toString()
-								);
+								);*/
 							}
 						}
 					}
 				}
-			}
+			//			}
 
 			if ( element.isAnnotationPresent( ManyToOne.class ) || element.isAnnotationPresent( OneToOne.class ) ) {
-				context.getMetadataCollector().addToOneAndIdProperty( entity, propertyAnnotatedElement );
+				//				context.getMetadataCollector().addToOneAndIdProperty( entity, propertyAnnotatedElement );
 			}
 			idPropertyCounter++;
 		}
 		else {
 			inFlightPropertyDataList.add( propertyAnnotatedElement );
 		}
-		if ( element.isAnnotationPresent( MapsId.class ) ) {
+		/*if ( element.isAnnotationPresent( MapsId.class ) ) {
 			context.getMetadataCollector().addPropertyAnnotatedWithMapsId( entity, propertyAnnotatedElement );
-		}
+		}*/
 
 		return idPropertyCounter;
 	}
 
-	*//*
+	/*
      * Process annotation of a particular property
-     *//*
+	 */
 
 	private static void processElementAnnotations(
 			PropertyHolder propertyHolder,
@@ -1200,29 +1208,30 @@ public final class AnnotationBinder {
 			Map<XClass, InheritanceState> inheritanceStatePerClass) throws MappingException {
 
 		if ( !propertyHolder.isComponent() ) {
-			if ( entityBinder.isPropertyDefinedInSuperHierarchy( inferredData.getPropertyName() ) ) {
+			/*if ( entityBinder.isPropertyDefinedInSuperHierarchy( inferredData.getPropertyName() ) ) {
 				LOG.debugf(
 						"Skipping attribute [%s : %s] as it was already processed as part of super hierarchy",
 						inferredData.getClassOrElementName(),
 						inferredData.getPropertyName()
 				);
 				return;
-			}
+			}*/
 		}
 
-		*//**
+		/**
      * inSecondPass can only be used to apply right away the second pass of a composite-element
      * Because it's a value type, there is no bidirectional association, hence second pass
      * ordering does not matter
-     *//*
+		 */
 
 		final boolean traceEnabled = LOG.isTraceEnabled();
 		if ( traceEnabled ) {
-			LOG.tracev( "Processing annotations of {0}.{1}" , propertyHolder.getEntityName(), inferredData.getPropertyName() );
+			LOG.trace("Processing annotations of {}.{}", propertyHolder.getEntityName(),
+					inferredData.getPropertyName());
 		}
 
 		final XProperty property = inferredData.getProperty();
-		if ( property.isAnnotationPresent( Parent.class ) ) {
+		/*if ( property.isAnnotationPresent( Parent.class ) ) {
 			if ( propertyHolder.isComponent() ) {
 				propertyHolder.setParentProperty( property.getName() );
 			}
@@ -1233,7 +1242,7 @@ public final class AnnotationBinder {
 				);
 			}
 			return;
-		}
+		}*/
 
 		ColumnsBuilder columnsBuilder = new ColumnsBuilder(
 				propertyHolder,
@@ -2236,11 +2245,11 @@ public final class AnnotationBinder {
 			boolean inSecondPass,
 			MetadataBuildingContext buildingContext,
 			Map<XClass, InheritanceState> inheritanceStatePerClass) {
-		*//**
+		/**
      * inSecondPass can only be used to apply right away the second pass of a composite-element
      * Because it's a value type, there is no bidirectional association, hence second pass
      * ordering does not matter
-     *//*
+		 */
 		Component comp = createComponent( propertyHolder, inferredData, isComponentEmbedded, isIdentifierMapper, buildingContext );
 		String subpath = BinderHelper.getPath( propertyHolder, inferredData );
 		LOG.tracev( "Binding component with path: {0}", subpath );
@@ -2416,9 +2425,9 @@ public final class AnnotationBinder {
 			MetadataBuildingContext buildingContext,
 			Map<XClass, InheritanceState> inheritanceStatePerClass) {
 
-		*//*
+		/*
      * Fill simple value and property since and Id is a property
-     *//*
+		 */
 		PersistentClass persistentClass = propertyHolder.getPersistentClass();
 		if ( !( persistentClass instanceof RootClass ) ) {
 			throw new AnnotationException(
@@ -2745,7 +2754,7 @@ public final class AnnotationBinder {
 	}
 
 
-*//*	public static FetchMode getFetchMode(FetchType fetch) {
+/*	public static FetchMode getFetchMode(FetchType fetch) {
 		if ( fetch == FetchType.EAGER ) {
 			return FetchMode.JOIN;
 		}

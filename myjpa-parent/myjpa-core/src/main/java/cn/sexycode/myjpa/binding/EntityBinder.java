@@ -1,5 +1,6 @@
 package cn.sexycode.myjpa.binding;
 
+import cn.sexycode.myjpa.cfg.InheritanceState;
 import cn.sexycode.myjpa.mapping.PersistentClass;
 import cn.sexycode.myjpa.mapping.RootClass;
 import cn.sexycode.util.core.cls.XClass;

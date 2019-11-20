@@ -1,7 +1,11 @@
-package cn.sexycode.myjpa.binding;
+package cn.sexycode.myjpa.cfg;
 
+import cn.sexycode.myjpa.binding.MetadataBuildingContext;
+import cn.sexycode.myjpa.mapping.PersistentClass;
 import cn.sexycode.util.core.cls.XAnnotatedElement;
 import cn.sexycode.util.core.cls.XClass;
+import cn.sexycode.util.core.cls.XProperty;
+import cn.sexycode.util.core.exception.AnnotationException;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -37,7 +41,7 @@ public class InheritanceState {
 
     private AccessType accessType;
 
-    //	private ElementsToProcess elementsToProcess;
+    private ElementsToProcess elementsToProcess;
     private Boolean hasIdClassOrEmbeddedId;
 
     public InheritanceState(XClass clazz, Map<XClass, InheritanceState> inheritanceStatePerClass,
@@ -140,8 +144,7 @@ public class InheritanceState {
         getElementsToProcess();
         addMappedSuperClassInMetadata( persistenceClass );
         entityBinder.setPropertyAccessType( accessType );
-    }
-*/
+    }*/
     public XClass getClassWithIdClass(boolean evenIfSubclass) {
         if (!evenIfSubclass && hasParents()) {
             return null;
@@ -158,7 +161,7 @@ public class InheritanceState {
         }
     }
 
-	/*public Boolean hasIdClassOrEmbeddedId() {
+    public Boolean hasIdClassOrEmbeddedId() {
 		if ( hasIdClassOrEmbeddedId == null ) {
 			hasIdClassOrEmbeddedId = false;
 			if ( getClassWithIdClass( true ) != null ) {
@@ -175,7 +178,7 @@ public class InheritanceState {
 			}
 		}
 		return hasIdClassOrEmbeddedId;
-	}*/
+    }
 
     /*
      * Get the annotated elements and determine access type from hierarchy, guessing from @Id or @EmbeddedId presence if not
@@ -183,7 +186,7 @@ public class InheritanceState {
      * Change EntityBinder by side effect
      */
 
-	/*public ElementsToProcess getElementsToProcess() {
+    public ElementsToProcess getElementsToProcess() {
 		if ( elementsToProcess == null ) {
 			InheritanceState inheritanceState = inheritanceStatePerClass.get( clazz );
 			assert !inheritanceState.isEmbeddableSuperclass();
@@ -218,8 +221,8 @@ public class InheritanceState {
 		}
 		return elementsToProcess;
 	}
-*/
-	/*private AccessType determineDefaultAccessType() {
+
+    private AccessType determineDefaultAccessType() {
 		for (XClass xclass = clazz; xclass != null; xclass = xclass.getSuperclass()) {
 			if ( ( xclass.getSuperclass() == null || Object.class.getName().equals( xclass.getSuperclass().getName() ) )
 					&& ( xclass.isAnnotationPresent( Entity.class ) || xclass.isAnnotationPresent( MappedSuperclass.class ) )
@@ -247,9 +250,8 @@ public class InheritanceState {
 			}
 		}
 		throw new AnnotationException( "No identifier specified for entity: " + clazz );
-	}*/
+    }
 
-/*
 	private void getMappedSuperclassesTillNextEntityOrdered() {
 
 		//ordered to allow proper messages on properties subclassing
@@ -274,7 +276,7 @@ public class InheritanceState {
 	private void addMappedSuperClassInMetadata(PersistentClass persistentClass) {
 		//add @MappedSuperclass in the metadata
 		// classes from 0 to n-1 are @MappedSuperclass and should be linked
-		MappedSuperclass mappedSuperclass = null;
+        cn.sexycode.myjpa.mapping.MappedSuperclass mappedSuperclass = null;
 		final InheritanceState superEntityState =
 				InheritanceState.getInheritanceStateOfSuperEntity( clazz, inheritanceStatePerClass );
 		PersistentClass superEntity =
@@ -283,13 +285,13 @@ public class InheritanceState {
 						null;
 		final int lastMappedSuperclass = classesToProcessForMappedSuperclass.size() - 1;
 		for ( int index = 0; index < lastMappedSuperclass; index++ ) {
-			MappedSuperclass parentSuperclass = mappedSuperclass;
+            cn.sexycode.myjpa.mapping.MappedSuperclass parentSuperclass = mappedSuperclass;
 			final Class<?> type = buildingContext.getBootstrapContext().getReflectionManager()
 					.toClass( classesToProcessForMappedSuperclass.get( index ) );
 			//add MAppedSuperclass if not already there
 			mappedSuperclass = buildingContext.getMetadataCollector().getMappedSuperclass( type );
 			if ( mappedSuperclass == null ) {
-				mappedSuperclass = new org.hibernate.mapping.MappedSuperclass( parentSuperclass, superEntity );
+                mappedSuperclass = new cn.sexycode.myjpa.mapping.MappedSuperclass(parentSuperclass, superEntity);
 				mappedSuperclass.setMappedClass( type );
 				buildingContext.getMetadataCollector().addMappedSuperclass( type, mappedSuperclass );
 			}
@@ -298,9 +300,8 @@ public class InheritanceState {
 			persistentClass.setSuperMappedSuperclass( mappedSuperclass );
 		}
 	}
-*/
 
-	/*static final class ElementsToProcess {
+    static final class ElementsToProcess {
 		private final List<PropertyData> properties;
 		private final int idPropertyCount;
 
@@ -316,5 +317,5 @@ public class InheritanceState {
 			this.properties = properties;
 			this.idPropertyCount = idPropertyCount;
 		}
-	}*/
+    }
 }

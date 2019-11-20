@@ -1,6 +1,7 @@
 package cn.sexycode.myjpa.binding;
 
 import cn.sexycode.myjpa.boot.BootstrapContext;
+import cn.sexycode.myjpa.boot.MetadataBuildingOptions;
 import cn.sexycode.util.core.cls.ReflectionManager;
 
 /**

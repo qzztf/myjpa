@@ -1,5 +1,7 @@
 package cn.sexycode.myjpa.binding;
 
+import cn.sexycode.myjpa.cfg.AnnotationBinder;
+import cn.sexycode.myjpa.cfg.InheritanceState;
 import cn.sexycode.util.core.cls.ReflectionManager;
 import cn.sexycode.util.core.cls.XClass;
 import cn.sexycode.util.core.cls.internal.JavaReflectionManager;

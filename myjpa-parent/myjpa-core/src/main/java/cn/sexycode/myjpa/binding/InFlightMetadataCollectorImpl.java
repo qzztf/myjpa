@@ -1,5 +1,6 @@
 package cn.sexycode.myjpa.binding;
 
+import cn.sexycode.myjpa.boot.MetadataBuildingOptions;
 import cn.sexycode.myjpa.mapping.MappedSuperclass;
 import cn.sexycode.myjpa.mapping.PersistentClass;
 import cn.sexycode.myjpa.session.SessionFactory;
@@ -24,7 +25,6 @@ import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The implementation of the in-flight Metadata collector contract.
@@ -65,14 +65,14 @@ public class InFlightMetadataCollectorImpl implements InFlightMetadataCollector 
         this.options = options;
         this.typeResolver = typeResolver;
 
-        for (Map.Entry<String, SQLFunction> sqlFunctionEntry : options.getSqlFunctions().entrySet()) {
+        /*for (Map.Entry<String, SQLFunction> sqlFunctionEntry : options.getSqlFunctions().entrySet()) {
             if (sqlFunctionMap == null) {
                 // we need this to be a ConcurrentHashMap for the one we ultimately pass along to the SF
                 // but is this the reference that gets passed along?
                 sqlFunctionMap = new ConcurrentHashMap<>(16, .75f, 1);
             }
             sqlFunctionMap.put(sqlFunctionEntry.getKey(), sqlFunctionEntry.getValue());
-        }
+        }*/
 
     }
 
@@ -95,7 +95,7 @@ public class InFlightMetadataCollectorImpl implements InFlightMetadataCollector 
     public Database getDatabase() {
         // important to delay this instantiation until as late as possible.
         if (database == null) {
-            this.database = new Database(options.getJdbcEnvironment());
+            //            this.database = new Database(options.getJdbcEnvironment());
         }
         return database;
     }

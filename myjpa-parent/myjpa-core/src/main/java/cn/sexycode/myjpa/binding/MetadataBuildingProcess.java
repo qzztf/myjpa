@@ -1,6 +1,7 @@
 package cn.sexycode.myjpa.binding;
 
 import cn.sexycode.myjpa.boot.BootstrapContext;
+import cn.sexycode.myjpa.boot.MetadataBuildingOptions;
 import cn.sexycode.sql.type.BasicTypeRegistry;
 import cn.sexycode.sql.type.TypeFactory;
 import cn.sexycode.sql.type.TypeResolver;

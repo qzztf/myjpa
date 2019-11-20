@@ -1,17 +1,12 @@
 package cn.sexycode.myjpa.session;
 
-import cn.sexycode.myjpa.AvailableSettings;
 import cn.sexycode.myjpa.binding.*;
 import cn.sexycode.myjpa.boot.BootstrapContextImpl;
+import cn.sexycode.myjpa.boot.MetadataBuildingOptions;
 import cn.sexycode.myjpa.mybatis.MyjpaConfiguration;
 import cn.sexycode.myjpa.mybatis.SqlSessionFactoryBuilder;
-import cn.sexycode.sql.dialect.DialectFactory;
 import cn.sexycode.sql.dialect.function.SQLFunction;
-import cn.sexycode.sql.jdbc.JdbcEnvironment;
-import cn.sexycode.sql.jdbc.JdbcEnvironmentImpl;
 import cn.sexycode.util.core.factory.BeanFactoryUtil;
-import cn.sexycode.util.core.file.scan.ScanEnvironment;
-import cn.sexycode.util.core.properties.PropertiesUtil;
 import cn.sexycode.util.core.service.Service;
 import cn.sexycode.util.core.service.ServiceRegistry;
 import cn.sexycode.util.core.service.StandardServiceRegistry;
@@ -63,28 +58,29 @@ public class SessionFactoryBuilderImpl implements SessionFactoryBuilder {
                     return null;
                 }
 
-                @Override
+                /*@Override
                 public Map<String, SQLFunction> getSqlFunctions() {
                     return sqlFunctionMap;
-                }
+                }*/
 
                 @Override
                 public MappingDefaults getMappingDefaults() {
                     return new MappingDefaultsImpl(null);
                 }
-
+ /*
                 @Override
                 public ScanEnvironment getScanEnvironment() {
                     return new StandardScanEnvironmentImpl(persistenceUnitInfo);
                 }
+                */
 
                 @Override
-                public ServiceRegistry getServiceRegistry() {
-                    ServiceRegistry serviceRegistry = BeanFactoryUtil.getBeanFactory()
+                public StandardServiceRegistry getServiceRegistry() {
+                    StandardServiceRegistry serviceRegistry = BeanFactoryUtil.getBeanFactory()
                             .getBean(StandardServiceRegistry.class);
                     return serviceRegistry;
                 }
-
+/*
                 @Override
                 public JdbcEnvironment getJdbcEnvironment() {
                     final DialectFactory dialectFactory = getServiceRegistry().getService(DialectFactory.class);
@@ -93,7 +89,7 @@ public class SessionFactoryBuilderImpl implements SessionFactoryBuilder {
                     return new JdbcEnvironmentImpl(getServiceRegistry(), dialectFactory
                             .buildDialect(PropertiesUtil.getString(AvailableSettings.DIALECT, properties, "cn.sexycode.sql.dialect.H2Dialect"),
                                     null));
-                }
+                }*/
             };
             BootstrapContextImpl bootstrapContext = new BootstrapContextImpl(new StandardServiceRegistry() {
                 @Override
@@ -111,7 +107,7 @@ public class SessionFactoryBuilderImpl implements SessionFactoryBuilder {
 
                 }
             }, options);
-            bootstrapContext.injectScanEnvironment(options.getScanEnvironment());
+            bootstrapContext.injectScanEnvironment(new StandardScanEnvironmentImpl(persistenceUnitInfo));
             ManagedResources managedResources = MetadataBuildingProcess.prepare(metadataSources, bootstrapContext);
             this.metadata = MetadataBuildingProcess.complete(managedResources, bootstrapContext, options);
         }

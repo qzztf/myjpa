@@ -186,8 +186,8 @@ class MetadataContext {
 				try {
 					final EntityTypeDescriptor<?> jpaMapping = entityTypesByPersistentClass.get(safeMapping);
 
-					applyIdMetadata(safeMapping, jpaMapping);
-					applyVersionAttribute(safeMapping, jpaMapping);
+//					applyIdMetadata(safeMapping, jpaMapping);
+//					applyVersionAttribute(safeMapping, jpaMapping);
 
 					Iterator<Property> properties = safeMapping.getDeclaredPropertyIterator();
 					while (properties.hasNext()) {
@@ -270,13 +270,13 @@ class MetadataContext {
 
 	@SuppressWarnings("unchecked")
 	private <X> void applyIdMetadata(PersistentClass persistentClass, IdentifiableTypeDescriptor<?> identifiableType) {
-		if (persistentClass.hasIdentifierProperty()) {
+		/*if (persistentClass.hasIdentifierProperty()) {
 			final Property declaredIdentifierProperty = persistentClass.getDeclaredIdentifierProperty();
 			if (declaredIdentifierProperty != null) {
 				identifiableType.getInFlightAccess().applyIdAttribute((SingularPersistentAttribute) attributeFactory
 						.buildIdAttribute(identifiableType, declaredIdentifierProperty));
 			}
-		}
+		}*/
 		/*else if ( persistentClass.hasIdentifierMapper() ) {
 			@SuppressWarnings("unchecked")
 			Iterator<Property> propertyIterator = persistentClass.getIdentifierMapper().getPropertyIterator();
@@ -305,13 +305,13 @@ class MetadataContext {
 	}
 
 	private <X> void applyIdMetadata(MappedSuperclass mappingType, MappedSuperclassTypeDescriptor<X> jpaMappingType) {
-		if (mappingType.hasIdentifierProperty()) {
+		/*if (mappingType.hasIdentifierProperty()) {
 			final Property declaredIdentifierProperty = mappingType.getDeclaredIdentifierProperty();
 			if (declaredIdentifierProperty != null) {
 				jpaMappingType.getInFlightAccess().applyIdAttribute(
 						attributeFactory.buildIdAttribute(jpaMappingType, declaredIdentifierProperty));
 			}
-		}
+		}*/
 		//a MappedSuperclass can have no identifier if the id is set below in the hierarchy
 		/*else if ( mappingType.getIdentifierMapper() != null ) {
 			@SuppressWarnings("unchecked")
@@ -326,19 +326,19 @@ class MetadataContext {
 
 	private <X> void applyVersionAttribute(PersistentClass persistentClass, EntityTypeDescriptor<X> jpaEntityType) {
 		final Property declaredVersion = persistentClass.getDeclaredVersion();
-		if (declaredVersion != null) {
+		/*if (declaredVersion != null) {
 			jpaEntityType.getInFlightAccess()
 					.applyVersionAttribute(attributeFactory.buildVersionAttribute(jpaEntityType, declaredVersion));
-		}
+		}*/
 	}
 
 	private <X> void applyVersionAttribute(MappedSuperclass mappingType,
 			MappedSuperclassTypeDescriptor<X> jpaMappingType) {
 		final Property declaredVersion = mappingType.getDeclaredVersion();
-		if (declaredVersion != null) {
+		/*if (declaredVersion != null) {
 			jpaMappingType.getInFlightAccess()
 					.applyVersionAttribute(attributeFactory.buildVersionAttribute(jpaMappingType, declaredVersion));
-		}
+		}*/
 	}
 
 	private <X> Set<SingularPersistentAttribute<? super X, ?>> buildIdClassAttributes(
@@ -347,9 +347,9 @@ class MetadataContext {
 			LOG.trace("Building old-school composite identifier [" + ownerType.getJavaType().getName() + ']');
 		}
 		Set<SingularPersistentAttribute<? super X, ?>> attributes = new HashSet<>();
-		while (propertyIterator.hasNext()) {
+		/*while (propertyIterator.hasNext()) {
 			attributes.add(attributeFactory.buildIdAttribute(ownerType, propertyIterator.next()));
-		}
+		}*/
 		return attributes;
 	}
 

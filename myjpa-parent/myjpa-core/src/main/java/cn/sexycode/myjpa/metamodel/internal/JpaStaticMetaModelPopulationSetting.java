@@ -1,13 +1,9 @@
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later.
- * See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
- */
 package cn.sexycode.myjpa.metamodel.internal;
 
-import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.internal.util.config.ConfigurationHelper;
+
+import cn.sexycode.myjpa.AvailableSettings;
+import cn.sexycode.sql.util.ConfigurationHelper;
+import cn.sexycode.util.core.properties.PropertiesUtil;
 
 import java.util.Map;
 
@@ -45,7 +41,7 @@ public enum JpaStaticMetaModelPopulationSetting {
     }
 
     public static JpaStaticMetaModelPopulationSetting determineJpaMetaModelPopulationSetting(Map configurationValues) {
-        String setting = ConfigurationHelper
+        String setting = PropertiesUtil
                 .getString(AvailableSettings.STATIC_METAMODEL_POPULATION, configurationValues, null);
         return JpaStaticMetaModelPopulationSetting.parse(setting);
     }

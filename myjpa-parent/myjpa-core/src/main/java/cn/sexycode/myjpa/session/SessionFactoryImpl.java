@@ -3,6 +3,7 @@ package cn.sexycode.myjpa.session;
 import cn.sexycode.myjpa.binding.Metadata;
 import cn.sexycode.myjpa.metamodel.internal.JpaMetaModelPopulationSetting;
 import cn.sexycode.myjpa.metamodel.internal.MetamodelImpl;
+import cn.sexycode.myjpa.metamodel.spi.MetamodelImplementor;
 import cn.sexycode.myjpa.transaction.MyjpaTransactionImpl;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
@@ -80,7 +81,7 @@ public class SessionFactoryImpl extends DefaultSqlSessionFactory implements Sess
     }
 
     @Override
-    public Metamodel getMetamodel() {
+    public MetamodelImplementor getMetamodel() {
         return metamodel;
     }
 

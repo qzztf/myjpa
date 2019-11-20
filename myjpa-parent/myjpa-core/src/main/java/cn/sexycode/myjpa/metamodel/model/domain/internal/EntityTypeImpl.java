@@ -27,8 +27,8 @@ public class EntityTypeImpl<J> extends AbstractIdentifiableType<J> implements En
     public EntityTypeImpl(Class javaType, IdentifiableTypeDescriptor<? super J> superType,
             PersistentClass persistentClass, SessionFactory sessionFactory) {
         super(javaType, persistentClass.getEntityName(), superType,
-                persistentClass.getDeclaredIdentifierMapper() != null || (superType != null && superType.hasIdClass()),
-                persistentClass.hasIdentifierProperty(), persistentClass.isVersioned(), sessionFactory);
+                /*persistentClass.getDeclaredIdentifierMapper() != null ||*/ (superType != null && superType.hasIdClass()),
+                persistentClass.hasIdentifierProperty(), /*persistentClass.isVersioned()*/ false, sessionFactory);
         this.jpaEntityName = persistentClass.getJpaEntityName();
     }
 
@@ -57,7 +57,7 @@ public class EntityTypeImpl<J> extends AbstractIdentifiableType<J> implements En
         return super.getSuperType();
     }
 
-    @Override
+ /*   @Override
     @SuppressWarnings("unchecked")
     public <S extends J> SubGraphImplementor<S> makeSubGraph(Class<S> subType) {
         if (!getBindableJavaType().isAssignableFrom(subType)) {
@@ -73,7 +73,7 @@ public class EntityTypeImpl<J> extends AbstractIdentifiableType<J> implements En
     public SubGraphImplementor<J> makeSubGraph() {
         return makeSubGraph(getBindableJavaType());
     }
-
+*/
     @Override
     public String toString() {
         return getName();

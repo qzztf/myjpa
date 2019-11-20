@@ -945,7 +945,7 @@ public abstract class PersistentClass implements AttributeContainer, Serializabl
         return java.util.Collections.unmodifiableMap(tuplizerImpls);
     }
 
-    public boolean hasNaturalId() {
+   /* public boolean hasNaturalId() {
         Iterator props = getRootClass().getPropertyIterator();
         while (props.hasNext()) {
             if (((Property) props.next()).isNaturalIdentifier()) {
@@ -953,7 +953,7 @@ public abstract class PersistentClass implements AttributeContainer, Serializabl
             }
         }
         return false;
-    }
+    }*/
 
     // The following methods are added to support @MappedSuperclass in the metamodel
     public Iterator getDeclaredPropertyIterator() {

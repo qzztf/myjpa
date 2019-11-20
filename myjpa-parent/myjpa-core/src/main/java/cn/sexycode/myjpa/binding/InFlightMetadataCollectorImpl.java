@@ -58,7 +58,7 @@ public class InFlightMetadataCollectorImpl implements InFlightMetadataCollector 
     // All the annotation-processing-specific state :(
     private final Set<String> defaultIdentifierGeneratorNames = new HashSet<String>();
 
-    private Map<Class, MappedSuperclass> mappedSuperClasses;
+    private Map<Class, MappedSuperclass> mappedSuperClasses = new HashMap<>();
 
     public InFlightMetadataCollectorImpl(MetadataBuildingOptions options, TypeResolver typeResolver) {
         this.uuid = UUID.randomUUID();
@@ -209,7 +209,7 @@ public class InFlightMetadataCollectorImpl implements InFlightMetadataCollector 
         if (importName == null || entityName == null) {
             throw new IllegalArgumentException("Import name or entity name is null");
         }
-        LOGGER.trace("Import: {0} -> {1}", importName, entityName);
+        LOGGER.trace("Import: {} -> {}", importName, entityName);
         String old = imports.put(importName, entityName);
         if (old != null) {
             LOGGER.debug("import name [" + importName + "] overrode previous [{" + old + "}]");

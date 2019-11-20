@@ -45,9 +45,9 @@ public class EmbeddableTypeImpl<J> extends AbstractManagedType<J> implements Emb
         return hibernateType;
     }*/
 
-    @Override
+    /*@Override
     @SuppressWarnings("unchecked")
     public <S extends J> SubGraphImplementor<S> makeSubGraph(Class<S> subType) {
         return new SubGraphImpl(this, true, sessionFactory());
-    }
+    }*/
 }

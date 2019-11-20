@@ -38,7 +38,7 @@ public abstract class AbstractPluralAttribute<D, C, E> extends AbstractAttribute
     @Override
     @SuppressWarnings("unchecked")
     public SimpleTypeDescriptor<E> getValueGraphType() {
-        return super.getValueGraphType();
+        return (SimpleTypeDescriptor<E>) super.getValueGraphType();
     }
 
     @Override

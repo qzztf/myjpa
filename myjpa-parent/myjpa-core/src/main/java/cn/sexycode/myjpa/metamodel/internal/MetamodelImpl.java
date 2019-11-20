@@ -6,12 +6,10 @@ import cn.sexycode.myjpa.mapping.PersistentClass;
 import cn.sexycode.myjpa.metamodel.model.domain.internal.EntityTypeImpl;
 import cn.sexycode.myjpa.metamodel.model.domain.internal.MappedSuperclassTypeImpl;
 import cn.sexycode.myjpa.metamodel.model.domain.spi.*;
-import cn.sexycode.myjpa.metamodel.spi.MetamodelImplementor;
 import cn.sexycode.myjpa.session.SessionFactory;
-import cn.sexycode.myjpa.type.TypeConfiguration;
 import cn.sexycode.util.core.collection.ArrayHelper;
 import cn.sexycode.util.core.collection.CollectionUtils;
-
+import cn.sexycode.myjpa.metamodel.spi.MetamodelImplementor;
 import javax.persistence.metamodel.EmbeddableType;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.ManagedType;
@@ -89,13 +87,13 @@ public class MetamodelImpl implements MetamodelImplementor, Serializable {
 
 	//	private final transient Map<String,RootGraphImplementor> entityGraphMap = new ConcurrentHashMap<>();
 
-	private final TypeConfiguration typeConfiguration;
+//	private final TypeConfiguration typeConfiguration;
 
 	private final Map<String, String[]> implementorsCache = new ConcurrentHashMap<>();
 
-	public MetamodelImpl(SessionFactory sessionFactory, TypeConfiguration typeConfiguration) {
+	public MetamodelImpl(SessionFactory sessionFactory/*, TypeConfiguration typeConfiguration*/) {
 		this.sessionFactory = sessionFactory;
-		this.typeConfiguration = typeConfiguration;
+//		this.typeConfiguration = typeConfiguration;
 	}
 
 	/**
@@ -394,10 +392,12 @@ public class MetamodelImpl implements MetamodelImplementor, Serializable {
 	//		this.entityTypesByEntityName = entityTypesByEntityName;
 	//	}
 
+/*
 	@Override
 	public TypeConfiguration getTypeConfiguration() {
 		return typeConfiguration;
 	}
+*/
 
 	@Override
 	public SessionFactory getSessionFactory() {

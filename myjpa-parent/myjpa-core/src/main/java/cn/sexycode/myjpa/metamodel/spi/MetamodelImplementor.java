@@ -4,7 +4,6 @@ import cn.sexycode.myjpa.metamodel.model.domain.spi.EmbeddedTypeDescriptor;
 import cn.sexycode.myjpa.metamodel.model.domain.spi.EntityTypeDescriptor;
 import cn.sexycode.myjpa.metamodel.model.domain.spi.ManagedTypeDescriptor;
 import cn.sexycode.myjpa.session.SessionFactory;
-import cn.sexycode.myjpa.type.TypeConfiguration;
 
 import javax.persistence.metamodel.Metamodel;
 import java.util.Set;
@@ -20,7 +19,7 @@ public interface MetamodelImplementor extends Metamodel {
      *
      * @return Access to the TypeConfiguration
      */
-    TypeConfiguration getTypeConfiguration();
+//    TypeConfiguration getTypeConfiguration();
 
     SessionFactory getSessionFactory();
 
@@ -113,7 +112,7 @@ public interface MetamodelImplementor extends Metamodel {
     //    <T> void addNamedEntityGraph(String graphName, RootGraphImplementor<T> entityGraph);
 
     /**
-     * @deprecated Use {@link #addNamedEntityGraph(String, RootGraphImplementor)} instead.
+     * deprecated Use {@link #addNamedEntityGraph(String, RootGraphImplementor)} instead.
      */
     //    @Deprecated
     //    <T> void addNamedEntityGraph(String graphName, EntityGraph<T> entityGraph);
@@ -123,7 +122,7 @@ public interface MetamodelImplementor extends Metamodel {
     //    <T> List<RootGraphImplementor<? super T>> findEntityGraphsByJavaType(Class<T> entityClass);
 
     /**
-     * @deprecated Use {@link #findEntityGraphsByJavaType(Class)} instead.
+     * //deprecated Use findEntityGraphsByJavaType(Class) instead.
      */
    /* @Deprecated
     default <T> List<EntityGraph<? super T>> findEntityGraphsByType(Class<T> entityClass) {

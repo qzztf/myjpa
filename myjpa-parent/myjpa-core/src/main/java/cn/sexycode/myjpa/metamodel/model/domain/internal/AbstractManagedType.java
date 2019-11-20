@@ -2,6 +2,7 @@ package cn.sexycode.myjpa.metamodel.model.domain.internal;
 
 import cn.sexycode.myjpa.metamodel.model.domain.spi.*;
 import cn.sexycode.myjpa.session.SessionFactory;
+import cn.sexycode.util.core.exception.AssertionFailure;
 
 import javax.persistence.metamodel.*;
 import java.io.Serializable;
@@ -457,10 +458,10 @@ public abstract class AbstractManagedType<J> extends AbstractType<J> implements 
         return mapAttribute;
     }
 
-    @Override
+   /* @Override
     public SubGraphImplementor<J> makeSubGraph() {
         return new SubGraphImpl<>(this, true, sessionFactory);
-    }
+    }*/
 
     @Override
     public <S extends J> ManagedTypeDescriptor<S> findSubType(String subTypeName) {

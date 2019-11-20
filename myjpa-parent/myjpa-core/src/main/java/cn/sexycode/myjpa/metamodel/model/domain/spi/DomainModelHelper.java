@@ -2,7 +2,6 @@ package cn.sexycode.myjpa.metamodel.model.domain.spi;
 
 import cn.sexycode.myjpa.metamodel.spi.MetamodelImplementor;
 import cn.sexycode.myjpa.session.SessionFactory;
-import cn.sexycode.util.core.cls.classloading.ClassLoaderService;
 
 /**
  * Helper containing utilities useful for domain model handling
@@ -10,13 +9,13 @@ import cn.sexycode.util.core.cls.classloading.ClassLoaderService;
  * @author Steve Ebersole
  */
 public class DomainModelHelper {
-    public static EntityPersister resolveEntityPersister(EntityTypeDescriptor<?> entityType,
+   /* public static EntityPersister resolveEntityPersister(EntityTypeDescriptor<?> entityType,
             SessionFactory sessionFactory) {
         // Our EntityTypeImpl#getType impl returns the Hibernate entity-name
         // which is exactly what we want
         final String hibernateEntityName = entityType.getName();
         return sessionFactory.getMetamodel().entityPersister(hibernateEntityName);
-    }
+    }*/
 
     @SuppressWarnings("unchecked")
     public static <T, S extends T> ManagedTypeDescriptor<S> resolveSubType(ManagedTypeDescriptor<T> baseType,
@@ -28,7 +27,7 @@ public class DomainModelHelper {
             return (ManagedTypeDescriptor) baseType;
         }
 
-        final String importedClassName = metamodel.getImportedClassName(subTypeName);
+        /*final String importedClassName = metamodel.getImportedClassName(subTypeName);
         if (importedClassName != null) {
             // first, try to find it by name directly..
             ManagedTypeDescriptor<S> subManagedType = metamodel.entity(importedClassName);
@@ -44,7 +43,7 @@ public class DomainModelHelper {
                 return metamodel.managedType(subTypeClass);
             } catch (Exception ignore) {
             }
-        }
+        }*/
 
         throw new IllegalArgumentException("Unknown sub-type name (" + baseType.getName() + ") : " + subTypeName);
     }

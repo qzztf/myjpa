@@ -1,7 +1,9 @@
 package cn.sexycode.myjpa.binding;
 
+import cn.sexycode.myjpa.boot.MetadataBuildingOptions;
 import cn.sexycode.myjpa.mapping.MappedSuperclass;
 import cn.sexycode.myjpa.mapping.PersistentClass;
+import cn.sexycode.myjpa.mapping.SimpleValue;
 
 import java.util.Collection;
 import java.util.Set;
@@ -36,4 +38,5 @@ public interface Metadata {
 
     Set<MappedSuperclass> getMappedSuperclassMappingsCopy();
 
+    MetadataBuildingOptions getMetadataBuildingOptions();
 }

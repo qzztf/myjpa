@@ -35,6 +35,7 @@ public interface InFlightMetadataCollector extends Metadata {
 
     UUID getUUID();
 
+    @Override
     MetadataBuildingOptions getMetadataBuildingOptions();
 
     TypeResolver getTypeResolver();

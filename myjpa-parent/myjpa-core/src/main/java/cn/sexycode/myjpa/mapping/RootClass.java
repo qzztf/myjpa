@@ -7,7 +7,9 @@ import cn.sexycode.sql.mapping.Value;
 import cn.sexycode.util.core.collection.SingletonIterator;
 import cn.sexycode.util.core.str.StringUtils;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * The root class of an inheritance hierarchy
@@ -334,19 +336,19 @@ public class RootClass extends PersistentClass {
     public java.util.Set getSynchronizedTables() {
         return synchronizedTables;
     }
-
+*/
     @SuppressWarnings("UnnecessaryUnboxing")
     public Set<Table> getIdentityTables() {
         Set<Table> tables = new HashSet<Table>();
-        Iterator iter = getSubclassClosureIterator();
+       /* Iterator iter = getSubclassClosureIterator();
         while ( iter.hasNext() ) {
             PersistentClass clazz = (PersistentClass) iter.next();
             if ( clazz.isAbstract() == null || !clazz.isAbstract().booleanValue() ) {
                 tables.add( clazz.getIdentityTable() );
             }
-        }
+        }*/
         return tables;
-    }*/
+    }
 
  /*   @Override
     public Object accept(PersistentClassVisitor mv) {

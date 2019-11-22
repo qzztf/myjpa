@@ -1,9 +1,9 @@
 package cn.sexycode.myjpa.query.criteria.internal.compile;
 
 import cn.sexycode.myjpa.session.Session;
-import cn.sexycode.sql.mapping.LockMode;
-import cn.sexycode.sql.mapping.LockOptions;
-import cn.sexycode.sql.model.RowSelection;
+import cn.sexycode.myjpa.sql.mapping.LockMode;
+import cn.sexycode.myjpa.sql.mapping.LockOptions;
+import cn.sexycode.myjpa.sql.model.RowSelection;
 
 import javax.persistence.*;
 import javax.persistence.criteria.ParameterExpression;

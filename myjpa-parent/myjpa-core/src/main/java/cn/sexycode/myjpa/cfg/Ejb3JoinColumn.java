@@ -4,11 +4,11 @@ import cn.sexycode.myjpa.binding.BinderHelper;
 import cn.sexycode.myjpa.binding.MetadataBuildingContext;
 import cn.sexycode.myjpa.mapping.PersistentClass;
 import cn.sexycode.myjpa.mapping.Property;
-import cn.sexycode.sql.mapping.Selectable;
-import cn.sexycode.sql.mapping.Table;
-import cn.sexycode.sql.model.Database;
-import cn.sexycode.sql.model.Identifier;
-import cn.sexycode.sql.model.PhysicalNamingStrategy;
+import cn.sexycode.myjpa.sql.mapping.Selectable;
+import cn.sexycode.myjpa.sql.mapping.Table;
+import cn.sexycode.myjpa.sql.model.Database;
+import cn.sexycode.myjpa.sql.model.Identifier;
+import cn.sexycode.myjpa.sql.model.PhysicalNamingStrategy;
 import cn.sexycode.util.core.cls.XClass;
 import cn.sexycode.util.core.exception.AnnotationException;
 

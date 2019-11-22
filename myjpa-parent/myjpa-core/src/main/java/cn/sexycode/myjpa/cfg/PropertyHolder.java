@@ -2,8 +2,8 @@ package cn.sexycode.myjpa.cfg;
 
 import cn.sexycode.myjpa.mapping.PersistentClass;
 import cn.sexycode.myjpa.mapping.Property;
-import cn.sexycode.sql.mapping.KeyValue;
-import cn.sexycode.sql.mapping.Table;
+import cn.sexycode.myjpa.sql.mapping.KeyValue;
+import cn.sexycode.myjpa.sql.mapping.Table;
 import cn.sexycode.util.core.cls.XClass;
 import cn.sexycode.util.core.cls.XProperty;
 

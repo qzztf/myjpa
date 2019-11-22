@@ -1,7 +1,7 @@
 package cn.sexycode.myjpa.metamodel.model.convert.spi;
 
 import cn.sexycode.myjpa.session.Session;
-import cn.sexycode.sql.type.descriptor.java.EnumJavaTypeDescriptor;
+import cn.sexycode.myjpa.sql.type.descriptor.java.EnumJavaTypeDescriptor;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

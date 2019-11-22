@@ -1,6 +1,6 @@
 package cn.sexycode.myjpa.id;
-import cn.sexycode.sql.dialect.Dialect;
-import cn.sexycode.sql.type.Type;
+import cn.sexycode.myjpa.sql.dialect.Dialect;
+import cn.sexycode.myjpa.sql.type.Type;
 
 import java.util.Properties;
 

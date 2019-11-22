@@ -2,11 +2,11 @@ package cn.sexycode.myjpa.cfg;
 
 import cn.sexycode.myjpa.binding.BinderHelper;
 import cn.sexycode.myjpa.binding.MetadataBuildingContext;
-import cn.sexycode.sql.mapping.Column;
-import cn.sexycode.sql.mapping.Table;
-import cn.sexycode.sql.model.Database;
-import cn.sexycode.sql.model.Identifier;
-import cn.sexycode.sql.model.PhysicalNamingStrategy;
+import cn.sexycode.myjpa.sql.mapping.Column;
+import cn.sexycode.myjpa.sql.mapping.Table;
+import cn.sexycode.myjpa.sql.model.Database;
+import cn.sexycode.myjpa.sql.model.Identifier;
+import cn.sexycode.myjpa.sql.model.PhysicalNamingStrategy;
 import cn.sexycode.util.core.cls.XProperty;
 import cn.sexycode.util.core.exception.AnnotationException;
 

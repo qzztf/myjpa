@@ -19,13 +19,15 @@ import cn.sexycode.myjpa.binding.MetadataBuildingContext;
 import cn.sexycode.myjpa.id.IdentifierGenerator;
 import cn.sexycode.myjpa.id.IdentifierGeneratorFactory;
 import cn.sexycode.myjpa.id.PersistentIdentifierGenerator;
-import cn.sexycode.sql.dialect.Dialect;
-import cn.sexycode.sql.mapping.*;
-import cn.sexycode.sql.type.*;
-import cn.sexycode.sql.type.descriptor.JdbcTypeNameMapper;
-import cn.sexycode.sql.type.descriptor.sql.LobTypeMappings;
-import cn.sexycode.sql.type.descriptor.sql.NationalizedTypeMappings;
-import cn.sexycode.sql.type.descriptor.sql.SqlTypeDescriptor;
+import cn.sexycode.myjpa.sql.dialect.Dialect;
+import cn.sexycode.myjpa.sql.mapping.*;
+import cn.sexycode.myjpa.sql.type.DynamicParameterizedType;
+import cn.sexycode.myjpa.sql.type.Mapping;
+import cn.sexycode.myjpa.sql.type.Type;
+import cn.sexycode.myjpa.sql.type.descriptor.JdbcTypeNameMapper;
+import cn.sexycode.myjpa.sql.type.descriptor.sql.LobTypeMappings;
+import cn.sexycode.myjpa.sql.type.descriptor.sql.NationalizedTypeMappings;
+import cn.sexycode.myjpa.sql.type.descriptor.sql.SqlTypeDescriptor;
 import cn.sexycode.util.core.cls.XProperty;
 import cn.sexycode.util.core.cls.classloading.ClassLoaderService;
 import cn.sexycode.util.core.exception.ClassLoadingException;
@@ -172,7 +174,7 @@ public class SimpleValue implements KeyValue {
 		return typeName;
 	}
 
-	public void setTypeName(String typeName) {
+	/*public void setTypeName(String typeName) {
 		if ( typeName != null && typeName.startsWith( AttributeConverterTypeAdapter.NAME_PREFIX ) ) {
 			final String converterClassName = typeName.substring( AttributeConverterTypeAdapter.NAME_PREFIX.length() );
 			final ClassLoaderService cls = getMetadata()
@@ -194,7 +196,7 @@ public class SimpleValue implements KeyValue {
 		}
 
 		this.typeName = typeName;
-	}
+	}*/
 
 	public void makeVersion() {
 		this.isVersion = true;
@@ -394,6 +396,7 @@ public class SimpleValue implements KeyValue {
 		this.foreignKeyDefinition = foreignKeyDefinition;
 	}
 
+	@Override
 	public boolean isAlternateUniqueKey() {
 		return alternateUniqueKey;
 	}
@@ -402,16 +405,17 @@ public class SimpleValue implements KeyValue {
 		this.alternateUniqueKey = unique;
 	}
 
+	@Override
 	public boolean isNullable() {
 		Iterator itr = getColumnIterator();
 		while ( itr.hasNext() ) {
 			final Object selectable = itr.next();
-			if ( selectable instanceof Formula ) {
+			/*if ( selectable instanceof Formula ) {
 				// if there are *any* formulas, then the Value overall is
 				// considered nullable
 				return true;
 			}
-			else if ( !( (Column) selectable ).isNullable() ) {
+			else */if ( !( (Column) selectable ).isNullable() ) {
 				// if there is a single non-nullable column, the Value
 				// overall is considered non-nullable.
 				return false;
@@ -421,14 +425,17 @@ public class SimpleValue implements KeyValue {
 		return true;
 	}
 
+	@Override
 	public boolean isSimpleValue() {
 		return true;
 	}
 
+	@Override
 	public boolean isValid(Mapping mapping) throws MappingException {
 		return getColumnSpan()==getType().getColumnSpan(mapping);
 	}
 
+	@Override
 	public Type getType() throws MappingException {
 		if ( type != null ) {
 			return type;
@@ -444,10 +451,10 @@ public class SimpleValue implements KeyValue {
 			createParameterImpl();
 		}
 
-		Type result = getMetadata().getTypeConfiguration().getTypeResolver().heuristicType( typeName, typeParameters );
+//		Type result = getMetadata().getTypeConfiguration().getTypeResolver().heuristicType( typeName, typeParameters );
 		// if this is a byte[] version/timestamp, then we need to use RowVersionType
 		// instead of BinaryType (HHH-10413)
-		if ( isVersion && BinaryType.class.isInstance( result ) ) {
+		/*if ( isVersion && BinaryType.class.isInstance( result ) ) {
 			log.debug( "version is BinaryType; changing to RowVersionType" );
 			result = RowVersionType.INSTANCE;
 		}
@@ -460,9 +467,10 @@ public class SimpleValue implements KeyValue {
 				msg += ", for columns: " + columns;
 			}
 			throw new MappingException( msg );
-		}
+		}*/
 
-		return result;
+//		return result;
+		return type;
 	}
 
 	@Override
@@ -479,7 +487,7 @@ public class SimpleValue implements KeyValue {
 			return;
 		}
 
-		if ( attributeConverterDescriptor == null ) {
+		/*if ( attributeConverterDescriptor == null ) {
 			// this is here to work like legacy.  This should change when we integrate with metamodel to
 			// look for SqlTypeDescriptor and JavaTypeDescriptor individually and create the BasicType (well, really
 			// keep a registry of [SqlTypeDescriptor,JavaTypeDescriptor] -> BasicType...)
@@ -499,10 +507,10 @@ public class SimpleValue implements KeyValue {
 			//		a (1) SqlTypeDescriptor, a (2) JavaTypeDescriptor and dynamically building a BasicType
 			// 		combining them.
 			return;
-		}
+		}*/
 
 		// we had an AttributeConverter...
-		type = buildAttributeConverterTypeAdapter();
+//		type = buildAttributeConverterTypeAdapter();
 	}
 
 	/**
@@ -538,7 +546,7 @@ public class SimpleValue implements KeyValue {
 	 * @todo : see if we already have previously built a custom on-the-fly BasicType for this AttributeConverter; see note below about caching
 	 */
 	@SuppressWarnings("unchecked")
-	private Type buildAttributeConverterTypeAdapter() {
+	/*private Type buildAttributeConverterTypeAdapter() {
 		// todo : validate the number of columns present here?
 
 		final JpaAttributeConverter jpaAttributeConverter = attributeConverterDescriptor.createJpaAttributeConverter(
@@ -633,7 +641,7 @@ public class SimpleValue implements KeyValue {
 				jpaAttributeConverter.getRelationalJavaTypeDescriptor().getJavaType(),
 				entityAttributeJavaTypeDescriptor
 		);
-	}
+	}*/
 
 	public boolean isTypeSpecified() {
 		return typeName!=null;
@@ -647,13 +655,13 @@ public class SimpleValue implements KeyValue {
 		return typeParameters;
 	}
 
-	public void copyTypeFrom( SimpleValue sourceValue ) {
+	/*public void copyTypeFrom( SimpleValue sourceValue ) {
 		setTypeName( sourceValue.getTypeName() );
 		setTypeParameters( sourceValue.getTypeParameters() );
 
 		type = sourceValue.type;
 		attributeConverterDescriptor = sourceValue.attributeConverterDescriptor;
-	}
+	}*/
 
 /*
 	@Override
@@ -680,14 +688,17 @@ public class SimpleValue implements KeyValue {
 		return getClass().getName() + '(' + columns.toString() + ')';
 	}
 
+	@Override
 	public Object accept(ValueVisitor visitor) {
 		return visitor.accept(this);
 	}
 	
+	@Override
 	public boolean[] getColumnInsertability() {
 		return extractBooleansFromList( insertability );
 	}
 	
+	@Override
 	public boolean[] getColumnUpdateability() {
 		return extractBooleansFromList( updatability );
 	}
@@ -701,9 +712,9 @@ public class SimpleValue implements KeyValue {
 		return array;
 	}
 
-	public void setJpaAttributeConverterDescriptor(ConverterDescriptor descriptor) {
+	/*public void setJpaAttributeConverterDescriptor(ConverterDescriptor descriptor) {
 		this.attributeConverterDescriptor = descriptor;
-	}
+	}*/
 
 	private void createParameterImpl() {
 		try {

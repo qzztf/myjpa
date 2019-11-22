@@ -2,8 +2,8 @@ package cn.sexycode.myjpa.query.criteria.internal.compile;
 
 import cn.sexycode.myjpa.query.criteria.LiteralHandlingMode;
 import cn.sexycode.myjpa.query.criteria.internal.expression.function.FunctionExpression;
-import cn.sexycode.sql.dialect.Dialect;
-import cn.sexycode.sql.mapping.ast.Clause;
+import cn.sexycode.myjpa.sql.dialect.Dialect;
+import cn.sexycode.myjpa.sql.mapping.ast.Clause;
 import cn.sexycode.util.core.collection.Stack;
 
 import javax.persistence.criteria.ParameterExpression;

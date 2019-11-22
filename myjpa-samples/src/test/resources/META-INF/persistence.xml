@@ -13,7 +13,7 @@
                       value="jdbc:mysql://localhost:3306/jpademo"/>
             <property name="javax.persistence.jdbc.user" value="root"/>
             <property name="javax.persistence.jdbc.password" value="zxcf123456"/>
-            <property name="myjpa.dialect" value="cn.sexycode.sql.dialect.MySQLDialect"/>
+            <property name="myjpa.dialect" value="cn.sexycode.myjpa.sql.dialect.MySQLDialect"/>
         </properties>
 
 

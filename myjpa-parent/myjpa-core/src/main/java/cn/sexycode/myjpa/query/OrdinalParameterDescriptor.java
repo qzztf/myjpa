@@ -1,6 +1,6 @@
 package cn.sexycode.myjpa.query;
 
-import cn.sexycode.sql.type.Type;
+import cn.sexycode.myjpa.sql.type.Type;
 
 /**
  * Descriptor regarding an ordinal parameter.

@@ -1,7 +1,7 @@
 package cn.sexycode.myjpa.session;
 
 import cn.sexycode.myjpa.metamodel.spi.MetamodelImplementor;
-import cn.sexycode.sql.type.TypeResolver;
+import cn.sexycode.myjpa.sql.type.TypeResolver;
 import org.apache.ibatis.session.Configuration;
 
 import cn.sexycode.util.core.factory.BeanFactoryUtil;

@@ -3,7 +3,7 @@ package cn.sexycode.myjpa.cfg;
 import cn.sexycode.myjpa.binding.*;
 import cn.sexycode.myjpa.mapping.PersistentClass;
 import cn.sexycode.myjpa.mapping.RootClass;
-import cn.sexycode.sql.mapping.Constraint;
+import cn.sexycode.myjpa.sql.mapping.Constraint;
 import cn.sexycode.util.core.cls.XAnnotatedElement;
 import cn.sexycode.util.core.cls.XClass;
 import cn.sexycode.util.core.cls.XPackage;

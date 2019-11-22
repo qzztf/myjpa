@@ -1,7 +1,7 @@
 package cn.sexycode.myjpa.boot;
 
 import cn.sexycode.myjpa.binding.StandardScanOptions;
-import cn.sexycode.sql.dialect.function.SQLFunction;
+import cn.sexycode.myjpa.sql.dialect.function.SQLFunction;
 import cn.sexycode.util.core.cls.classloading.ClassLoaderAccess;
 import cn.sexycode.util.core.cls.classloading.ClassLoaderAccessImpl;
 import cn.sexycode.util.core.cls.classloading.ClassLoaderService;

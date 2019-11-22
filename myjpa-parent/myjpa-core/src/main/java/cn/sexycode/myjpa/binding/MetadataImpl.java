@@ -3,9 +3,9 @@ package cn.sexycode.myjpa.binding;
 import cn.sexycode.myjpa.boot.MetadataBuildingOptions;
 import cn.sexycode.myjpa.mapping.MappedSuperclass;
 import cn.sexycode.myjpa.mapping.PersistentClass;
-import cn.sexycode.sql.dialect.function.SQLFunction;
-import cn.sexycode.sql.model.Database;
-import cn.sexycode.sql.type.TypeResolver;
+import cn.sexycode.myjpa.sql.dialect.function.SQLFunction;
+import cn.sexycode.myjpa.sql.model.Database;
+import cn.sexycode.myjpa.sql.type.TypeResolver;
 
 import java.io.Serializable;
 import java.util.*;

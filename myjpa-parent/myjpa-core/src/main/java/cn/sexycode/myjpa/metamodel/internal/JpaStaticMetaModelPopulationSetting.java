@@ -2,7 +2,7 @@ package cn.sexycode.myjpa.metamodel.internal;
 
 
 import cn.sexycode.myjpa.AvailableSettings;
-import cn.sexycode.sql.util.ConfigurationHelper;
+import cn.sexycode.myjpa.sql.util.ConfigurationHelper;
 import cn.sexycode.util.core.properties.PropertiesUtil;
 
 import java.util.Map;

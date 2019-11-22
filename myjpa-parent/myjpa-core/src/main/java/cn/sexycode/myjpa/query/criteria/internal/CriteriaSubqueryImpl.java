@@ -10,7 +10,7 @@ import cn.sexycode.myjpa.query.criteria.internal.compile.RenderingContext;
 import cn.sexycode.myjpa.query.criteria.internal.expression.DelegatedExpressionImpl;
 import cn.sexycode.myjpa.query.criteria.internal.expression.ExpressionImpl;
 import cn.sexycode.myjpa.query.criteria.internal.path.RootImpl;
-import cn.sexycode.sql.mapping.ast.Clause;
+import cn.sexycode.myjpa.sql.mapping.ast.Clause;
 
 import javax.persistence.criteria.*;
 import javax.persistence.metamodel.EntityType;

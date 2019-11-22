@@ -6,12 +6,12 @@ import cn.sexycode.myjpa.mapping.MappedSuperclass;
 import cn.sexycode.myjpa.mapping.PersistentClass;
 import cn.sexycode.myjpa.session.SessionFactory;
 import cn.sexycode.myjpa.session.SessionFactoryBuilder;
-import cn.sexycode.sql.dialect.function.SQLFunction;
-import cn.sexycode.sql.mapping.Column;
-import cn.sexycode.sql.mapping.Table;
-import cn.sexycode.sql.model.Database;
-import cn.sexycode.sql.model.Identifier;
-import cn.sexycode.sql.type.TypeResolver;
+import cn.sexycode.myjpa.sql.dialect.function.SQLFunction;
+import cn.sexycode.myjpa.sql.mapping.Column;
+import cn.sexycode.myjpa.sql.mapping.Table;
+import cn.sexycode.myjpa.sql.model.Database;
+import cn.sexycode.myjpa.sql.model.Identifier;
+import cn.sexycode.myjpa.sql.type.TypeResolver;
 import cn.sexycode.util.core.cls.XClass;
 
 import java.io.Serializable;

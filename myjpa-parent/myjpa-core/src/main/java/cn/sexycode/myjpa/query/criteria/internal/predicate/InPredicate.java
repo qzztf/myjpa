@@ -14,7 +14,7 @@ import cn.sexycode.myjpa.query.criteria.internal.compile.RenderingContext;
 import cn.sexycode.myjpa.query.criteria.internal.expression.LiteralExpression;
 import cn.sexycode.myjpa.query.criteria.internal.expression.ParameterExpressionImpl;
 import cn.sexycode.myjpa.session.SessionFactory;
-import cn.sexycode.sql.type.Type;
+import cn.sexycode.myjpa.sql.type.Type;
 
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Subquery;

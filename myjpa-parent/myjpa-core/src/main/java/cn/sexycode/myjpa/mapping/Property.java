@@ -1,10 +1,10 @@
 package cn.sexycode.myjpa.mapping;
 
 import cn.sexycode.myjpa.MyjpaException;
-import cn.sexycode.sql.mapping.MappingException;
-import cn.sexycode.sql.mapping.Value;
-import cn.sexycode.sql.type.Mapping;
-import cn.sexycode.sql.type.Type;
+import cn.sexycode.myjpa.sql.mapping.MappingException;
+import cn.sexycode.myjpa.sql.mapping.Value;
+import cn.sexycode.myjpa.sql.type.Mapping;
+import cn.sexycode.myjpa.sql.type.Type;
 import cn.sexycode.util.core.collection.ArrayHelper;
 import cn.sexycode.util.core.service.ServiceRegistry;
 

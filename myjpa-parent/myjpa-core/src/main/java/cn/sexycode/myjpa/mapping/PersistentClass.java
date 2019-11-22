@@ -2,8 +2,8 @@ package cn.sexycode.myjpa.mapping;
 
 import cn.sexycode.myjpa.binding.MappingException;
 import cn.sexycode.myjpa.binding.MetadataBuildingContext;
-import cn.sexycode.sql.mapping.*;
-import cn.sexycode.sql.type.Mapping;
+import cn.sexycode.myjpa.sql.mapping.*;
+import cn.sexycode.myjpa.sql.type.Mapping;
 import cn.sexycode.util.core.exception.ClassLoadingException;
 import cn.sexycode.util.core.service.ServiceRegistry;
 import cn.sexycode.util.core.str.StringUtils;

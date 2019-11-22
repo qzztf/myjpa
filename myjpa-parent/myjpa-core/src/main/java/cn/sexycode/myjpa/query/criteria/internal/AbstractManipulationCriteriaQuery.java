@@ -3,7 +3,7 @@ package cn.sexycode.myjpa.query.criteria.internal;
 import cn.sexycode.myjpa.query.criteria.internal.compile.*;
 import cn.sexycode.myjpa.query.criteria.internal.path.RootImpl;
 import cn.sexycode.myjpa.session.Session;
-import cn.sexycode.sql.mapping.ast.Clause;
+import cn.sexycode.myjpa.sql.mapping.ast.Clause;
 
 import javax.persistence.Query;
 import javax.persistence.criteria.*;

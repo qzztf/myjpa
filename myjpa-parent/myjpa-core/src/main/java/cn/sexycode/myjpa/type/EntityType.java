@@ -10,8 +10,8 @@ import java.util.Set;
 import cn.sexycode.myjpa.MyjpaException;
 import cn.sexycode.myjpa.session.Session;
 import cn.sexycode.myjpa.session.SessionFactory;
-import cn.sexycode.sql.mapping.MappingException;
-import cn.sexycode.sql.type.*;
+import cn.sexycode.myjpa.sql.mapping.MappingException;
+import cn.sexycode.myjpa.sql.type.*;
 import cn.sexycode.util.core.exception.AssertionFailure;
 import cn.sexycode.util.core.object.ReflectHelper;
 

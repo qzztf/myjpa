@@ -5,7 +5,7 @@ import cn.sexycode.myjpa.boot.BootstrapContextImpl;
 import cn.sexycode.myjpa.boot.MetadataBuildingOptions;
 import cn.sexycode.myjpa.mybatis.MyjpaConfiguration;
 import cn.sexycode.myjpa.mybatis.SqlSessionFactoryBuilder;
-import cn.sexycode.sql.dialect.function.SQLFunction;
+import cn.sexycode.myjpa.sql.dialect.function.SQLFunction;
 import cn.sexycode.util.core.factory.BeanFactoryUtil;
 import cn.sexycode.util.core.service.Service;
 import cn.sexycode.util.core.service.ServiceRegistry;
@@ -87,7 +87,7 @@ public class SessionFactoryBuilderImpl implements SessionFactoryBuilder {
 
                     // if we get here, either we were asked to not use JDBC metadata or accessing the JDBC metadata failed.
                     return new JdbcEnvironmentImpl(getServiceRegistry(), dialectFactory
-                            .buildDialect(PropertiesUtil.getString(AvailableSettings.DIALECT, properties, "cn.sexycode.sql.dialect.H2Dialect"),
+                            .buildDialect(PropertiesUtil.getString(AvailableSettings.DIALECT, properties, "cn.sexycode.myjpa.sql.dialect.H2Dialect"),
                                     null));
                 }*/
             };

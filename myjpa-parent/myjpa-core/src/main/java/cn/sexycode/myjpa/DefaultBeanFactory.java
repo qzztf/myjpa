@@ -2,9 +2,9 @@ package cn.sexycode.myjpa;
 
 import cn.sexycode.myjpa.query.DefaultQueryFactory;
 import cn.sexycode.myjpa.query.QueryFactory;
-import cn.sexycode.sql.dialect.DialectFactory;
-import cn.sexycode.sql.dialect.DialectFactoryImpl;
-import cn.sexycode.sql.dialect.StandardDialectResolver;
+import cn.sexycode.myjpa.sql.dialect.DialectFactory;
+import cn.sexycode.myjpa.sql.dialect.DialectFactoryImpl;
+import cn.sexycode.myjpa.sql.dialect.StandardDialectResolver;
 import cn.sexycode.util.core.cls.classloading.ClassLoaderService;
 import cn.sexycode.util.core.cls.classloading.ClassLoaderServiceImpl;
 import cn.sexycode.util.core.factory.BeanFactory;

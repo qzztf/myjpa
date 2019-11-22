@@ -32,10 +32,10 @@
             <version>1.7.25</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>cn.sexycode</groupId>
             <artifactId>mysql</artifactId>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>cn.sexycode</groupId>
             <artifactId>solo-core</artifactId>

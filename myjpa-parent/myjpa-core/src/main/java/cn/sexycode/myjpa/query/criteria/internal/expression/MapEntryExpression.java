@@ -10,7 +10,7 @@ import cn.sexycode.myjpa.query.criteria.internal.CriteriaBuilderImpl;
 import cn.sexycode.myjpa.query.criteria.internal.ParameterRegistry;
 import cn.sexycode.myjpa.query.criteria.internal.compile.RenderingContext;
 import cn.sexycode.myjpa.query.criteria.internal.path.MapAttributeJoin;
-import cn.sexycode.sql.mapping.ast.Clause;
+import cn.sexycode.myjpa.sql.mapping.ast.Clause;
 
 import javax.persistence.criteria.CompoundSelection;
 import javax.persistence.criteria.Selection;

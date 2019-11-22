@@ -1,6 +1,6 @@
 package cn.sexycode.myjpa.binding;
 
-import cn.sexycode.sql.type.*;
+import cn.sexycode.myjpa.sql.type.*;
 
 /**
  * @author Steve Ebersole

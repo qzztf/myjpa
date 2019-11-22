@@ -5,7 +5,7 @@ import cn.sexycode.myjpa.Configuration;
 import cn.sexycode.myjpa.MyjpaPersistenceProvider;
 import cn.sexycode.myjpa.session.Session;
 import cn.sexycode.myjpa.session.SessionFactory;
-import cn.sexycode.sql.dialect.MySQLDialect;
+import cn.sexycode.myjpa.sql.dialect.MySQLDialect;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.Database;

@@ -8,7 +8,7 @@ package cn.sexycode.myjpa.query.criteria.internal;
 
 import cn.sexycode.myjpa.query.criteria.internal.compile.*;
 import cn.sexycode.myjpa.session.Session;
-import cn.sexycode.sql.mapping.ast.Clause;
+import cn.sexycode.myjpa.sql.mapping.ast.Clause;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

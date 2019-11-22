@@ -5,10 +5,13 @@ import java.util.*;
 
 import cn.sexycode.myjpa.EntityMode;
 import cn.sexycode.myjpa.binding.MetadataBuildingContext;
-import cn.sexycode.sql.dialect.Dialect;
-import cn.sexycode.sql.mapping.*;
-import cn.sexycode.sql.type.Type;
-import cn.sexycode.sql.type.TypeFactory;
+import cn.sexycode.myjpa.id.IdentifierGenerator;
+import cn.sexycode.myjpa.id.IdentifierGeneratorFactory;
+import cn.sexycode.myjpa.session.Session;
+import cn.sexycode.myjpa.sql.dialect.Dialect;
+import cn.sexycode.myjpa.sql.mapping.*;
+import cn.sexycode.myjpa.sql.type.Type;
+import cn.sexycode.myjpa.sql.type.TypeFactory;
 import cn.sexycode.util.core.cls.classloading.ClassLoaderService;
 import cn.sexycode.util.core.exception.ClassLoadingException;
 import jdk.nashorn.internal.objects.annotations.Setter;
@@ -39,7 +42,7 @@ public class Component extends SimpleValue implements MetaAttributable {
 	private volatile Type type;
 
 	/**
-	 * deprecated User {@link Component#Component(MetadataBuildingContext, PersistentClass)} instead.
+	 * deprecated User {link Component#Component(MetadataBuildingContext, PersistentClass)} instead.
 	 */
 	/*@Deprecated
 	public Component(MetadataImplementor metadata, PersistentClass owner) throws MappingException {
@@ -47,7 +50,7 @@ public class Component extends SimpleValue implements MetaAttributable {
 	}*/
 
 	/**
-	 * deprecated User {@link Component#Component(MetadataBuildingContext, Component)} instead.
+	 * deprecated User {link Component#Component(MetadataBuildingContext, Component)} instead.
 	 */
 	/*@Deprecated
 	public Component(MetadataImplementor metadata, Component component) throws MappingException {
@@ -55,7 +58,7 @@ public class Component extends SimpleValue implements MetaAttributable {
 	}*/
 
 	/**
-	 * deprecated User {@link Component#Component(MetadataBuildingContext, Join)} instead.
+	 * deprecated User {link Component#Component(MetadataBuildingContext, Join)} instead.
 	 */
 	/*@Deprecated
 	public Component(MetadataImplementor metadata, Join join) throws MappingException {
@@ -63,7 +66,7 @@ public class Component extends SimpleValue implements MetaAttributable {
 	}*/
 
 	/**
-	 * deprecated User {@link Component#Component(MetadataBuildingContext, Collection)} instead.
+	 * deprecated User {link Component#Component(MetadataBuildingContext, Collection)} instead.
 	 */
 	/*@Deprecated
 	public Component(MetadataImplementor metadata, Collection collection) throws MappingException {
@@ -71,7 +74,7 @@ public class Component extends SimpleValue implements MetaAttributable {
 	}*/
 
 	/**
-	 * deprecated User {@link Component#Component(MetadataBuildingContext, Table, PersistentClass)} instead.
+	 * deprecated User {link Component#Component(MetadataBuildingContext, Table, PersistentClass)} instead.
 	 */
 	/*@Deprecated
 	public Component(MetadataImplementor metadata, Table table, PersistentClass owner) throws MappingException {
@@ -87,13 +90,13 @@ public class Component extends SimpleValue implements MetaAttributable {
 		this( metadata, component.getTable(), component.getOwner() );
 	}
 
-	public Component(MetadataBuildingContext metadata, Join join) throws MappingException {
+/*	public Component(MetadataBuildingContext metadata, Join join) throws MappingException {
 		this( metadata, join.getTable(), join.getPersistentClass() );
 	}
 
 	public Component(MetadataBuildingContext metadata, Collection collection) throws MappingException {
 		this( metadata, collection.getCollectionTable(), collection.getOwner() );
-	}
+	}*/
 
 	public Component(MetadataBuildingContext metadata, Table table, PersistentClass owner) throws MappingException {
 		super( metadata, table );
@@ -459,7 +462,7 @@ public class Component extends SimpleValue implements MetaAttributable {
 		}
 
 		@Override
-		public Serializable locateGenerationContext(SharedSessionContractImplementor session, Object incomingObject) {
+		public Serializable locateGenerationContext(Session session, Object incomingObject) {
 			return session.getEntityPersister( entityName, incomingObject ).getIdentifier( incomingObject, session );
 		}
 	}

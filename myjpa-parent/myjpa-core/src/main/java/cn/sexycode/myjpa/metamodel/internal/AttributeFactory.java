@@ -5,7 +5,7 @@ import cn.sexycode.myjpa.metamodel.model.domain.internal.*;
 import cn.sexycode.myjpa.metamodel.model.domain.spi.ManagedTypeDescriptor;
 import cn.sexycode.myjpa.metamodel.model.domain.spi.PersistentAttributeDescriptor;
 import cn.sexycode.myjpa.metamodel.model.domain.spi.SimpleTypeDescriptor;
-import cn.sexycode.sql.mapping.Value;
+import cn.sexycode.myjpa.sql.mapping.Value;
 import cn.sexycode.util.core.exception.AssertionFailure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -385,7 +385,7 @@ public class AttributeFactory {
 		LOG.trace("    Determined member [" + member + "]");
 
 		final Value value = attributeContext.getPropertyMapping().getValue();
-		final cn.sexycode.sql.type.Type type = value.getType();
+		final cn.sexycode.myjpa.sql.type.Type type = value.getType();
 		LOG.trace("    Determined type [name=" + type.getName() + ", class=" + type.getClass().getName() + "]");
 
 		if (type.isAnyType()) {

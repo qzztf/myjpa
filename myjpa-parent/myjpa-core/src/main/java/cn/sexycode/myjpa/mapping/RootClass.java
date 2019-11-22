@@ -1,9 +1,9 @@
 package cn.sexycode.myjpa.mapping;
 
 import cn.sexycode.myjpa.binding.MetadataBuildingContext;
-import cn.sexycode.sql.mapping.KeyValue;
-import cn.sexycode.sql.mapping.Table;
-import cn.sexycode.sql.mapping.Value;
+import cn.sexycode.myjpa.sql.mapping.KeyValue;
+import cn.sexycode.myjpa.sql.mapping.Table;
+import cn.sexycode.myjpa.sql.mapping.Value;
 import cn.sexycode.util.core.collection.SingletonIterator;
 import cn.sexycode.util.core.str.StringUtils;
 

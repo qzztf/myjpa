@@ -1,6 +1,5 @@
 package cn.sexycode.myjpa.session;
 
-import cn.sexycode.myjpa.binding.ModelProxy;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.session.Configuration;
@@ -96,6 +95,8 @@ public interface Session extends EntityManager,SqlSession, Closeable {
     default <T> T find(Class<T> entityClass, Object primaryKey) {
         return (T) new SessionAdaptor(this).execute("find", primaryKey);
     }
+
+    SessionFactory getSessionFactory();
 
     @Override
     Configuration getConfiguration();

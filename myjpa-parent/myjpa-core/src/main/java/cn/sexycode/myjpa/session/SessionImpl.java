@@ -2,12 +2,9 @@ package cn.sexycode.myjpa.session;
 
 import cn.sexycode.myjpa.query.QueryFactory;
 import cn.sexycode.myjpa.transaction.MyjpaTransaction;
-import cn.sexycode.myjpa.transaction.MyjpaTransactionImpl;
 import cn.sexycode.util.core.factory.BeanFactoryUtil;
-import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.transaction.Transaction;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -15,7 +12,6 @@ import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.metamodel.Metamodel;
-import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +36,10 @@ public class SessionImpl implements Session {
         return sqlSession;
     }
 
+    @Override
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
     @Override
     public Configuration getConfiguration() {
         return sessionFactory.getConfiguration();

@@ -159,7 +159,7 @@ class ColumnsBuilder {
                             inferredData.getPropertyName(), buildingContext);
         }
 
-        JoinColumnOrFormula[] joinColumnOrFormulaAnnotations = null;
+        /*JoinColumnOrFormula[] joinColumnOrFormulaAnnotations = null;
 
         if (property.isAnnotationPresent(JoinColumnOrFormula.class)) {
             joinColumnOrFormulaAnnotations = new JoinColumnOrFormula[] {
@@ -172,22 +172,22 @@ class ColumnsBuilder {
             if (length == 0) {
                 throw new AnnotationException("Cannot bind an empty @JoinColumnsOrFormulas");
             }
-        }
+        }*/
 
-        if (joinColumnOrFormulaAnnotations != null) {
+        /*if (joinColumnOrFormulaAnnotations != null) {
             return Ejb3JoinColumn
                     .buildJoinColumnsOrFormulas(joinColumnOrFormulaAnnotations, null, entityBinder.getSecondaryTables(),
                             propertyHolder, inferredData.getPropertyName(), buildingContext);
-        }
+        }*/
 
-        if (property.isAnnotationPresent(JoinFormula.class)) {
+        /*if (property.isAnnotationPresent(JoinFormula.class)) {
             JoinFormula ann = property.getAnnotation(JoinFormula.class);
             Ejb3JoinColumn[] ejb3JoinColumns = new Ejb3JoinColumn[1];
             ejb3JoinColumns[0] = Ejb3JoinColumn
                     .buildJoinFormula(ann, null, entityBinder.getSecondaryTables(), propertyHolder,
                             inferredData.getPropertyName(), buildingContext);
             return ejb3JoinColumns;
-        }
+        }*/
 
         return null;
     }

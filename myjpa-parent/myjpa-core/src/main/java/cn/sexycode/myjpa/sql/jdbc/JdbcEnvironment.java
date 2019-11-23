@@ -3,6 +3,7 @@ package cn.sexycode.myjpa.sql.jdbc;
 import cn.sexycode.myjpa.sql.Environment;
 import cn.sexycode.myjpa.sql.dialect.Dialect;
 import cn.sexycode.myjpa.sql.model.Identifier;
+import cn.sexycode.myjpa.sql.model.IdentifierHelper;
 
 /**
  * Initial look at this concept we keep talking about with merging information from {@link java.sql.DatabaseMetaData}
@@ -58,7 +59,7 @@ public interface JdbcEnvironment extends Environment {
      *
      * @return The identifier helper.
      */
-    //	IdentifierHelper getIdentifierHelper();
+    IdentifierHelper getIdentifierHelper();
 
     /**
      * Obtain the level of support for qualified names.

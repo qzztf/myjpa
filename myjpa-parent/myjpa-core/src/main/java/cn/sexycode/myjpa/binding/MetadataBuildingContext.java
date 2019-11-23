@@ -2,6 +2,7 @@ package cn.sexycode.myjpa.binding;
 
 import cn.sexycode.myjpa.boot.BootstrapContext;
 import cn.sexycode.myjpa.boot.MetadataBuildingOptions;
+import cn.sexycode.myjpa.boot.ObjectNameNormalizer;
 import cn.sexycode.util.core.cls.ReflectionManager;
 
 /**
@@ -26,4 +27,6 @@ public interface MetadataBuildingContext {
     ReflectionManager getReflectionManager();
 
     BootstrapContext getBootstrapContext();
+
+    ObjectNameNormalizer getObjectNameNormalizer();
 }

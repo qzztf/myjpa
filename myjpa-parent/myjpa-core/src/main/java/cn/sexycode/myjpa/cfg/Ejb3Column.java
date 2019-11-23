@@ -2,6 +2,7 @@ package cn.sexycode.myjpa.cfg;
 
 import cn.sexycode.myjpa.binding.BinderHelper;
 import cn.sexycode.myjpa.binding.MetadataBuildingContext;
+import cn.sexycode.myjpa.mapping.SimpleValue;
 import cn.sexycode.myjpa.sql.mapping.Column;
 import cn.sexycode.myjpa.sql.mapping.Table;
 import cn.sexycode.myjpa.sql.model.Database;
@@ -9,6 +10,9 @@ import cn.sexycode.myjpa.sql.model.Identifier;
 import cn.sexycode.myjpa.sql.model.PhysicalNamingStrategy;
 import cn.sexycode.util.core.cls.XProperty;
 import cn.sexycode.util.core.exception.AnnotationException;
+import cn.sexycode.util.core.str.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.criteria.Join;
 import java.util.Map;
@@ -20,7 +24,7 @@ import java.util.Map;
  * @author Emmanuel Bernard
  */
 public class Ejb3Column {
-
+    private static final Logger LOG = LoggerFactory.getLogger(Ejb3Column.class);
     private MetadataBuildingContext context;
 
     private Column mappingColumn;
@@ -95,7 +99,7 @@ public class Ejb3Column {
     }
 
     /*public boolean isFormula() {
-        return StringHelper.isNotEmpty( formulaString );
+        return StringUtils.isNotEmpty( formulaString );
     }
 */
     @SuppressWarnings("UnusedDeclaration")
@@ -177,7 +181,7 @@ public class Ejb3Column {
     }
 
     public boolean isNullable() {
-        return isFormula() || mappingColumn.isNullable();
+        return /*isFormula() ||*/ mappingColumn.isNullable();
     }
 
     public String getDefaultValue() {
@@ -192,28 +196,30 @@ public class Ejb3Column {
     }
 
     public void bind() {
-        if (StringHelper.isNotEmpty(formulaString)) {
+        /*if (StringUtils.isNotEmpty(formulaString)) {
             LOG.debugf("Binding formula %s", formulaString);
             formula = new Formula();
             formula.setFormula(formulaString);
-        } else {
+        } else*/
+        {
             initMappingColumn(logicalColumnName, propertyName, length, precision, scale, nullable, sqlType, unique,
                     true);
             if (defaultValue != null) {
                 mappingColumn.setDefaultValue(defaultValue);
             }
             if (LOG.isDebugEnabled()) {
-                LOG.debugf("Binding column: %s", toString());
+                LOG.debug("Binding column: [{}]", toString());
             }
         }
     }
 
     protected void initMappingColumn(String columnName, String propertyName, int length, int precision, int scale,
             boolean nullable, String sqlType, boolean unique, boolean applyNamingStrategy) {
-        if (StringHelper.isNotEmpty(formulaString)) {
+        /*if (StringUtils.isNotEmpty(formulaString)) {
             this.formula = new Formula();
             this.formula.setFormula(formulaString);
-        } else {
+        } else */
+        {
             this.mappingColumn = new Column();
             redefineColumnName(columnName, propertyName, applyNamingStrategy);
             this.mappingColumn.setLength(length);
@@ -240,7 +246,7 @@ public class Ejb3Column {
     }
 
     public boolean isNameDeferred() {
-        return mappingColumn == null || StringHelper.isEmpty(mappingColumn.getName());
+        return mappingColumn == null || StringUtils.isEmpty(mappingColumn.getName());
     }
 
     public void redefineColumnName(String columnName, String propertyName, boolean applyNamingStrategy) {
@@ -250,7 +256,7 @@ public class Ejb3Column {
         final PhysicalNamingStrategy physicalNamingStrategy = context.getBuildingOptions().getPhysicalNamingStrategy();
 
         if (applyNamingStrategy) {
-            if (StringHelper.isEmpty(columnName)) {
+            if (StringUtils.isEmpty(columnName)) {
                 if (propertyName != null) {
                     final AttributePath attributePath = AttributePath.parse(propertyName);
 
@@ -282,18 +288,18 @@ public class Ejb3Column {
                     }
 
                     final Identifier physicalName = physicalNamingStrategy
-                            .toPhysicalColumnName(implicitName, database.getJdbcEnvironment());
+                            .toPhysicalColumnName(implicitName, database.getEnvironment());
                     mappingColumn.setName(physicalName.render(database.getDialect()));
                 }
                 //Do nothing otherwise
             } else {
                 final Identifier explicitName = database.toIdentifier(columnName);
                 final Identifier physicalName = physicalNamingStrategy
-                        .toPhysicalColumnName(explicitName, database.getJdbcEnvironment());
+                        .toPhysicalColumnName(explicitName, database.getEnvironment());
                 mappingColumn.setName(physicalName.render(database.getDialect()));
             }
         } else {
-            if (StringHelper.isNotEmpty(columnName)) {
+            if (StringUtils.isNotEmpty(columnName)) {
                 mappingColumn.setName(normalizer.toDatabaseIdentifierText(columnName));
             }
         }
@@ -340,9 +346,10 @@ public class Ejb3Column {
     }
 
     public void linkWithValue(SimpleValue value) {
-        if (formula != null) {
+        /*if (formula != null) {
             value.addFormula(formula);
-        } else {
+        } else */
+        {
             getMappingColumn().setValue(value);
             value.addColumn(getMappingColumn(), insertable, updatable);
             value.getTable().addColumn(getMappingColumn());
@@ -353,7 +360,7 @@ public class Ejb3Column {
 
     protected void addColumnBinding(SimpleValue value) {
         final String logicalColumnName;
-        if (StringHelper.isNotEmpty(this.logicalColumnName)) {
+        if (StringUtils.isNotEmpty(this.logicalColumnName)) {
             logicalColumnName = this.logicalColumnName;
         } else {
             final ObjectNameNormalizer normalizer = context.getObjectNameNormalizer();
@@ -407,7 +414,7 @@ public class Ejb3Column {
             throw new AssertionFailure("Should not call getTable() on column w/o persistent class defined");
         }
 
-        return StringHelper.isNotEmpty(explicitTableName) && !propertyHolder.getTable().getName()
+        return StringUtils.isNotEmpty(explicitTableName) && !propertyHolder.getTable().getName()
                 .equals(explicitTableName);
     }
 
@@ -463,7 +470,7 @@ public class Ejb3Column {
         } else {
             javax.persistence.Column[] actualCols = anns;
             javax.persistence.Column[] overriddenCols = propertyHolder.getOverriddenColumn(
-                    StringHelper.qualify(propertyHolder.getPath(), inferredData.getPropertyName()));
+                    StringUtils.qualify(propertyHolder.getPath(), inferredData.getPropertyName()));
             if (overriddenCols != null) {
                 //check for overridden first
                 if (anns != null && overriddenCols.length != anns.length) {
@@ -497,7 +504,7 @@ public class Ejb3Column {
                     }
 
                     final String tableName;
-                    if (StringHelper.isEmpty(col.table())) {
+                    if (StringUtils.isEmpty(col.table())) {
                         tableName = "";
                     } else {
                         tableName = database.getJdbcEnvironment().getIdentifierHelper().toIdentifier(col.table())
@@ -529,7 +536,7 @@ public class Ejb3Column {
                     column.setLength(col.length());
                     column.setPrecision(col.precision());
                     column.setScale(col.scale());
-                    if (StringHelper.isEmpty(columnName) && !StringHelper.isEmpty(suffixForDefaultColumnName)) {
+                    if (StringUtils.isEmpty(columnName) && !StringUtils.isEmpty(suffixForDefaultColumnName)) {
                         column.setLogicalColumnName(inferredData.getPropertyName() + suffixForDefaultColumnName);
                     } else {
                         column.setLogicalColumnName(columnName);
@@ -592,13 +599,13 @@ public class Ejb3Column {
                 //use the default for annotations
                 : "";
 
-        if (StringHelper.isEmpty(annotation.forColumn()) || annotation.forColumn().equals(nonNullLogicalColumnName)) {
+        if (StringUtils.isEmpty(annotation.forColumn()) || annotation.forColumn().equals(nonNullLogicalColumnName)) {
             readExpression = annotation.read();
-            if (StringHelper.isEmpty(readExpression)) {
+            if (StringUtils.isEmpty(readExpression)) {
                 readExpression = null;
             }
             writeExpression = annotation.write();
-            if (StringHelper.isEmpty(writeExpression)) {
+            if (StringUtils.isEmpty(writeExpression)) {
                 writeExpression = null;
             }
         }
@@ -624,7 +631,7 @@ public class Ejb3Column {
         column.setBuildingContext(context);
 
         // property name + suffix is an "explicit" column name
-        if (!StringHelper.isEmpty(suffixForDefaultColumnName)) {
+        if (!StringUtils.isEmpty(suffixForDefaultColumnName)) {
             column.setLogicalColumnName(propertyName + suffixForDefaultColumnName);
             column.setImplicit(false);
         } else {

@@ -1,6 +1,8 @@
 package cn.sexycode.myjpa.binding;
 
+import cn.sexycode.myjpa.cfg.PropertyHolder;
 import cn.sexycode.myjpa.mapping.Property;
+import cn.sexycode.util.core.str.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -65,7 +67,7 @@ public class BinderHelper {
     //			boolean inverse,
     //			Mappings mappings) {
     //		//associated entity only used for more precise exception, yuk!
-    //		if ( columns[0].isImplicit() || StringHelper.isNotEmpty( columns[0].getMappedBy() ) ) return;
+    //		if ( columns[0].isImplicit() || StringUtils.isNotEmpty( columns[0].getMappedBy() ) ) return;
     //		int fkEnum = Ejb3JoinColumn.checkReferencedColumnsType( columns, ownerEntity, mappings );
     //		PersistentClass associatedClass = columns[0].getPropertyHolder() != null ?
     //				columns[0].getPropertyHolder().getPersistentClass() :
@@ -190,7 +192,7 @@ public class BinderHelper {
 			boolean inverse,
 			MetadataBuildingContext context) {
 		//associated entity only used for more precise exception, yuk!
-		if ( columns[0].isImplicit() || StringHelper.isNotEmpty( columns[0].getMappedBy() ) ) {
+		if ( columns[0].isImplicit() || StringUtils.isNotEmpty( columns[0].getMappedBy() ) ) {
 			return;
 		}
 		int fkEnum = Ejb3JoinColumn.checkReferencedColumnsType( columns, ownerEntity, context );
@@ -515,7 +517,7 @@ public class BinderHelper {
 		}
 		return property;
 	}
-
+*/
 	public static String getRelativePath(PropertyHolder propertyHolder, String propertyName) {
 		if ( propertyHolder == null ) {
 			return propertyName;
@@ -526,10 +528,10 @@ public class BinderHelper {
 			return propertyName;
 		}
 		else {
-			return StringHelper.qualify( path.substring( entityName.length() + 1 ), propertyName );
+            return StringUtils.qualify(path.substring(entityName.length() + 1), propertyName);
 		}
 	}
-*/
+
     /**
      * Find the column owner (ie PersistentClass or Join) of columnName.
      * If columnName is null or empty, persistentClass is returned
@@ -538,7 +540,7 @@ public class BinderHelper {
 			PersistentClass persistentClass,
 			String columnName,
 			MetadataBuildingContext context) {
-		if ( StringHelper.isEmpty( columnName ) ) {
+		if ( StringUtils.isEmpty( columnName ) ) {
 			//shortcut for implicit referenced column names
 			return persistentClass;
 		}
@@ -934,7 +936,7 @@ public class BinderHelper {
 		}
 		else {
 			throw new AnnotationException( "Unable to find @AnyMetaDef for an @(ManyTo)Any mapping: "
-					+ StringHelper.qualify( propertyHolder.getPath(), inferredData.getPropertyName() ) );
+					+ StringUtils.qualify( propertyHolder.getPath(), inferredData.getPropertyName() ) );
 		}
 
 		value.setCascadeDeleteEnabled( cascadeOnDelete );
@@ -1042,7 +1044,7 @@ public class BinderHelper {
 */
 
 /*	public static String getPath(PropertyHolder holder, PropertyData property) {
-		return StringHelper.qualify( holder.getPath(), property.getPropertyName() );
+		return StringUtils.qualify( holder.getPath(), property.getPropertyName() );
 	}
 
 	static PropertyData getPropertyOverriddenByMapperOrMapsId(
@@ -1078,7 +1080,7 @@ public class BinderHelper {
 	public static Map<String,String> toAliasTableMap(SqlFragmentAlias[] aliases){
 		Map<String,String> ret = new HashMap<>();
 		for ( int i = 0; i < aliases.length; i++ ) {
-			if ( StringHelper.isNotEmpty( aliases[i].table() ) ) {
+			if ( StringUtils.isNotEmpty( aliases[i].table() ) ) {
 				ret.put( aliases[i].alias(), aliases[i].table() );
 }
 		}

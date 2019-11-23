@@ -2,15 +2,21 @@ package cn.sexycode.myjpa.cfg;
 
 import cn.sexycode.myjpa.binding.BinderHelper;
 import cn.sexycode.myjpa.binding.MetadataBuildingContext;
+import cn.sexycode.myjpa.boot.ObjectNameNormalizer;
 import cn.sexycode.myjpa.mapping.PersistentClass;
 import cn.sexycode.myjpa.mapping.Property;
+import cn.sexycode.myjpa.mapping.SimpleValue;
+import cn.sexycode.myjpa.sql.mapping.Column;
 import cn.sexycode.myjpa.sql.mapping.Selectable;
 import cn.sexycode.myjpa.sql.mapping.Table;
+import cn.sexycode.myjpa.sql.mapping.Value;
 import cn.sexycode.myjpa.sql.model.Database;
 import cn.sexycode.myjpa.sql.model.Identifier;
 import cn.sexycode.myjpa.sql.model.PhysicalNamingStrategy;
 import cn.sexycode.util.core.cls.XClass;
 import cn.sexycode.util.core.exception.AnnotationException;
+import cn.sexycode.util.core.exception.AssertionFailure;
+import cn.sexycode.util.core.str.StringUtils;
 
 import javax.persistence.JoinColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
@@ -104,7 +110,7 @@ public class Ejb3JoinColumn extends Ejb3Column {
         return referencedColumn;
     }
 
-    public static Ejb3JoinColumn[] buildJoinColumnsOrFormulas(JoinColumnOrFormula[] anns, String mappedBy,
+ /*   public static Ejb3JoinColumn[] buildJoinColumnsOrFormulas(JoinColumnOrFormula[] anns, String mappedBy,
             Map<String, Join> joins, PropertyHolder propertyHolder, String propertyName,
             MetadataBuildingContext buildingContext) {
         Ejb3JoinColumn[] joinColumns = new Ejb3JoinColumn[anns.length];
@@ -122,11 +128,11 @@ public class Ejb3JoinColumn extends Ejb3Column {
 
         return joinColumns;
     }
-
+*/
     /**
      * build join formula
      */
-    public static Ejb3JoinColumn buildJoinFormula(JoinFormula ann, String mappedBy, Map<String, Join> joins,
+    /*public static Ejb3JoinColumn buildJoinFormula(JoinFormula ann, String mappedBy, Map<String, Join> joins,
             PropertyHolder propertyHolder, String propertyName, MetadataBuildingContext buildingContext) {
         Ejb3JoinColumn formulaColumn = new Ejb3JoinColumn();
         formulaColumn.setFormula(ann.value());
@@ -137,7 +143,7 @@ public class Ejb3JoinColumn extends Ejb3Column {
         formulaColumn.setPropertyName(BinderHelper.getRelativePath(propertyHolder, propertyName));
         formulaColumn.bind();
         return formulaColumn;
-    }
+    }*/
 
     public static Ejb3JoinColumn[] buildJoinColumns(JoinColumn[] anns, String mappedBy, Map<String, Join> joins,
             PropertyHolder propertyHolder, String propertyName, MetadataBuildingContext buildingContext) {
@@ -149,7 +155,7 @@ public class Ejb3JoinColumn extends Ejb3Column {
             Map<String, Join> joins, PropertyHolder propertyHolder, String propertyName,
             String suffixForDefaultColumnName, MetadataBuildingContext buildingContext) {
         JoinColumn[] actualColumns = propertyHolder
-                .getOverriddenJoinColumn(StringHelper.qualify(propertyHolder.getPath(), propertyName));
+                .getOverriddenJoinColumn(StringUtils.qualify(propertyHolder.getPath(), propertyName));
         if (actualColumns == null)
             actualColumns = anns;
         if (actualColumns == null || actualColumns.length == 0) {
@@ -175,14 +181,14 @@ public class Ejb3JoinColumn extends Ejb3Column {
             MetadataBuildingContext buildingContext) {
         if (ann != null) {
             if (BinderHelper.isEmptyAnnotationValue(mappedBy)) {
-                throw new AnnotationException(
+                /*throw new AnnotationException(
                         "Illegal attempt to define a @JoinColumn with a mappedBy association: " + BinderHelper
-                                .getRelativePath(propertyHolder, propertyName));
+                                .getRelativePath(propertyHolder, propertyName));*/
             }
             Ejb3JoinColumn joinColumn = new Ejb3JoinColumn();
             joinColumn.setBuildingContext(buildingContext);
             joinColumn.setJoinAnnotation(ann, null);
-            if (StringHelper.isEmpty(joinColumn.getLogicalColumnName()) && !StringHelper
+            if (StringUtils.isEmpty(joinColumn.getLogicalColumnName()) && !StringUtils
                     .isEmpty(suffixForDefaultColumnName)) {
                 joinColumn.setLogicalColumnName(propertyName + suffixForDefaultColumnName);
             }
@@ -199,7 +205,7 @@ public class Ejb3JoinColumn extends Ejb3Column {
             joinColumn.setPropertyHolder(propertyHolder);
             joinColumn.setPropertyName(BinderHelper.getRelativePath(propertyHolder, propertyName));
             // property name + suffix is an "explicit" column name
-            if (!StringHelper.isEmpty(suffixForDefaultColumnName)) {
+            if (!StringUtils.isEmpty(suffixForDefaultColumnName)) {
                 joinColumn.setLogicalColumnName(propertyName + suffixForDefaultColumnName);
                 joinColumn.setImplicit(false);
             } else {
@@ -218,8 +224,8 @@ public class Ejb3JoinColumn extends Ejb3Column {
         } else {
             setImplicit(false);
             if (!BinderHelper.isEmptyAnnotationValue(annJoin.columnDefinition())) {
-                setSqlType(
-                        getBuildingContext().getObjectNameNormalizer().applyGlobalQuoting(annJoin.columnDefinition()));
+                /*setSqlType(
+                        getBuildingContext().getObjectNameNormalizer().applyGlobalQuoting(annJoin.columnDefinition()));*/
             }
             if (!BinderHelper.isEmptyAnnotationValue(annJoin.name())) {
                 setLogicalColumnName(annJoin.name());
@@ -232,15 +238,15 @@ public class Ejb3JoinColumn extends Ejb3Column {
 
             if (BinderHelper.isEmptyAnnotationValue(annJoin.table())) {
                 setExplicitTableName("");
-            } else {
+            } /*else {
                 final Identifier logicalIdentifier = getBuildingContext().getMetadataCollector().getDatabase()
                         .toIdentifier(annJoin.table());
                 final Identifier physicalIdentifier = getBuildingContext().getBuildingOptions()
                         .getPhysicalNamingStrategy().toPhysicalTableName(logicalIdentifier,
-                                getBuildingContext().getMetadataCollector().getDatabase().getJdbcEnvironment());
+                                getBuildingContext().getMetadataCollector().getDatabase().getEnvironment());
                 setExplicitTableName(physicalIdentifier
                         .render(getBuildingContext().getMetadataCollector().getDatabase().getDialect()));
-            }
+            }*/
         }
     }
 
@@ -357,7 +363,7 @@ public class Ejb3JoinColumn extends Ejb3Column {
         boolean mappedBySide = mappedByTableName != null || mappedByPropertyName != null;
         boolean ownerSide = getPropertyName() != null;
 
-        boolean isRefColumnQuoted = StringHelper.isQuoted(logicalReferencedColumn);
+        boolean isRefColumnQuoted = StringUtils.isQuoted(logicalReferencedColumn);
 
         if (mappedBySide) {
             // NOTE : While it is completely misleading here to allow for the combination
@@ -438,7 +444,7 @@ public class Ejb3JoinColumn extends Ejb3Column {
                                 mappedByPropertyName, propertyHolder.getPath()));
                     }
                     final Selectable selectable = selectableValues.next();
-                    if (!Column.class.isInstance(selectable)) {
+                    if (!(selectable instanceof Column)) {
                         throw new AnnotationException(String.format(Locale.ENGLISH,
                                 "mapped-by [%s] defined for attribute [%s] referenced an invalid property (formula)",
                                 mappedByPropertyName, propertyHolder.getPath()));
@@ -459,7 +465,7 @@ public class Ejb3JoinColumn extends Ejb3Column {
             });
 
             //one element was quoted so we quote
-            if (isRefColumnQuoted || StringHelper.isQuoted(mappedByTableName)) {
+            if (isRefColumnQuoted || StringUtils.isQuoted(mappedByTableName)) {
                 columnIdentifier = Identifier.quote(columnIdentifier);
             }
         } else if (ownerSide) {
@@ -541,7 +547,7 @@ public class Ejb3JoinColumn extends Ejb3Column {
             }
 
             //one element was quoted so we quote
-            if (isRefColumnQuoted || StringHelper.isQuoted(logicalTableName)) {
+            if (isRefColumnQuoted || StringUtils.isQuoted(logicalTableName)) {
                 columnIdentifier = Identifier.quote(columnIdentifier);
             }
         } else {
@@ -591,18 +597,18 @@ public class Ejb3JoinColumn extends Ejb3Column {
 
     @Override
     protected void addColumnBinding(SimpleValue value) {
-        if (StringHelper.isEmpty(mappedBy)) {
+        if (StringUtils.isEmpty(mappedBy)) {
             // was the column explicitly quoted in the mapping/annotation
             // TODO: in metamodel, we need to better split global quoting and explicit quoting w/ respect to logical names
-            boolean isLogicalColumnQuoted = StringHelper.isQuoted(getLogicalColumnName());
+            boolean isLogicalColumnQuoted = StringUtils.isQuoted(getLogicalColumnName());
 
             final ObjectNameNormalizer nameNormalizer = getBuildingContext().getObjectNameNormalizer();
             final String logicalColumnName = nameNormalizer.normalizeIdentifierQuotingAsString(getLogicalColumnName());
             final String referencedColumn = nameNormalizer.normalizeIdentifierQuotingAsString(getReferencedColumn());
-            final String unquotedLogColName = StringHelper.unquote(logicalColumnName);
-            final String unquotedRefColumn = StringHelper.unquote(referencedColumn);
+            final String unquotedLogColName = StringUtils.unquote(logicalColumnName);
+            final String unquotedRefColumn = StringUtils.unquote(referencedColumn);
 
-            String logicalCollectionColumnName = StringHelper.isNotEmpty(unquotedLogColName)
+            String logicalCollectionColumnName = StringUtils.isNotEmpty(unquotedLogColName)
                     ? unquotedLogColName
                     : getPropertyName() + '_' + unquotedRefColumn;
             logicalCollectionColumnName = getBuildingContext().getMetadataCollector().getDatabase().getJdbcEnvironment()
@@ -653,7 +659,7 @@ public class Ejb3JoinColumn extends Ejb3Column {
         //check each referenced column
         for (Ejb3JoinColumn ejb3Column : columns) {
             String logicalReferencedColumnName = ejb3Column.getReferencedColumn();
-            if (StringHelper.isNotEmpty(logicalReferencedColumnName)) {
+            if (StringUtils.isNotEmpty(logicalReferencedColumnName)) {
                 String referencedColumnName;
                 try {
                     referencedColumnName = context.getMetadataCollector()
@@ -694,7 +700,7 @@ public class Ejb3JoinColumn extends Ejb3Column {
         if (getMappingColumn() != null) {
             // columnDefinition can also be specified using @JoinColumn, hence we have to check
             // whether it is set or not
-            if (StringHelper.isEmpty(sqlType)) {
+            if (StringUtils.isEmpty(sqlType)) {
                 sqlType = column.getSqlType();
                 getMappingColumn().setSqlType(sqlType);
             }
@@ -708,7 +714,7 @@ public class Ejb3JoinColumn extends Ejb3Column {
 
     @Override
     public void redefineColumnName(String columnName, String propertyName, boolean applyNamingStrategy) {
-        if (StringHelper.isNotEmpty(columnName)) {
+        if (StringUtils.isNotEmpty(columnName)) {
             if (applyNamingStrategy) {
                 getMappingColumn().setName(getBuildingContext().getBuildingOptions().getPhysicalNamingStrategy()
                         .toPhysicalColumnName(

@@ -11,6 +11,7 @@ import cn.sexycode.myjpa.binding.EntityBinder;
 import cn.sexycode.myjpa.binding.MetadataBuildingContext;
 import cn.sexycode.util.core.cls.XProperty;
 import cn.sexycode.util.core.exception.AnnotationException;
+import cn.sexycode.util.core.str.StringUtils;
 
 import javax.persistence.*;
 
@@ -97,13 +98,13 @@ class ColumnsBuilder {
             joinColumns = Ejb3JoinColumn
                     .buildJoinColumns(null, mappedBy, entityBinder.getSecondaryTables(), propertyHolder,
                             inferredData.getPropertyName(), buildingContext);
-        } else if (joinColumns == null && property.isAnnotationPresent(org.hibernate.annotations.Any.class)) {
+        }/* else if (joinColumns == null && property.isAnnotationPresent(org.hibernate.annotations.Any.class)) {
             throw new AnnotationException(
                     "@Any requires an explicit @JoinColumn(s): " + BinderHelper.getPath(propertyHolder, inferredData));
-        }
+        }*/
         if (columns == null && !property.isAnnotationPresent(ManyToMany.class)) {
             //useful for collection of embedded elements
-            columns = Ejb3Column.buildColumnFromAnnotation(null, null, nullability, propertyHolder, inferredData,
+            columns = Ejb3Column.buildColumnFromAnnotation(null, nullability, propertyHolder, inferredData,
                     entityBinder.getSecondaryTables(), buildingContext);
         }
 
@@ -123,7 +124,7 @@ class ColumnsBuilder {
             joinColumns = Ejb3JoinColumn
                     .buildJoinColumns(joinTableAnn.inverseJoinColumns(), null, entityBinder.getSecondaryTables(),
                             propertyHolder, inferredData.getPropertyName(), buildingContext);
-            if (StringHelper.isEmpty(joinTableAnn.name())) {
+            if (StringUtils.isEmpty(joinTableAnn.name())) {
                 throw new AnnotationException(
                         "JoinTable.name() on a @ToOne association has to be explicit: " + BinderHelper
                                 .getPath(propertyHolder, inferredData));
@@ -194,11 +195,11 @@ class ColumnsBuilder {
 
     Ejb3Column[] overrideColumnFromMapperOrMapsIdProperty(boolean isId) {
         Ejb3Column[] result = columns;
-        final PropertyData overridingProperty = BinderHelper
+        /*final PropertyData overridingProperty = BinderHelper
                 .getPropertyOverriddenByMapperOrMapsId(isId, propertyHolder, property.getName(), buildingContext);
         if (overridingProperty != null) {
             result = buildExcplicitOrDefaultJoinColumn(overridingProperty);
-        }
+        }*/
         return result;
     }
 

@@ -2,25 +2,21 @@ package cn.sexycode.myjpa.cfg;
 
 import cn.sexycode.myjpa.binding.BinderHelper;
 import cn.sexycode.myjpa.binding.MetadataBuildingContext;
-import cn.sexycode.myjpa.boot.ObjectNameNormalizer;
+import cn.sexycode.myjpa.boot.*;
+import cn.sexycode.myjpa.mapping.Join;
 import cn.sexycode.myjpa.mapping.PersistentClass;
 import cn.sexycode.myjpa.mapping.Property;
 import cn.sexycode.myjpa.mapping.SimpleValue;
-import cn.sexycode.myjpa.sql.mapping.Column;
-import cn.sexycode.myjpa.sql.mapping.Selectable;
-import cn.sexycode.myjpa.sql.mapping.Table;
-import cn.sexycode.myjpa.sql.mapping.Value;
+import cn.sexycode.myjpa.sql.mapping.*;
 import cn.sexycode.myjpa.sql.model.Database;
 import cn.sexycode.myjpa.sql.model.Identifier;
 import cn.sexycode.myjpa.sql.model.PhysicalNamingStrategy;
-import cn.sexycode.util.core.cls.XClass;
 import cn.sexycode.util.core.exception.AnnotationException;
 import cn.sexycode.util.core.exception.AssertionFailure;
 import cn.sexycode.util.core.str.StringUtils;
 
 import javax.persistence.JoinColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.criteria.Join;
 import java.util.*;
 
 /**
@@ -156,8 +152,9 @@ public class Ejb3JoinColumn extends Ejb3Column {
             String suffixForDefaultColumnName, MetadataBuildingContext buildingContext) {
         JoinColumn[] actualColumns = propertyHolder
                 .getOverriddenJoinColumn(StringUtils.qualify(propertyHolder.getPath(), propertyName));
-        if (actualColumns == null)
+        if (actualColumns == null) {
             actualColumns = anns;
+        }
         if (actualColumns == null || actualColumns.length == 0) {
             return new Ejb3JoinColumn[] {
                     buildJoinColumn(null, mappedBy, joins, propertyHolder, propertyName, suffixForDefaultColumnName,
@@ -302,12 +299,12 @@ public class Ejb3JoinColumn extends Ejb3Column {
      * Override persistent class on oneToMany Cases for late settings
      * Must only be used on second level pass binding
      */
-    public void setPersistentClass(PersistentClass persistentClass, Map<String, Join> joins,
+    /*public void setPersistentClass(PersistentClass persistentClass, Map<String, Join> joins,
             Map<XClass, InheritanceState> inheritanceStatePerClass) {
         // TODO shouldn't we deduce the classname from the persistentclasS?
         this.propertyHolder = PropertyHolderBuilder
                 .buildPropertyHolder(persistentClass, joins, getBuildingContext(), inheritanceStatePerClass);
-    }
+    }*/
 
     public static void checkIfJoinColumn(Object columns, PropertyHolder holder, PropertyData property) {
         if (!(columns instanceof Ejb3JoinColumn[])) {
@@ -578,8 +575,8 @@ public class Ejb3JoinColumn extends Ejb3Column {
             }
         }
 
-        return physicalNamingStrategy.toPhysicalColumnName(columnIdentifier, database.getJdbcEnvironment())
-                .render(database.getJdbcEnvironment().getDialect());
+        return physicalNamingStrategy.toPhysicalColumnName(columnIdentifier, database.getEnvironment())
+                .render(database.getEnvironment().getDialect());
     }
 
     /**
@@ -611,7 +608,7 @@ public class Ejb3JoinColumn extends Ejb3Column {
             String logicalCollectionColumnName = StringUtils.isNotEmpty(unquotedLogColName)
                     ? unquotedLogColName
                     : getPropertyName() + '_' + unquotedRefColumn;
-            logicalCollectionColumnName = getBuildingContext().getMetadataCollector().getDatabase().getJdbcEnvironment()
+            logicalCollectionColumnName = getBuildingContext().getMetadataCollector().getDatabase().getEnvironment()
                     .getIdentifierHelper().toIdentifier(logicalCollectionColumnName, isLogicalColumnQuoted).render();
             getBuildingContext().getMetadataCollector()
                     .addColumnNameBinding(value.getTable(), logicalCollectionColumnName, getMappingColumn());
@@ -640,8 +637,9 @@ public class Ejb3JoinColumn extends Ejb3Column {
         boolean isFkReferencedColumnName = false;
         boolean noReferencedColumn = true;
         //build the list of potential tables
-        if (columns.length == 0)
+        if (columns.length == 0) {
             return NO_REFERENCE; //shortcut
+        }
         Object columnOwner = BinderHelper.findColumnOwner(referencedEntity, columns[0].getReferencedColumn(), context);
         if (columnOwner == null) {
             try {
@@ -650,12 +648,12 @@ public class Ejb3JoinColumn extends Ejb3Column {
                                 + referencedEntity.getTable() + " and its related "
                                 + "supertables and secondary tables");
             } catch (MappingException e) {
-                throw new RecoverableException(e.getMessage(), e);
+                //                throw new RecoverableException(e.getMessage(), e);
             }
         }
         Table matchingTable = columnOwner instanceof PersistentClass
                 ? ((PersistentClass) columnOwner).getTable()
-                : ((Join) columnOwner).getTable();
+                : ((cn.sexycode.myjpa.mapping.Join) columnOwner).getTable();
         //check each referenced column
         for (Ejb3JoinColumn ejb3Column : columns) {
             String logicalReferencedColumnName = ejb3Column.getReferencedColumn();
@@ -696,7 +694,7 @@ public class Ejb3JoinColumn extends Ejb3Column {
      *
      * @param column the referenced column.
      */
-    public void overrideFromReferencedColumnIfNecessary(org.hibernate.mapping.Column column) {
+    public void overrideFromReferencedColumnIfNecessary(Column column) {
         if (getMappingColumn() != null) {
             // columnDefinition can also be specified using @JoinColumn, hence we have to check
             // whether it is set or not
@@ -719,7 +717,7 @@ public class Ejb3JoinColumn extends Ejb3Column {
                 getMappingColumn().setName(getBuildingContext().getBuildingOptions().getPhysicalNamingStrategy()
                         .toPhysicalColumnName(
                                 getBuildingContext().getMetadataCollector().getDatabase().toIdentifier(columnName),
-                                getBuildingContext().getMetadataCollector().getDatabase().getJdbcEnvironment())
+                                getBuildingContext().getMetadataCollector().getDatabase().getEnvironment())
                         .render());
             } else {
                 getMappingColumn().setName(columnName);

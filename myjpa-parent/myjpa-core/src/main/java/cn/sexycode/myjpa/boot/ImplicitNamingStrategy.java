@@ -66,7 +66,7 @@ public interface ImplicitNamingStrategy {
      * @param source The source information
      * @return The implicit table name.
      */
-    Identifier determineCollectionTableName(ImplicitCollectionTableNameSource source);
+    //    Identifier determineCollectionTableName(ImplicitCollectionTableNameSource source);
 
     /**
      * Determine the implicit name for the discriminator column for the given entity
@@ -128,7 +128,7 @@ public interface ImplicitNamingStrategy {
      * @param source The source information
      * @return The determined column name
      */
-    Identifier determineAnyDiscriminatorColumnName(ImplicitAnyDiscriminatorColumnNameSource source);
+    //    Identifier determineAnyDiscriminatorColumnName(ImplicitAnyDiscriminatorColumnNameSource source);
 
     /**
      * Determine the column name related to the key/id portion of an ANY mapping when
@@ -137,7 +137,7 @@ public interface ImplicitNamingStrategy {
      * @param source The source information
      * @return The determined identifier column name
      */
-    Identifier determineAnyKeyColumnName(ImplicitAnyKeyColumnNameSource source);
+    /*Identifier determineAnyKeyColumnName(ImplicitAnyKeyColumnNameSource source);
 
     Identifier determineMapKeyColumnName(ImplicitMapKeyColumnNameSource source);
 
@@ -147,5 +147,5 @@ public interface ImplicitNamingStrategy {
 
     Identifier determineUniqueKeyName(ImplicitUniqueKeyNameSource source);
 
-    Identifier determineIndexName(ImplicitIndexNameSource source);
+    Identifier determineIndexName(ImplicitIndexNameSource source);*/
 }

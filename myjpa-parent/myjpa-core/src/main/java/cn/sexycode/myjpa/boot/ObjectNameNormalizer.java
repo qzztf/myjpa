@@ -36,13 +36,13 @@ public abstract class ObjectNameNormalizer {
         return database;
     }
 
-	/*public Identifier normalizeIdentifierQuoting(Identifier identifier) {
+    public Identifier normalizeIdentifierQuoting(Identifier identifier) {
 		return getBuildingContext().getMetadataCollector()
 				.getDatabase()
 				.getEnvironment()
 				.getIdentifierHelper()
 				.normalizeQuoting( identifier );
-	}*/
+    }
 
     /**
      * Normalizes the quoting of identifiers.  This form returns a String rather than an Identifier

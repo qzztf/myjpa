@@ -2,11 +2,15 @@ package cn.sexycode.myjpa.session;
 
 import cn.sexycode.myjpa.binding.*;
 import cn.sexycode.myjpa.boot.BootstrapContextImpl;
+import cn.sexycode.myjpa.boot.ImplicitNamingStrategy;
+import cn.sexycode.myjpa.boot.ImplicitNamingStrategyJpaCompliantImpl;
 import cn.sexycode.myjpa.boot.MetadataBuildingOptions;
 import cn.sexycode.myjpa.mybatis.MyjpaConfiguration;
 import cn.sexycode.myjpa.mybatis.SqlSessionFactoryBuilder;
 import cn.sexycode.myjpa.sql.dialect.function.SQLFunction;
+import cn.sexycode.myjpa.sql.model.PhysicalNamingStrategy;
 import cn.sexycode.util.core.factory.BeanFactoryUtil;
+import cn.sexycode.util.core.factory.selector.StrategySelector;
 import cn.sexycode.util.core.service.Service;
 import cn.sexycode.util.core.service.ServiceRegistry;
 import cn.sexycode.util.core.service.StandardServiceRegistry;
@@ -17,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.spi.PersistenceUnitInfo;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.Callable;
 
 /**
  * @author qzz
@@ -58,6 +63,27 @@ public class SessionFactoryBuilderImpl implements SessionFactoryBuilder {
                     return null;
                 }
 
+                @Override
+                public ImplicitNamingStrategy getImplicitNamingStrategy() {
+                    final StrategySelector strategySelector = getServiceRegistry().getService(StrategySelector.class);
+                    return strategySelector.resolveDefaultableStrategy(ImplicitNamingStrategy.class,
+                            //                            configService.getSettings().get( AvailableSettings.IMPLICIT_NAMING_STRATEGY ),
+                            "cn.sexycode.myjpa.boot.ImplicitNamingStrategyJpaCompliantImpl",
+                            new Callable<ImplicitNamingStrategy>() {
+                                @Override
+                                public ImplicitNamingStrategy call() {
+                                    return strategySelector
+                                            .resolveDefaultableStrategy(ImplicitNamingStrategy.class, "default",
+                                                    ImplicitNamingStrategyJpaCompliantImpl.INSTANCE);
+                                }
+                            });
+                }
+
+                @Override
+                public PhysicalNamingStrategy getPhysicalNamingStrategy() {
+                    return null;
+                }
+
                 /*@Override
                 public Map<String, SQLFunction> getSqlFunctions() {
                     return sqlFunctionMap;
@@ -76,9 +102,8 @@ public class SessionFactoryBuilderImpl implements SessionFactoryBuilder {
 
                 @Override
                 public StandardServiceRegistry getServiceRegistry() {
-                    StandardServiceRegistry serviceRegistry = BeanFactoryUtil.getBeanFactory()
+                    return BeanFactoryUtil.getBeanFactory()
                             .getBean(StandardServiceRegistry.class);
-                    return serviceRegistry;
                 }
 /*
                 @Override

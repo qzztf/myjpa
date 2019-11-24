@@ -1,7 +1,11 @@
 package cn.sexycode.myjpa.binding;
 
+import cn.sexycode.myjpa.cfg.PropertyData;
 import cn.sexycode.myjpa.cfg.PropertyHolder;
+import cn.sexycode.myjpa.mapping.Join;
+import cn.sexycode.myjpa.mapping.PersistentClass;
 import cn.sexycode.myjpa.mapping.Property;
+import cn.sexycode.myjpa.sql.mapping.Table;
 import cn.sexycode.util.core.str.StringUtils;
 
 import javax.persistence.Column;
@@ -536,7 +540,7 @@ public class BinderHelper {
      * Find the column owner (ie PersistentClass or Join) of columnName.
      * If columnName is null or empty, persistentClass is returned
      */
-	/*public static Object findColumnOwner(
+    public static Object findColumnOwner(
 			PersistentClass persistentClass,
 			String columnName,
 			MetadataBuildingContext context) {
@@ -573,7 +577,7 @@ public class BinderHelper {
 		}
 		while ( !found && current != null );
 		return found ? result : null;
-	}*/
+    }
 
     /**
      * apply an id generator to a SimpleValue
@@ -1043,10 +1047,10 @@ public class BinderHelper {
 	}
 */
 
-/*	public static String getPath(PropertyHolder holder, PropertyData property) {
+    public static String getPath(PropertyHolder holder, PropertyData property) {
 		return StringUtils.qualify( holder.getPath(), property.getPropertyName() );
 	}
-
+/*
 	static PropertyData getPropertyOverriddenByMapperOrMapsId(
 			boolean isId,
 			PropertyHolder propertyHolder,

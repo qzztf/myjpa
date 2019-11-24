@@ -2,6 +2,7 @@ package cn.sexycode.myjpa.boot;
 
 import cn.sexycode.myjpa.binding.BasicTypeRegistration;
 import cn.sexycode.myjpa.binding.MappingDefaults;
+import cn.sexycode.myjpa.sql.model.PhysicalNamingStrategy;
 import cn.sexycode.util.core.service.StandardServiceRegistry;
 
 import java.util.List;
@@ -62,7 +63,7 @@ public interface MetadataBuildingOptions {
      *
      * @return The Jandex index
      *
-     * @deprecated Use {@link BootstrapContext#getJandexView()} instead.
+     * deprecated Use {@link BootstrapContext#getJandexView()} instead.
      */
     //    @Deprecated
     //    IndexView getJandexView();
@@ -118,14 +119,14 @@ public interface MetadataBuildingOptions {
      *
      * @return The tempo ClassLoader
      *
-     *  @deprecated Use {@link BootstrapContext#getJpaTempClassLoader()} instead.
+     *  deprecated Use {@link BootstrapContext#getJpaTempClassLoader()} instead.
      */
     //    @Deprecated
     //    ClassLoader getTempClassLoader();
 
-    //    ImplicitNamingStrategy getImplicitNamingStrategy();
+    ImplicitNamingStrategy getImplicitNamingStrategy();
 
-    //    PhysicalNamingStrategy getPhysicalNamingStrategy();
+    PhysicalNamingStrategy getPhysicalNamingStrategy();
 
     /**
      * Access to the SharedCacheMode for determining whether we should perform second level

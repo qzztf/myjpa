@@ -2,6 +2,11 @@ package cn.sexycode.myjpa.cfg;
 
 import cn.sexycode.myjpa.binding.BinderHelper;
 import cn.sexycode.myjpa.binding.MetadataBuildingContext;
+import cn.sexycode.myjpa.boot.AttributePath;
+import cn.sexycode.myjpa.boot.ImplicitBasicColumnNameSource;
+import cn.sexycode.myjpa.boot.ImplicitNamingStrategy;
+import cn.sexycode.myjpa.boot.ObjectNameNormalizer;
+import cn.sexycode.myjpa.mapping.Join;
 import cn.sexycode.myjpa.mapping.SimpleValue;
 import cn.sexycode.myjpa.sql.mapping.Column;
 import cn.sexycode.myjpa.sql.mapping.Table;
@@ -10,11 +15,11 @@ import cn.sexycode.myjpa.sql.model.Identifier;
 import cn.sexycode.myjpa.sql.model.PhysicalNamingStrategy;
 import cn.sexycode.util.core.cls.XProperty;
 import cn.sexycode.util.core.exception.AnnotationException;
+import cn.sexycode.util.core.exception.AssertionFailure;
 import cn.sexycode.util.core.str.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.criteria.Join;
 import java.util.Map;
 
 /**
@@ -440,26 +445,26 @@ public class Ejb3Column {
 
     public void forceNotNull() {
         if (mappingColumn == null) {
-            throw new CannotForceNonNullableException(
+            /*throw new CannotForceNonNullableException(
                     "Cannot perform #forceNotNull because internal org.hibernate.mapping.Column reference is null: "
-                            + "likely a formula");
+                            + "likely a formula");*/
         }
         mappingColumn.setNullable(false);
     }
 
-    public static Ejb3Column[] buildColumnFromAnnotation(javax.persistence.Column[] anns,
-            org.hibernate.annotations.Formula formulaAnn, Nullability nullability, PropertyHolder propertyHolder,
+    public static Ejb3Column[] buildColumnFromAnnotation(javax.persistence.Column[] anns, Nullability nullability,
+            PropertyHolder propertyHolder,
             PropertyData inferredData, Map<String, Join> secondaryTables, MetadataBuildingContext context) {
-        return buildColumnFromAnnotation(anns, formulaAnn, nullability, propertyHolder, inferredData, null,
+        return buildColumnFromAnnotation(anns, nullability, propertyHolder, inferredData, null,
                 secondaryTables, context);
     }
 
-    public static Ejb3Column[] buildColumnFromAnnotation(javax.persistence.Column[] anns,
-            org.hibernate.annotations.Formula formulaAnn, Nullability nullability, PropertyHolder propertyHolder,
+    public static Ejb3Column[] buildColumnFromAnnotation(javax.persistence.Column[] anns, Nullability nullability,
+            PropertyHolder propertyHolder,
             PropertyData inferredData, String suffixForDefaultColumnName, Map<String, Join> secondaryTables,
             MetadataBuildingContext context) {
         Ejb3Column[] columns;
-        if (formulaAnn != null) {
+        /*if (formulaAnn != null) {
             Ejb3Column formulaColumn = new Ejb3Column();
             formulaColumn.setFormula(formulaAnn.value());
             formulaColumn.setImplicit(false);
@@ -467,7 +472,8 @@ public class Ejb3Column {
             formulaColumn.setPropertyHolder(propertyHolder);
             formulaColumn.bind();
             columns = new Ejb3Column[] { formulaColumn };
-        } else {
+        } else*/
+        {
             javax.persistence.Column[] actualCols = anns;
             javax.persistence.Column[] overriddenCols = propertyHolder.getOverriddenColumn(
                     StringUtils.qualify(propertyHolder.getPath(), inferredData.getPropertyName()));
@@ -477,7 +483,7 @@ public class Ejb3Column {
                     throw new AnnotationException("AttributeOverride.column() should override all columns for now");
                 }
                 actualCols = overriddenCols.length == 0 ? null : overriddenCols;
-                LOG.debugf("Column(s) overridden for property %s", inferredData.getPropertyName());
+                LOG.debug("Column(s) overridden for property [{}]", inferredData.getPropertyName());
             }
             if (actualCols == null) {
                 columns = buildImplicitColumn(inferredData, suffixForDefaultColumnName, secondaryTables, propertyHolder,
@@ -507,9 +513,9 @@ public class Ejb3Column {
                     if (StringUtils.isEmpty(col.table())) {
                         tableName = "";
                     } else {
-                        tableName = database.getJdbcEnvironment().getIdentifierHelper().toIdentifier(col.table())
+                        tableName = database.getEnvironment().getIdentifierHelper().toIdentifier(col.table())
                                 .render();
-                        //						final Identifier logicalName = database.getJdbcEnvironment()
+                        //						final Identifier logicalName = database.getEnvironment()
                         //								.getIdentifierHelper()
                         //								.toIdentifier( col.table() );
                         //						final Identifier physicalName = physicalNamingStrategy.toPhysicalTableName( logicalName );
@@ -521,7 +527,7 @@ public class Ejb3Column {
                         columnName = null;
                     } else {
                         // NOTE : this is the logical column name, not the physical!
-                        columnName = database.getJdbcEnvironment().getIdentifierHelper().toIdentifier(col.name())
+                        columnName = database.getEnvironment().getIdentifierHelper().toIdentifier(col.name())
                                 .render();
                     }
 
@@ -564,19 +570,20 @@ public class Ejb3Column {
 
     private static void applyColumnDefault(Ejb3Column column, PropertyData inferredData) {
         final XProperty xProperty = inferredData.getProperty();
-        if (xProperty != null) {
+        /*if (xProperty != null) {
             ColumnDefault columnDefaultAnn = xProperty.getAnnotation(ColumnDefault.class);
             if (columnDefaultAnn != null) {
                 column.setDefaultValue(columnDefaultAnn.value());
             }
-        } else {
+        } else*/
+        {
             LOG.trace("Could not perform @ColumnDefault lookup as 'PropertyData' did not give access to XProperty");
         }
     }
 
     //must only be called after all setters are defined and before bind
     private void extractDataFromPropertyData(PropertyData inferredData) {
-        if (inferredData != null) {
+        /*if (inferredData != null) {
             XProperty property = inferredData.getProperty();
             if (property != null) {
                 processExpression(property.getAnnotation(ColumnTransformer.class));
@@ -587,10 +594,10 @@ public class Ejb3Column {
                     }
                 }
             }
-        }
+        }*/
     }
 
-    private void processExpression(ColumnTransformer annotation) {
+   /* private void processExpression(ColumnTransformer annotation) {
         if (annotation == null) {
             return;
         }
@@ -609,7 +616,7 @@ public class Ejb3Column {
                 writeExpression = null;
             }
         }
-    }
+    }*/
 
     private static Ejb3Column[] buildImplicitColumn(PropertyData inferredData, String suffixForDefaultColumnName,
             Map<String, Join> secondaryTables, PropertyHolder propertyHolder, Nullability nullability,
@@ -649,9 +656,9 @@ public class Ejb3Column {
         if (nbrOfColumns > 1) {
             for (int currentIndex = 1; currentIndex < nbrOfColumns; currentIndex++) {
 
-                if (columns[currentIndex].isFormula() || columns[currentIndex - 1].isFormula()) {
+                /*if (columns[currentIndex].isFormula() || columns[currentIndex - 1].isFormula()) {
                     continue;
-                }
+                }*/
 
                 if (columns[currentIndex].isInsertable() != columns[currentIndex - 1].isInsertable()) {
                     throw new AnnotationException(
@@ -675,7 +682,7 @@ public class Ejb3Column {
 
     }
 
-    public void addIndex(Index index, boolean inSecondPass) {
+  /*  public void addIndex(Index index, boolean inSecondPass) {
         if (index == null)
             return;
         String indexName = index.name();
@@ -698,7 +705,7 @@ public class Ejb3Column {
         } else {
             context.getMetadataCollector().addSecondPass(secondPass);
         }
-    }
+    }*/
 
     @Override
     public String toString() {

@@ -1,6 +1,7 @@
 package cn.sexycode.myjpa.binding;
 
 import cn.sexycode.myjpa.cfg.InheritanceState;
+import cn.sexycode.myjpa.mapping.Join;
 import cn.sexycode.myjpa.mapping.PersistentClass;
 import cn.sexycode.myjpa.mapping.RootClass;
 import cn.sexycode.util.core.cls.XClass;
@@ -13,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.Entity;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
-import javax.persistence.criteria.Join;
 import java.util.HashMap;
 
 /**

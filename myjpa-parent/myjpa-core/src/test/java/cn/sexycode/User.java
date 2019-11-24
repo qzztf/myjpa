@@ -1,15 +1,15 @@
 package cn.sexycode;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table
 public class User {
     @Column(name = "full_name")
     private String name;
-    @Column(name = "id")
+
+    @Id
+    @GeneratedValue
     private String id;
 
     public void setName(String name) {

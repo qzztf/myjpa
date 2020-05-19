@@ -1,5 +1,6 @@
 package cn.sexycode.myjpa.session;
 
+import cn.sexycode.myjpa.binding.ModelProxy;
 import org.apache.ibatis.session.SqlSession;
 
 import javax.persistence.EntityManager;
@@ -85,6 +86,7 @@ public interface Session extends EntityManager, Closeable {
      */
     @Override
     default <T> T find(Class<T> entityClass, Object primaryKey) {
-        return (T) new SessionAdaptor(this).execute("find", primaryKey);
+        ModelProxy findModelProxy = new ModelProxy<>(primaryKey, entityClass.getCanonicalName() + ".findById");
+        return (T) new SessionAdaptor(this).execute("find", findModelProxy);
     }
 }

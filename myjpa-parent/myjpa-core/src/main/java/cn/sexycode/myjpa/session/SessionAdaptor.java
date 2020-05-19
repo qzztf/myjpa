@@ -1,6 +1,7 @@
 package cn.sexycode.myjpa.session;
 
 import cn.sexycode.myjpa.binding.ModelProxy;
+import cn.sexycode.util.core.str.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 
 import javax.persistence.PersistenceException;
@@ -36,11 +37,13 @@ public class SessionAdaptor {
         if (param != null && param.length > 0) {
             try {
                 Object entity = param[0];
+                Method mappingMethod = methodMapping.get(method);
                 if (entity.getClass().isAssignableFrom(ModelProxy.class)) {
                     ModelProxy modelProxy = (ModelProxy) entity;
-                    return methodMapping.get(method).invoke(session.getSession(), modelProxy.getStatement(), modelProxy.getModel());
+                    return mappingMethod.invoke(session.getSession(), modelProxy.getStatement(), modelProxy.getModel());
                 } else {
-                    return methodMapping.get(method).invoke(session.getSession(), entity.getClass().getCanonicalName(), param);
+                    return mappingMethod
+                            .invoke(session.getSession(), StringUtils.join(".", new String[]{entity.getClass().getCanonicalName(), mappingMethod.getName()}), entity);
                 }
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new PersistenceException(e);

@@ -111,7 +111,7 @@ public class MetamodelImpl implements Metamodel, Serializable {
         for (PersistentClass entityBinding : mappingMetadata.getEntityBindings()) {
             locateOrBuildEntityType(entityBinding, context);
         }
-
+        context.wrapUp();
         this.jpaEntityTypeMap.putAll(context.getEntityTypeMap());
         this.jpaEmbeddableTypeMap.putAll(context.getEmbeddableTypeMap());
         this.jpaMappedSuperclassTypeMap.putAll(context.getMappedSuperclassTypeMap());

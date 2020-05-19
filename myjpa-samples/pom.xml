@@ -79,6 +79,12 @@
             <version>${myjpa.version}</version>
         </dependency>
         <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>3.3.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>cn.sexycode</groupId>
             <artifactId>spring-data-myjpa</artifactId>
             <version>0.0.2</version>

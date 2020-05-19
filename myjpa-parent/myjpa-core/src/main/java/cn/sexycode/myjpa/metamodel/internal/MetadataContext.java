@@ -127,6 +127,106 @@ class MetadataContext {
         return Collections.unmodifiableMap(entityTypesByEntityName);
     }
 
+    public void wrapUp() {
+        /*if ( LOG.isTraceEnabled() ) {
+            LOG.trace( "Wrapping up metadata context..." );
+        }
+
+        boolean staticMetamodelScanEnabled = JpaStaticMetaModelPopulationSetting
+                .determineJpaMetaModelPopulationSetting( sessionFactory.getProperties() ) != JpaStaticMetaModelPopulationSetting.DISABLED;
+
+        //we need to process types from superclasses to subclasses
+        for ( Object mapping : orderedMappings ) {
+            if ( PersistentClass.class.isAssignableFrom( mapping.getClass() ) ) {
+                @SuppressWarnings("unchecked")
+                final PersistentClass safeMapping = (PersistentClass) mapping;
+                if ( LOG.isTraceEnabled() ) {
+                    LOG.trace( "Starting entity [" + safeMapping.getEntityName() + ']' );
+                }
+                try {
+                    final EntityTypeDescriptor<?> jpaMapping = entityTypesByPersistentClass.get( safeMapping );
+
+                    applyIdMetadata( safeMapping, jpaMapping );
+                    applyVersionAttribute( safeMapping, jpaMapping );
+
+                    Iterator<Property> properties = safeMapping.getDeclaredPropertyIterator();
+                    while ( properties.hasNext() ) {
+                        final Property property = properties.next();
+                        if ( property.getValue() == safeMapping.getIdentifierMapper() ) {
+                            // property represents special handling for id-class mappings but we have already
+                            // accounted for the embedded property mappings in #applyIdMetadata &&
+                            // #buildIdClassAttributes
+                            continue;
+                        }
+                        if ( safeMapping.isVersioned() && property == safeMapping.getVersion() ) {
+                            // skip the version property, it was already handled previously.
+                            continue;
+                        }
+                        final PersistentAttributeDescriptor attribute = attributeFactory.buildAttribute( jpaMapping, property );
+                        if ( attribute != null ) {
+                            jpaMapping.getInFlightAccess().addAttribute( attribute );
+                        }
+                    }
+
+                    jpaMapping.getInFlightAccess().finishUp();
+
+                    if ( staticMetamodelScanEnabled ) {
+                        populateStaticMetamodel( jpaMapping );
+                    }
+                }
+                finally {
+                    if ( LOG.isTraceEnabled() ) {
+                        LOG.trace( "Completed entity [" + safeMapping.getEntityName() + ']' );
+                    }
+                }
+            }
+            else if ( MappedSuperclass.class.isAssignableFrom( mapping.getClass() ) ) {
+                @SuppressWarnings("unchecked")
+                final MappedSuperclass safeMapping = (MappedSuperclass) mapping;
+                if ( LOG.isTraceEnabled() ) {
+                    LOG.trace( "Starting mapped superclass [" + safeMapping.getMappedClass().getName() + ']' );
+                }
+                try {
+                    final MappedSuperclassTypeDescriptor<?> jpaType = mappedSuperclassByMappedSuperclassMapping.get( safeMapping );
+
+                    applyIdMetadata( safeMapping, jpaType );
+                    applyVersionAttribute( safeMapping, jpaType );
+
+                    Iterator<Property> properties = safeMapping.getDeclaredPropertyIterator();
+                    while ( properties.hasNext() ) {
+                        final Property property = properties.next();
+                        if ( safeMapping.isVersioned() && property == safeMapping.getVersion() ) {
+                            // skip the version property, it was already handled previously.
+                            continue;
+                        }
+                        final PersistentAttributeDescriptor attribute = attributeFactory.buildAttribute( jpaType, property );
+                        if ( attribute != null ) {
+                            jpaType.getInFlightAccess().addAttribute( attribute );
+                        }
+                    }
+                    jpaType.getInFlightAccess().finishUp();
+
+                    if ( staticMetamodelScanEnabled ) {
+                        populateStaticMetamodel( jpaType );
+                    }
+                }
+                finally {
+                    if ( LOG.isTraceEnabled() ) {
+                        LOG.trace( "Completed mapped superclass [" + safeMapping.getMappedClass().getName() + ']' );
+                    }
+                }
+            }
+            else {
+                throw new AssertionFailure( "Unexpected mapping type: " + mapping.getClass() );
+            }
+        }
+
+        if ( staticMetamodelScanEnabled ) {
+            for ( EmbeddedTypeDescriptor embeddable : embeddables ) {
+                populateStaticMetamodel( embeddable );
+            }
+        }*/
+    }
 
     private <X> void applyIdMetadata(PersistentClass persistentClass, EntityTypeImpl<X> jpaEntityType) {
 		/*if ( persistentClass.hasIdentifierProperty() ) {

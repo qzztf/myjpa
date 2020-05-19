@@ -1,22 +1,8 @@
-/*
- * Copyright 2002-2018 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package cn.sexycode.myjpa.orm.vendor;
 
+import cn.sexycode.myjpa.session.Session;
 import org.springframework.jdbc.datasource.ConnectionHandle;
+import org.springframework.lang.Nullable;
 import org.springframework.orm.jpa.DefaultJpaDialect;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionException;
@@ -52,8 +38,43 @@ public class MyjpaDialect extends DefaultJpaDialect {
 
     public Object beginTransaction(EntityManager entityManager, TransactionDefinition definition)
             throws PersistenceException, SQLException, TransactionException {
+        Session session = entityManager.unwrap(Session.class);
+
+        if (definition.getTimeout() != TransactionDefinition.TIMEOUT_DEFAULT) {
+            //            session.getTransaction().setTimeout(definition.getTimeout());
+        }
+
+        boolean isolationLevelNeeded = (definition.getIsolationLevel() != TransactionDefinition.ISOLATION_DEFAULT);
+        Integer previousIsolationLevel = null;
+        Connection preparedCon = null;
+
+        if (isolationLevelNeeded || definition.isReadOnly()) {
+           /* if (this.prepareConnection) {
+                preparedCon = MyJpaConnectionHandle.doGetConnection(session);
+                previousIsolationLevel = DataSourceUtils.prepareConnectionForTransaction(preparedCon, definition);
+            }
+            else if (isolationLevelNeeded) {
+                throw new InvalidIsolationLevelException(getClass().getSimpleName() +
+                        " does not support custom isolation levels since the 'prepareConnection' flag is off.");
+            }*/
+        }
+
+        // Standard JPA transaction begin call for full JPA context setup...
         entityManager.getTransaction().begin();
-        return null;
+
+        // Adapt flush mode and store previous isolation level, if any.
+        //        FlushMode previousFlushMode = prepareFlushMode(session, definition.isReadOnly());
+        /*if (definition instanceof ResourceTransactionDefinition &&
+                ((ResourceTransactionDefinition) definition).isLocalResource()) {
+            // As of 5.1, we explicitly optimize for a transaction-local EntityManager,
+            // aligned with native HibernateTransactionManager behavior.
+            previousFlushMode = null;
+            if (definition.isReadOnly()) {
+                session.setDefaultReadOnly(true);
+            }
+        }*/
+        return new SessionTransactionData(session, preparedCon, previousIsolationLevel);
+
     }
 
     @Override
@@ -63,9 +84,32 @@ public class MyjpaDialect extends DefaultJpaDialect {
         // As of Spring 4.1.2, we're using a custom ConnectionHandle for lazy retrieval
         // of the underlying Connection (allowing for deferred internal transaction begin
         // within the EclipseLink EntityManager)
-        return new MyJpaConnectionHandle(entityManager);
+//        return new MyjpaConnectionHandle(entityManager);
+        return null;
     }
 
+    private static class SessionTransactionData {
+
+        private final Session session;
+
+        @Nullable
+        private final Connection preparedCon;
+
+        @Nullable
+        private final Integer previousIsolationLevel;
+
+        public SessionTransactionData(Session session,
+                @Nullable
+                        Connection preparedCon,
+                @Nullable
+                        Integer previousIsolationLevel) {
+
+            this.session = session;
+            this.preparedCon = preparedCon;
+            this.previousIsolationLevel = previousIsolationLevel;
+        }
+
+    }
 
     /**
      * {@link ConnectionHandle} implementation that lazily fetches an
@@ -74,21 +118,21 @@ public class MyjpaDialect extends DefaultJpaDialect {
      * This is useful to defer the early transaction begin that obtaining a
      * JDBC Connection implies within an EclipseLink EntityManager.
      */
-    private static class MyJpaConnectionHandle implements ConnectionHandle {
+    private static class MyjpaConnectionHandle implements ConnectionHandle {
 
         private final EntityManager entityManager;
 
         private Connection connection;
 
-        public MyJpaConnectionHandle(EntityManager entityManager) {
+        public MyjpaConnectionHandle(EntityManager entityManager) {
             this.entityManager = entityManager;
         }
 
         @Override
         public Connection getConnection() {
-            /*if (this.connection == null) {
-                this.connection = this.entityManager.get(Connection.class);
-            }*/
+            if (this.connection == null) {
+                entityManager.unwrap(Session.class).getConnection();
+            }
             return this.connection;
         }
 

@@ -3,10 +3,7 @@ package cn.sexycode.myjpa.samples.model;
 //import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * @author qzz
@@ -17,6 +14,7 @@ import javax.persistence.Table;
 @Data
 public class User {
     @Id
+    @GeneratedValue
     private String id;
 
     @Column

@@ -16,10 +16,8 @@ import java.util.Map;
 
 public class DefaultBeanFactory implements BeanFactory {
 
-    private Map<Class, Object> objectMap = new HashMap<>();
-
-    public DefaultBeanFactory() {
-        objectMap.put(StandardServiceRegistry.class, new StandardServiceRegistry() {
+    Map<Class, Object> beans = new HashMap<Class, Object>() {{
+        put(StandardServiceRegistry.class, new StandardServiceRegistry() {
             private Map<Class, Service> serviceMap = new HashMap<Class, Service>() {{
                 put(ClassLoaderService.class, new ClassLoaderServiceImpl());
                 put(DialectFactory.class, new DialectFactoryImpl(new StandardDialectResolver(),
@@ -41,10 +39,10 @@ public class DefaultBeanFactory implements BeanFactory {
 
             }
         });
-    }
+    }};
 
     @Override
     public <T> T getBean(Class<T> clazz) {
-        return (T) objectMap.get(clazz);
+        return (T) beans.get(clazz);
     }
 }

@@ -68,7 +68,7 @@ public class MyjpaVendorAdapter extends AbstractJpaVendorAdapter {
 
     @Override
     public String getPersistenceProviderRootPackage() {
-        return "cn.sexycode.mybatis.jpa";
+        return "cn.sexycode.myjpa";
     }
 
     @Override

@@ -1,6 +1,8 @@
 package cn.sexycode.myjpa.session;
 
+import cn.sexycode.myjpa.AvailableSettings;
 import cn.sexycode.myjpa.binding.ModelProxy;
+import cn.sexycode.util.core.str.StringUtils;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.session.Configuration;
@@ -94,12 +96,21 @@ public interface Session extends EntityManager,SqlSession, Closeable {
      */
     @Override
     default <T> T find(Class<T> entityClass, Object primaryKey) {
-        ModelProxy findModelProxy = new ModelProxy<>(primaryKey, entityClass.getCanonicalName() + ".findById");
+        ModelProxy findModelProxy = new ModelProxy(primaryKey, StringUtils.join(".", new String[]{entityClass.getCanonicalName(), getSessionFactory().getProperties().getOrDefault(
+                AvailableSettings.MybatisMapperMethodMapping.find, AvailableSettings.MybatisMapperMethodMapping.Mapping.FIND).toString()}));
         return (T) new SessionAdaptor(this).execute("find", findModelProxy);
     }
 
+    /**
+     * 返回 SessionFactory
+     * @return SessionFactory
+     */
     SessionFactory getSessionFactory();
 
+    /**
+     * 返回mybatis Configuration
+     * @return Configuration mybatis
+     */
     @Override
     Configuration getConfiguration();
 

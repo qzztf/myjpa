@@ -3,6 +3,7 @@ package cn.sexycode.myjpa.session;
 import cn.sexycode.myjpa.binding.Metadata;
 import cn.sexycode.myjpa.metamodel.internal.MetamodelImpl;
 import cn.sexycode.myjpa.transaction.MyjpaTransactionImpl;
+import cn.sexycode.util.core.properties.PropertiesUtil;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.Executor;
@@ -21,6 +22,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.metamodel.Metamodel;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -89,7 +91,7 @@ public class SessionFactoryImpl extends DefaultSqlSessionFactory implements Sess
 
     @Override
     public Map<String, Object> getProperties() {
-        return new LinkedHashMap<>(5);
+        return new HashMap(getConfiguration().getVariables());
     }
 
     @Override

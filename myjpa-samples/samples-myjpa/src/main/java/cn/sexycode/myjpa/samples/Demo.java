@@ -20,15 +20,15 @@ public class Demo {
         EntityManager em = entityManagerFactory.createEntityManager();
         em.getTransaction().begin();
         User user = new User();
-        user.setId("1");
-        user.setAccount("q");
+        user.setId("2");
+        user.setAccount("qq");
         user.setPassword("1111");
         user.setFullName("qzz");
         //以上两行为新建状态
         //托管状态
-//        em.persist(user);
+        em.persist(user);
         //事务提交或调用flush()方法后会同步到数据库
-//        em.getTransaction().commit();
+        em.getTransaction().commit();
         //根据主键获取对象
         System.err.println(em.find(User.class,1));
         //System.err.println(em.getReference(User.class,1));

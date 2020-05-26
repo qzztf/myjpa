@@ -1970,4 +1970,11 @@ public interface AvailableSettings {
      * @since 5.4
      */
     String SEQUENCE_INCREMENT_SIZE_MISMATCH_STRATEGY = "hibernate.id.sequence.increment_size_mismatch_strategy";
+
+    interface MybatisMapperMethodMapping {
+        String find = "myjpa.jpa.entity.method.find";
+        class Mapping{
+            public static final String FIND = "findById";
+        }
+    }
 }

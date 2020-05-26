@@ -100,8 +100,8 @@ public class MyjpaPersistenceProvider implements PersistenceProvider {
                 }
             }
             if (sessionFactory != null) {
-                return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, properties)
-                        .sqlSessionFactory(sessionFactory).build((MyjpaConfiguration) getConfig(sessionFactory.getConfiguration(), properties));
+                return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, prop)
+                        .sqlSessionFactory(sessionFactory).build((MyjpaConfiguration) getConfig(sessionFactory.getConfiguration(), prop));
             }
 
             InputStream configStream = Resources

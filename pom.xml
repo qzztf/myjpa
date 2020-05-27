@@ -42,6 +42,7 @@
     </dependencyManagement>
     <modules>
         <module>myjpa-dependencies</module>
+        <module>myjpa-spring</module>
     </modules>
 
     <profiles>

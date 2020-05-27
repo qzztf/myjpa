@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * The Hibernate {@link PersistenceProvider} implementation
+ * The myjpa {@link PersistenceProvider} implementation
  *
  * @author qzz
  */
@@ -109,8 +109,8 @@ public class MyjpaPersistenceProvider implements PersistenceProvider {
             if (configStream != null) {
                 return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, prop).build(configStream, prop);
             }
-            return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, properties)
-                    .build(((MyjpaConfiguration) getConfig(null, properties)));
+            return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, prop)
+                    .build(((MyjpaConfiguration) getConfig(null, prop)));
         } catch (PersistenceException pe) {
             throw pe;
         } catch (Exception e) {

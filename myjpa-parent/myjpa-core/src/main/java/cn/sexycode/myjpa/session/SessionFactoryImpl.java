@@ -30,7 +30,7 @@ import java.util.Optional;
 /**
  * @author qzz
  */
-public class SessionFactoryImpl extends DefaultSqlSessionFactory implements SessionFactory, SqlSessionFactory {
+public class SessionFactoryImpl extends DefaultSqlSessionFactory implements SessionFactory {
 
     private final Configuration configuration;
 

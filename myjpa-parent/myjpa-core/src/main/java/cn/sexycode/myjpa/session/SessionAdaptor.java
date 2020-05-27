@@ -29,7 +29,7 @@ public class SessionAdaptor {
             METHOD_MAPPING.put("remove", SqlSession.class.getMethod("delete", String.class, Object.class));
             METHOD_MAPPING.put("find", SqlSession.class.getMethod("selectOne", String.class, Object.class));
         } catch (NoSuchMethodException e) {
-            LOGGER.warn("映射mybatis方法出现异常", e);
+            throw new PersistenceException("映射mybatis方法出现异常", e);
         }
     }
 

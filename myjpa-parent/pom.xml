@@ -19,6 +19,7 @@
         <module>spring-orm-myjpa</module>
         <module>myjpa-spring-boot</module>
         <module>myjpa-tkmapper</module>
+        <module>myjpa-spring</module>
     </modules>
 
 

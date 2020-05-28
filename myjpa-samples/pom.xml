@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>samples-myjpa</module>
+        <module>samples-myjpa-spring</module>
     </modules>
 
     <properties>

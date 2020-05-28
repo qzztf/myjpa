@@ -1971,8 +1971,10 @@ public interface AvailableSettings {
      */
     String SEQUENCE_INCREMENT_SIZE_MISMATCH_STRATEGY = "hibernate.id.sequence.increment_size_mismatch_strategy";
 
+    String MYBATIS_CONFIG_LOCATION = "myjpa.mybatis.config.location";
+    String MYBATIS_SESSION_FACTORY_BEAN_NAME = "myjpa.mybatis.sessionFactory.name";
     interface MybatisMapperMethodMapping {
-        String find = "myjpa.jpa.entity.method.find";
+        String FIND = "myjpa.jpa.entity.method.find";
         class Mapping{
             public static final String FIND = "findById";
         }

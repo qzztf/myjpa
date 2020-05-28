@@ -45,4 +45,14 @@ public class DefaultBeanFactory implements BeanFactory {
     public <T> T getBean(Class<T> clazz) {
         return (T) beans.get(clazz);
     }
+
+    @Override
+    public <T> T getBean(String s) {
+        return null;
+    }
+
+    @Override
+    public <T> T getBean(String s, Class<T> aClass) {
+        return null;
+    }
 }

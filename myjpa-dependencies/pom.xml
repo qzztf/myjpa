@@ -68,6 +68,11 @@
             </dependency>
             <dependency>
                 <groupId>cn.sexycode</groupId>
+                <artifactId>myjpa-spring</artifactId>
+                <version>${myjpa.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.sexycode</groupId>
                 <artifactId>mysql</artifactId>
                 <version>${mysql.version}</version>
             </dependency>
@@ -103,6 +108,7 @@
                 <artifactId>spring-orm-myjpa</artifactId>
                 <version>${myjpa.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>cn.sexycode</groupId>
                 <artifactId>spring-data-myjpa</artifactId>

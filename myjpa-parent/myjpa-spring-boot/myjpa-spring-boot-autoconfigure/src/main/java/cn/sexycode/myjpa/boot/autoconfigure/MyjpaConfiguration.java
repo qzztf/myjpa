@@ -3,6 +3,7 @@ package cn.sexycode.myjpa.boot.autoconfigure;
 import cn.sexycode.myjpa.orm.vendor.MyjpaVendorAdapter;
 import cn.sexycode.myjpa.query.DefaultQueryFactory;
 import cn.sexycode.myjpa.query.QueryFactory;
+import cn.sexycode.myjpa.spring.BeanFactoryAdapter;
 import cn.sexycode.sql.dialect.DialectFactory;
 import cn.sexycode.sql.dialect.DialectFactoryImpl;
 import cn.sexycode.sql.dialect.StandardDialectResolver;
@@ -93,12 +94,7 @@ public class MyjpaConfiguration extends JpaBaseConfiguration implements BeanFact
 				physicalNamingStrategy.getIfAvailable(),
 				implicitNamingStrategy.getIfAvailable(),
 				hibernatePropertiesCustomizers.getIfAvailable(Collections::emptyList));*/
-        BeanFactoryUtil.setBeanFactory(new cn.sexycode.util.core.factory.BeanFactory() {
-            @Override
-            public <T> T getBean(Class<T> clazz) {
-                return beanFactory.getBean(clazz);
-            }
-        });
+        BeanFactoryUtil.setBeanFactory(new BeanFactoryAdapter(beanFactory));
     }
 
     @Bean("standardServiceRegistry")

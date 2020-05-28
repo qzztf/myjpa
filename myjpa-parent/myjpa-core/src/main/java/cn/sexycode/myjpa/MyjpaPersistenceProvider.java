@@ -7,6 +7,7 @@ import cn.sexycode.myjpa.mybatis.MyjpaConfiguration;
 import cn.sexycode.myjpa.session.SessionFactoryBuilderImpl;
 import cn.sexycode.util.core.factory.BeanFactoryUtil;
 import cn.sexycode.util.core.object.ObjectUtils;
+import cn.sexycode.util.core.properties.PropertiesUtil;
 import cn.sexycode.util.core.str.StringUtils;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.Configuration;
@@ -105,7 +106,7 @@ public class MyjpaPersistenceProvider implements PersistenceProvider {
             }
 
             InputStream configStream = Resources
-                    .getResourceAsStream(ClassLoader.getSystemClassLoader(), Consts.DEFAULT_CFG_FILE);
+                    .getResourceAsStream(ClassLoader.getSystemClassLoader(), PropertiesUtil.getString(AvailableSettings.MYBATIS_CONFIG_LOCATION, prop, Consts.DEFAULT_CFG_FILE));
             if (configStream != null) {
                 return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, prop).build(configStream, prop);
             }

@@ -56,5 +56,6 @@
         <property name="configLocation" value="mybatis-config.xml"/>
     </bean>
 
+    <bean class="cn.sexycode.myjpa.spring.BeanFactoryAdapter"/>
 
 </beans>

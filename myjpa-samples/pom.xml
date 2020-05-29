@@ -12,6 +12,7 @@
     <modules>
         <module>samples-myjpa</module>
         <module>samples-myjpa-spring</module>
+        <module>samples-myjpa-spring-data</module>
     </modules>
 
     <properties>

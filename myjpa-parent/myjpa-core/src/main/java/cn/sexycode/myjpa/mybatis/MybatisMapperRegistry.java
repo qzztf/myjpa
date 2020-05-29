@@ -44,7 +44,9 @@ public class MybatisMapperRegistry extends MapperRegistry {
 
     @Override
     public <T> void addMapper(Class<T> type) {
-        innerMapperRegistry.addMapper(type);
+        if (!innerMapperRegistry.hasMapper(type)) {
+            innerMapperRegistry.addMapper(type);
+        }
         if (type.isInterface()) {
             if (knownMappers.containsKey(type)) {
                 return;

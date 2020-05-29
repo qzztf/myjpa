@@ -1,5 +1,6 @@
 package cn.sexycode.myjpa.data.repository.support;
 
+import cn.sexycode.myjpa.AvailableSettings;
 import cn.sexycode.myjpa.binding.ModelProxy;
 import cn.sexycode.myjpa.data.repository.MyjpaRepository;
 import org.springframework.data.domain.Example;
@@ -93,7 +94,8 @@ public class MyjpaRepositoryImpl<T, ID> implements JpaSpecificationExecutor<T>, 
 
     @Override
     public Optional<T> findById(ID id) {
-        ModelProxy findModelProxy = new ModelProxy<>(id, repositoryInterface.getCanonicalName() + ".findById");
+        ModelProxy findModelProxy = new ModelProxy<>(id, repositoryInterface.getCanonicalName() + em.getProperties().getOrDefault(AvailableSettings.MybatisMapperMethodMapping.FIND,
+                        AvailableSettings.MybatisMapperMethodMapping.Mapping.FIND).toString());
         return Optional.ofNullable(em.find(domainClass, findModelProxy));
     }
 

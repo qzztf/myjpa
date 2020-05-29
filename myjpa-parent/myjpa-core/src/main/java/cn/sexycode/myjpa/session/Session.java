@@ -96,8 +96,14 @@ public interface Session extends EntityManager,SqlSession, Closeable {
      */
     @Override
     default <T> T find(Class<T> entityClass, Object primaryKey) {
-        ModelProxy findModelProxy = new ModelProxy(primaryKey, StringUtils.join(".", new String[]{entityClass.getCanonicalName(), getSessionFactory().getProperties().getOrDefault(
-                AvailableSettings.MybatisMapperMethodMapping.FIND, AvailableSettings.MybatisMapperMethodMapping.Mapping.FIND).toString()}));
+        ModelProxy findModelProxy;
+        if (primaryKey instanceof ModelProxy){
+            findModelProxy = (ModelProxy) primaryKey;
+        }else {
+            findModelProxy = new ModelProxy(primaryKey, StringUtils.join(".", new String[] { entityClass.getCanonicalName(), getSessionFactory().getProperties()
+                    .getOrDefault(AvailableSettings.MybatisMapperMethodMapping.FIND,
+                            AvailableSettings.MybatisMapperMethodMapping.Mapping.FIND).toString() }));
+        }
         return (T) new SessionAdaptor(this).execute("find", findModelProxy);
     }
 

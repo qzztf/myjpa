@@ -17,6 +17,8 @@
 
     <properties>
         <myjpa.version>0.0.4-SNAPSHOT</myjpa.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
    <!-- <dependencies>
         <dependency>

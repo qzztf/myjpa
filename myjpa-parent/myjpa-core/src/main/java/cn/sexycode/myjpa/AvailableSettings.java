@@ -1973,10 +1973,19 @@ public interface AvailableSettings {
 
     String MYBATIS_CONFIG_LOCATION = "myjpa.mybatis.config.location";
     String MYBATIS_SESSION_FACTORY_BEAN_NAME = "myjpa.mybatis.sessionFactory.name";
+    /**
+     * 分页查询时，以statement id 加此后缀的语句为自定义统计总数语句
+     * 如: findByUser查询分页数据,如果后缀为Count, 那么findByUserCount则为计数语句
+     */
+    String MYBATIS_QUERY_COUNT_SUFFIX = "myjpa.mybatis.query.count.suffix";
     interface MybatisMapperMethodMapping {
         String FIND = "myjpa.jpa.entity.method.find";
         class Mapping{
             public static final String FIND = "findById";
         }
+    }
+
+    interface Defaults{
+        String DEFAULt_MYBATIS_QUERY_COUNT_SUFFIX = "Count";
     }
 }

@@ -1,9 +1,6 @@
 package cn.sexycode.myjpa.samples;
 
-//import cn.sexycode.myjpa.data.repository.support.MyjpaRepositoryFactoryBean;
-
 import cn.sexycode.myjpa.samples.dao.UserDao;
-import cn.sexycode.myjpa.samples.model.User;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**

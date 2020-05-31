@@ -32,10 +32,14 @@ public class MybatisNamedQueryImpl<R> implements TypedQuery<R> {
         this.session = session;
         this.mappedStatement = session.getConfiguration().getMappedStatement(name);
         mappedStatement.getParameterMap().getParameterMappings().forEach(mapping -> {
-            mapping.getExpression();
+            parameters.add(new MyjpaParameterImpl(mapping));
         });
         Metamodel metamodel = session.getEntityManagerFactory().getMetamodel();
         //		EntityType<R> entity = metamodel.entity(resultClass);
+    }
+
+    public void setParameterValues(Object values){
+
     }
 
     public String getQueryString() {
@@ -199,6 +203,6 @@ public class MybatisNamedQueryImpl<R> implements TypedQuery<R> {
 
     @Override
     public <T> T unwrap(Class<T> cls) {
-        return null;
+        return (T) this;
     }
 }

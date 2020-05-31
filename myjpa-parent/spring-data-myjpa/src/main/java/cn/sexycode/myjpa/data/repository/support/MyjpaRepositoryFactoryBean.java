@@ -1,13 +1,19 @@
 package cn.sexycode.myjpa.data.repository.support;
 
+import org.springframework.data.jpa.provider.PersistenceProvider;
+import org.springframework.data.jpa.provider.QueryExtractor;
+import org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.data.repository.core.RepositoryInformation;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
+import org.springframework.data.repository.query.EvaluationContextProvider;
+import org.springframework.data.repository.query.QueryLookupStrategy;
 
 import javax.persistence.EntityManager;
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * @author qinzaizhen
@@ -29,13 +35,17 @@ public class MyjpaRepositoryFactoryBean extends JpaRepositoryFactoryBean {
         return new MyJpaRepositoryFactory(entityManager);
     }
 
+
     private class MyJpaRepositoryFactory<T, I extends Serializable> extends JpaRepositoryFactory {
 
         private final EntityManager em;
 
+        private final QueryExtractor extractor;
+
         public MyJpaRepositoryFactory(EntityManager em) {
             super(em);
             this.em = em;
+            this.extractor = PersistenceProvider.fromEntityManager(em);
         }
 
         @Override
@@ -46,6 +56,14 @@ public class MyjpaRepositoryFactoryBean extends JpaRepositoryFactoryBean {
         @Override
         protected Class<?> getRepositoryBaseClass(RepositoryMetadata metadata) {
             return MyjpaRepositoryImpl.class;
+        }
+
+        @Override
+        protected Optional<QueryLookupStrategy> getQueryLookupStrategy(QueryLookupStrategy.Key key,
+                EvaluationContextProvider evaluationContextProvider) {
+            return Optional.of(Optional
+                    .ofNullable(MyjpaQueryLookupStrategy.create(em, key, extractor, evaluationContextProvider))
+                    .orElse(JpaQueryLookupStrategy.create(em, key, extractor, evaluationContextProvider)));
         }
     }
 

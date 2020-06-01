@@ -1,17 +1,24 @@
 package cn.sexycode.myjpa.query;
 
 import cn.sexycode.myjpa.session.Session;
+import cn.sexycode.util.core.object.ReflectionUtils;
+import cn.sexycode.util.core.str.StringUtils;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.session.SqlSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import javax.persistence.metamodel.Metamodel;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * @author Steve Ebersole
  */
-public class MybatisNamedQueryImpl<R> implements TypedQuery<R> {
+public class MybatisNamedQueryImpl<R> extends AbstractMybatisQuery<R> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MybatisNamedQueryImpl.class);
+
     private final String name;
 
     private Session session;
@@ -21,6 +28,12 @@ public class MybatisNamedQueryImpl<R> implements TypedQuery<R> {
     private MappedStatement mappedStatement;
 
     private List<Parameter<?>> parameters = new LinkedList<>();
+
+    private String methodName;
+
+    private Object[] parameterValues;
+
+    private Class mapperInterface;
 
     public MybatisNamedQueryImpl(Session session, String name) {
         this(session, name, null);
@@ -35,25 +48,37 @@ public class MybatisNamedQueryImpl<R> implements TypedQuery<R> {
             parameters.add(new MyjpaParameterImpl(mapping));
         });
         Metamodel metamodel = session.getEntityManagerFactory().getMetamodel();
-        //		EntityType<R> entity = metamodel.entity(resultClass);
+        String[] split = StringUtils.split(".", name, false);
+        methodName = split[split.length - 1];
+        split = Arrays.copyOf(split, split.length - 1);
+        try {
+            mapperInterface = Class.forName(StringUtils.join(".", split));
+        } catch (ClassNotFoundException e) {
+            LOGGER.info("未能加载接口类", e);
+        }
     }
 
-    public void setParameterValues(Object values){
-
+    @Override
+    public void setParameterValues(Object[] values) {
+        this.parameterValues = values;
     }
 
-    public String getQueryString() {
-        return name;
+    private Object invokeMapper() {
+        Class[] classes = Stream.of(parameterValues).map(Object::getClass).toArray(Class[]::new);
+
+        return ReflectionUtils.invokeMethod(ReflectionUtils.findMethod(mapperInterface, methodName, classes),
+                session.getMapper(mapperInterface), parameterValues);
+
     }
 
     @Override
     public List<R> getResultList() {
-        return session.selectList(mappedStatement.getId(), new HashMap<>(0));
+        return (List<R>) invokeMapper();
     }
 
     @Override
     public R getSingleResult() {
-        return null;
+        return (R) invokeMapper();
     }
 
     @Override

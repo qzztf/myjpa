@@ -1,7 +1,9 @@
 package cn.sexycode.myjpa.data.repository.query;
 
 import cn.sexycode.myjpa.AvailableSettings;
+import cn.sexycode.myjpa.query.AbstractMybatisQuery;
 import cn.sexycode.myjpa.query.MybatisNamedQueryImpl;
+import cn.sexycode.myjpa.query.MybatisQuery;
 import cn.sexycode.util.core.properties.PropertiesUtil;
 import org.springframework.data.jpa.repository.query.AbstractJpaQuery;
 import org.springframework.data.jpa.repository.query.JpaQueryMethod;
@@ -22,7 +24,8 @@ public class MyjpaQueryImpl extends AbstractJpaQuery {
 
     @Override
     protected Query doCreateQuery(Object[] values) {
-        MybatisNamedQueryImpl query = this.getEntityManager().createNamedQuery(getQueryMethod().getNamedQueryName()).unwrap(MybatisNamedQueryImpl.class);
+        MybatisQuery query = this.getEntityManager().createNamedQuery(getQueryMethod().getNamedQueryName()).unwrap(
+                MybatisQuery.class);
         query.setParameterValues(values);
         return query;
     }

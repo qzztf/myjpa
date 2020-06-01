@@ -1,8 +1,12 @@
 package cn.sexycode.myjpa.data.repository.support;
 
 import cn.sexycode.myjpa.data.repository.query.MyjpaQueryImpl;
+import org.springframework.data.jpa.provider.PersistenceProvider;
 import org.springframework.data.jpa.provider.QueryExtractor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy;
+import org.springframework.data.jpa.repository.query.JpaQueryMethod;
+import org.springframework.data.jpa.repository.query.PartTreeJpaQuery;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.NamedQueries;
 import org.springframework.data.repository.core.RepositoryMetadata;
@@ -65,8 +69,72 @@ public final class MyjpaQueryLookupStrategy {
 
 		protected abstract RepositoryQuery resolveQuery(MyjpaQueryMethod method, EntityManager em, NamedQueries namedQueries);
 	}
+	/**
+	 * {@link QueryLookupStrategy} to create a query from the method name.
+	 *
+	 * @author Oliver Gierke
+	 * @author Thomas Darimont
+	 */
+	private static class CreateQueryLookupStrategy extends AbstractQueryLookupStrategy {
 
+		private final PersistenceProvider persistenceProvider;
 
+		public CreateQueryLookupStrategy(EntityManager em, QueryExtractor extractor) {
+
+			super(em, extractor);
+			this.persistenceProvider = PersistenceProvider.fromEntityManager(em);
+		}
+
+		@Override
+		protected RepositoryQuery resolveQuery(MyjpaQueryMethod method, EntityManager em, NamedQueries namedQueries) {
+			return null;
+		}
+	}
+	/**
+	 * {@link QueryLookupStrategy} to try to detect a declared query first (
+	 * {@link org.springframework.data.jpa.repository.Query}, JPA named query). In case none is found we fall back on
+	 * query creation.
+	 *
+	 * @author Oliver Gierke
+	 * @author Thomas Darimont
+	 */
+	private static class CreateIfNotFoundQueryLookupStrategy extends
+			AbstractQueryLookupStrategy {
+
+		private final DeclaredQueryLookupStrategy lookupStrategy;
+		private final CreateQueryLookupStrategy createStrategy;
+
+		/**
+		 * Creates a new {@link CreateIfNotFoundQueryLookupStrategy}.
+		 *
+		 * @param em
+		 * @param extractor
+		 * @param createStrategy
+		 * @param lookupStrategy
+		 */
+		public CreateIfNotFoundQueryLookupStrategy(EntityManager em, QueryExtractor extractor,
+				MyjpaQueryLookupStrategy.CreateQueryLookupStrategy createStrategy, DeclaredQueryLookupStrategy lookupStrategy) {
+
+			super(em, extractor);
+
+			this.createStrategy = createStrategy;
+			this.lookupStrategy = lookupStrategy;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy.AbstractQueryLookupStrategy#resolveQuery(org.springframework.data.jpa.repository.query.JpaQueryMethod, javax.persistence.EntityManager, org.springframework.data.repository.core.NamedQueries)
+		 */
+		@Override
+		protected RepositoryQuery resolveQuery(MyjpaQueryMethod method, EntityManager em, NamedQueries namedQueries) {
+
+			try {
+				return lookupStrategy.resolveQuery(method, em, namedQueries);
+			} catch (IllegalStateException e) {
+				return createStrategy.resolveQuery(method, em, namedQueries);
+			}
+		}
+	}
 	/**
 	 * {@link QueryLookupStrategy} that tries to detect a declared query declared via {@link Query} annotation followed by
 	 * a JPA named query lookup.
@@ -120,7 +188,8 @@ public final class MyjpaQueryLookupStrategy {
 			case USE_DECLARED_QUERY:
 				return new DeclaredQueryLookupStrategy(em, extractor, evaluationContextProvider);
 			case CREATE_IF_NOT_FOUND:
-
+				return new CreateIfNotFoundQueryLookupStrategy(em,extractor,
+						new CreateQueryLookupStrategy(em, extractor), new DeclaredQueryLookupStrategy(em, extractor, evaluationContextProvider));
 			default:
 				return null;
 		}

@@ -9,6 +9,10 @@
     <select id="findByFullName" resultType="cn.sexycode.myjpa.samples.model.User">
     select * from user where id = #{id}
   </select>
+
+    <select id="findUserByFullName" resultType="cn.sexycode.myjpa.samples.model.User">
+    select id, full_name as fullName from user where full_name = #{name}
+  </select>
     <select id="findById" resultType="cn.sexycode.myjpa.samples.model.User">
     select * from user where id = #{id}
   </select>

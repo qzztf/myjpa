@@ -1,5 +1,6 @@
 package cn.sexycode.myjpa.data.repository.support;
 
+import cn.sexycode.util.core.str.StringUtils;
 import org.springframework.data.jpa.provider.QueryExtractor;
 import org.springframework.data.jpa.repository.query.JpaQueryMethod;
 import org.springframework.data.projection.ProjectionFactory;
@@ -43,6 +44,6 @@ public class MyjpaQueryMethod extends JpaQueryMethod {
     @Override
     public String getNamedQueryName() {
         //返回mybatis statement id
-        return metadata.getRepositoryInterface().getName() + "." + method.getName();
+        return StringUtils.join(".", new String[]{metadata.getRepositoryInterface().getName(), method.getName()});
     }
 }

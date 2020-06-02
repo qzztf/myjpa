@@ -1,5 +1,6 @@
 package cn.sexycode.myjpa.mybatis;
 
+import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.session.Configuration;
@@ -8,12 +9,9 @@ import org.apache.ibatis.session.SqlSession;
 import java.util.*;
 
 /**
- * <p>
- * 继承至MapperRegistry
- * </p>
- *
- * @author Caratacus hubin
- * @since 2017-04-19
+ * @author Clinton Begin
+ * @author Eduardo Macarron
+ * @author Lasse Voss
  */
 public class MybatisMapperRegistry extends MapperRegistry {
 
@@ -34,7 +32,19 @@ public class MybatisMapperRegistry extends MapperRegistry {
 
     @Override
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
-        return innerMapperRegistry.getMapper(type, sqlSession);
+        try {
+            return innerMapperRegistry.getMapper(type, sqlSession);
+        }catch (BindingException e) {
+            final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
+            if (mapperProxyFactory == null) {
+                throw new BindingException("Type " + type + " is not known to the MapperRegistry.");
+            }
+            try {
+                return mapperProxyFactory.newInstance(sqlSession);
+            } catch (Exception e1) {
+                throw new BindingException("Error getting mapper instance. Cause: " + e1, e1);
+            }
+        }
     }
 
     @Override
@@ -53,7 +63,7 @@ public class MybatisMapperRegistry extends MapperRegistry {
             }
             boolean loadCompleted = false;
             try {
-                knownMappers.put(type, new MapperProxyFactory<>(type));
+                knownMappers.put(type, new MyjpaMapperProxyFactory<T>(type));
                 MybatisMapperEntityNamespaceBuilder builder = new MybatisMapperEntityNamespaceBuilder(config, type);
                 builder.parse();
                 loadCompleted = true;

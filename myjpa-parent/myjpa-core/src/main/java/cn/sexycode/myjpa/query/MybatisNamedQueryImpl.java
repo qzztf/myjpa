@@ -1,5 +1,6 @@
 package cn.sexycode.myjpa.query;
 
+import cn.sexycode.myjpa.mybatis.NoSuchMapperMethodException;
 import cn.sexycode.myjpa.session.Session;
 import cn.sexycode.util.core.object.ReflectionUtils;
 import cn.sexycode.util.core.str.StringUtils;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import javax.persistence.metamodel.Metamodel;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -63,17 +65,27 @@ public class MybatisNamedQueryImpl<R> extends AbstractMybatisQuery<R> {
         this.parameterValues = values;
     }
 
-    private Object invokeMapper() {
+    private Object invokeMapper() throws NoSuchMethodException {
         Class[] classes = Stream.of(parameterValues).map(Object::getClass).toArray(Class[]::new);
 
-        return ReflectionUtils.invokeMethod(ReflectionUtils.findMethod(mapperInterface, methodName, classes),
+        Method method = ReflectionUtils.findMethod(mapperInterface, methodName, classes);
+        Optional.ofNullable(method).orElseThrow(() -> new NoSuchMapperMethodException("未找到mapper方法" + methodName));
+        return ReflectionUtils.invokeMethod(method,
                 session.getMapper(mapperInterface), parameterValues);
 
     }
 
     @Override
     public List<R> getResultList() {
-        return (List<R>) invokeMapper();
+        try {
+            List<R> list = (List<R>) invokeMapper();
+        }catch (NoSuchMethodException e){
+            return invokeSessionMethod();
+        }
+    }
+
+    private Object invokeSessionMethod() {
+        return null;
     }
 
     @Override

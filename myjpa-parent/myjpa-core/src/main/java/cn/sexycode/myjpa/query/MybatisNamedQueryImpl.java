@@ -1,10 +1,12 @@
 package cn.sexycode.myjpa.query;
 
 import cn.sexycode.myjpa.mybatis.NoSuchMapperMethodException;
+import cn.sexycode.myjpa.mybatis.PagePlugin;
 import cn.sexycode.myjpa.session.Session;
 import cn.sexycode.util.core.object.ReflectionUtils;
 import cn.sexycode.util.core.str.StringUtils;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.plugin.Interceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,9 +80,17 @@ public class MybatisNamedQueryImpl<R> extends AbstractMybatisQuery<R> {
     @Override
     public List<R> getResultList() {
         try {
-            List<R> list = (List<R>) invokeMapper();
+            Object rs =  invokeMapper();
+            Optional<Interceptor> interceptor = session.getConfiguration().getInterceptors().stream()
+                    .filter((i) -> PagePlugin.class.isAssignableFrom(i.getClass())).findFirst();
+            boolean page = interceptor.isPresent();
+            if (page) {
+                PagePlugin  pagePlugin = (PagePlugin) interceptor.get();
+                return pagePlugin.unWarpPage(parameterValues, null, rs);
+            }
+            return (List<R>) rs;
         }catch (NoSuchMethodException e){
-            return invokeSessionMethod();
+            return (List<R>) invokeSessionMethod();
         }
     }
 
@@ -90,7 +100,11 @@ public class MybatisNamedQueryImpl<R> extends AbstractMybatisQuery<R> {
 
     @Override
     public R getSingleResult() {
-        return (R) invokeMapper();
+        try {
+            return (R) invokeMapper();
+        } catch (NoSuchMethodException e) {
+            return (R) invokeSessionMethod();
+        }
     }
 
     @Override

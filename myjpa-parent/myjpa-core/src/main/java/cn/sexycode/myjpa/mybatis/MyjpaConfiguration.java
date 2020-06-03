@@ -29,11 +29,18 @@ public class MyjpaConfiguration extends Configuration {
         if (ObjectUtils.isEmpty(configuration)) {
             configuration = new Configuration();
         }
+
+        copyConfiguration(configuration);
+
         this.configuration = configuration;
         mybatisMapperRegistry = new MybatisMapperRegistry(this, configuration.getMapperRegistry());
         ObjectUtils.copyProperties(configuration, this);
         initMappedStatements();
         mybatisMapperRegistry.initEntityMapper();
+    }
+
+    private void copyConfiguration(Configuration config) {
+        config.getInterceptors().forEach(this::addInterceptor);
     }
 
     private void initMappedStatements() {

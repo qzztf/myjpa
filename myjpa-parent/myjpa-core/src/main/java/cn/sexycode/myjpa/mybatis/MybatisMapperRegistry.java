@@ -32,19 +32,17 @@ public class MybatisMapperRegistry extends MapperRegistry {
 
     @Override
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
-        try {
-            return innerMapperRegistry.getMapper(type, sqlSession);
-        }catch (BindingException e) {
+
             final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
             if (mapperProxyFactory == null) {
-                throw new BindingException("Type " + type + " is not known to the MapperRegistry.");
+                return innerMapperRegistry.getMapper(type, sqlSession);
             }
             try {
                 return mapperProxyFactory.newInstance(sqlSession);
-            } catch (Exception e1) {
-                throw new BindingException("Error getting mapper instance. Cause: " + e1, e1);
+            } catch (Exception e) {
+                throw new BindingException("Error getting mapper instance.", e);
             }
-        }
+
     }
 
     @Override

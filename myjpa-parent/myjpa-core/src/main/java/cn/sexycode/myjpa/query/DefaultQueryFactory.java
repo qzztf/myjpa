@@ -1,7 +1,10 @@
 package cn.sexycode.myjpa.query;
 
+import cn.sexycode.myjpa.AvailableSettings;
 import cn.sexycode.myjpa.session.Session;
 import cn.sexycode.util.core.object.ObjectUtils;
+import cn.sexycode.util.core.properties.PropertiesUtil;
+import cn.sexycode.util.core.str.StringUtils;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
@@ -24,17 +27,7 @@ public class DefaultQueryFactory implements QueryFactory {
 
     @Override
     public Query createNamedQuery(Session session, String name) {
-        MappedStatement mappedStatement = null;
-        try {
-            mappedStatement = session.getConfiguration().getMappedStatement(name);
-        } catch (Exception e) {
-            LOGGER.debug("获取MappedStatement失败", e);
-            return null;
-        }
-        if (ObjectUtils.isEmpty(mappedStatement)) {
-            return null;
-        }
-        return new MybatisNamedQueryImpl(session, name);
+        return  createNamedQuery(session, name, null);
     }
 
     @Override
@@ -43,7 +36,10 @@ public class DefaultQueryFactory implements QueryFactory {
         if (ObjectUtils.isEmpty(mappedStatement)) {
             return null;
         }
-        return new MybatisNamedQueryImpl<>(session, name, resultClass);
+        return name.endsWith(PropertiesUtil
+                .getString(AvailableSettings.MYBATIS_QUERY_COUNT_SUFFIX, session.getProperties(),
+                        AvailableSettings.Defaults.DEFAULt_MYBATIS_QUERY_COUNT_SUFFIX)) ? new MybatisNamedCountQueryImpl<>(session,name,resultClass) :
+         new MybatisNamedQueryImpl<>(session, name, resultClass);
     }
 
     @Override

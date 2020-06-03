@@ -70,7 +70,7 @@ public class MyjpaMapperMethod extends MapperMethod {
         return result;
     }
 
-    protected boolean isPage(Class<?> returnType, Object[] args) {
+    public boolean isPage(Class<?> returnType, Object[] args) {
         Optional<Interceptor> interceptor = configuration.getInterceptors().stream()
                 .filter((i) -> PagePlugin.class.isAssignableFrom(i.getClass())).findFirst();
         boolean page = interceptor.isPresent() && ((PagePlugin) interceptor.get()).isPage(returnType, args);
@@ -80,4 +80,11 @@ public class MyjpaMapperMethod extends MapperMethod {
         return page;
     }
 
+    public SqlCommand getCommand() {
+        return command;
+    }
+
+    public MethodSignature getMethod() {
+        return method;
+    }
 }

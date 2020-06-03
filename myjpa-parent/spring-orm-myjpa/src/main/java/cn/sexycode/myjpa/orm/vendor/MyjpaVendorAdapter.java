@@ -107,7 +107,7 @@ public class MyjpaVendorAdapter extends AbstractJpaVendorAdapter implements Init
             jpaProperties.put(AvailableSettings.SHOW_SQL, "true");
         }
         if(StringUtils.isNotEmpty(getSqlSessionFactoryBeanName())){
-            jpaProperties.put(AvailableSettings.MYBATIS_SESSION_FACTORY_BEAN_NAME,getSqlSessionFactoryBeanName());
+            jpaProperties.put(AvailableSettings.MYBATIS_SESSION_FACTORY_BEAN_NAME, getSqlSessionFactoryBeanName());
         }
         return jpaProperties;
     }

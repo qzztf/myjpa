@@ -47,7 +47,7 @@ public class MyjpaMapperProxy<T> extends MapperProxy<T> implements InvocationHan
     return myjpaMapperMethod.execute(sqlSession, args);
   }
 
-  private MyjpaMapperMethod cachedMapperMethod(Method method) {
+  public MyjpaMapperMethod cachedMapperMethod(Method method) {
     MyjpaMapperMethod myjpaMapperMethod = methodCache.get(method);
     if (myjpaMapperMethod == null) {
       myjpaMapperMethod = new MyjpaMapperMethod(mapperInterface, method, sqlSession.getConfiguration());

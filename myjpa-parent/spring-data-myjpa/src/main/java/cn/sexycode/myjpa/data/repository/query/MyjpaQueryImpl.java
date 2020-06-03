@@ -33,8 +33,12 @@ public class MyjpaQueryImpl extends AbstractJpaQuery {
     @Override
     protected Query doCreateCountQuery(Object[] values) {
         EntityManager entityManager = getEntityManager();
-        return this.getEntityManager().createNamedQuery(getQueryMethod().getNamedQueryName() + PropertiesUtil
-                .getString(AvailableSettings.MYBATIS_QUERY_COUNT_SUFFIX, entityManager.getProperties(),
-                        AvailableSettings.Defaults.DEFAULt_MYBATIS_QUERY_COUNT_SUFFIX));
+        MybatisQuery namedQuery = this.getEntityManager().createNamedQuery(
+                getQueryMethod().getNamedQueryName() + PropertiesUtil
+                        .getString(AvailableSettings.MYBATIS_QUERY_COUNT_SUFFIX, entityManager.getProperties(),
+                                AvailableSettings.Defaults.DEFAULt_MYBATIS_QUERY_COUNT_SUFFIX)).unwrap(
+                MybatisQuery.class);
+        namedQuery.setParameterValues(values);
+        return namedQuery;
     }
 }

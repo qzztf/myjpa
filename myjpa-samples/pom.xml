@@ -2,19 +2,32 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>springo-parent</artifactId>
-        <groupId>cn.sexycode</groupId>
-        <version>0.0.1</version>
-    </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>cn.sexycode</groupId>
     <artifactId>myjpa-samples</artifactId>
+    <packaging>pom</packaging>
+    <version>0.0.4-SNAPSHOT</version>
+    <modules>
+        <module>samples-myjpa</module>
+        <module>samples-myjpa-spring</module>
+        <module>samples-myjpa-spring-data</module>
+    </modules>
 
     <properties>
-        <myjpa.version>0.0.3-SNAPSHOT</myjpa.version>
+        <myjpa.version>0.0.4-SNAPSHOT</myjpa.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+    </dependencies>
+   <!-- <dependencies>
         <dependency>
             <groupId>cn.sexycode</groupId>
             <artifactId>myjpa-plus</artifactId>
@@ -26,11 +39,11 @@
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>3.0.6</version>
         </dependency>
-        <!--<dependency>
+        &lt;!&ndash;<dependency>
             <groupId>cn.sexycode</groupId>
             <artifactId>spring-orm-myjpa</artifactId>
             <version>${my-jpa.version}</version>
-        </dependency>-->
+        </dependency>&ndash;&gt;
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -39,7 +52,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <!--<version>2.0.0.BUILD-SNAPSHOT</version>-->
+            &lt;!&ndash;<version>2.0.0.BUILD-SNAPSHOT</version>&ndash;&gt;
             <exclusions>
                 <exclusion>
                     <groupId>org.hibernate</groupId>
@@ -50,25 +63,25 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <!--<version>8.0.12</version>-->
+            &lt;!&ndash;<version>8.0.12</version>&ndash;&gt;
         </dependency>
 
-        <!--<dependency>
+        &lt;!&ndash;<dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>5.3.7.Final</version>
-        </dependency>-->
+        </dependency>&ndash;&gt;
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>compile</scope>
         </dependency>
-        <!--<dependency>
+        &lt;!&ndash;<dependency>
             <groupId>cn.sexycode</groupId>
             <artifactId>spring-data-myjpa</artifactId>
             <version>0.0.1</version>
             <scope>compile</scope>
-        </dependency>-->
+        </dependency>&ndash;&gt;
         <dependency>
             <groupId>cn.sexycode</groupId>
             <artifactId>myjpa-spring-boot-starter</artifactId>
@@ -89,9 +102,9 @@
         <dependency>
             <groupId>cn.sexycode</groupId>
             <artifactId>spring-data-myjpa</artifactId>
-            <version>0.0.3-SNAPSHOT</version>
+            <version>0.0.4-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
-    </dependencies>
+    </dependencies>-->
 
 </project>

@@ -1,26 +1,43 @@
 package cn.sexycode.myjpa.query;
 
+import cn.sexycode.myjpa.mybatis.NoSuchMapperMethodException;
+import cn.sexycode.myjpa.mybatis.PagePlugin;
 import cn.sexycode.myjpa.session.Session;
+import cn.sexycode.util.core.object.ReflectionUtils;
+import cn.sexycode.util.core.str.StringUtils;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.plugin.Interceptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import javax.persistence.metamodel.Metamodel;
+import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * @author Steve Ebersole
  */
-public class MybatisNamedQueryImpl<R> implements TypedQuery<R> {
-    private final String name;
+public class MybatisNamedQueryImpl<R> extends AbstractMybatisQuery<R> {
 
-    private Session session;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MybatisNamedQueryImpl.class);
 
-    private Class<R> resultClass;
+    protected final String name;
 
-    private MappedStatement mappedStatement;
+    protected Session session;
 
-    private List<Parameter<?>> parameters = new LinkedList<>();
+    protected Class<R> resultClass;
+
+    protected MappedStatement mappedStatement;
+
+    protected List<Parameter<?>> parameters = new LinkedList<>();
+
+    protected String methodName;
+
+    protected Object[] parameterValues;
+
+    protected Class mapperInterface;
 
     public MybatisNamedQueryImpl(Session session, String name) {
         this(session, name, null);
@@ -32,24 +49,62 @@ public class MybatisNamedQueryImpl<R> implements TypedQuery<R> {
         this.session = session;
         this.mappedStatement = session.getConfiguration().getMappedStatement(name);
         mappedStatement.getParameterMap().getParameterMappings().forEach(mapping -> {
-            mapping.getExpression();
+            parameters.add(new MyjpaParameterImpl(mapping));
         });
         Metamodel metamodel = session.getEntityManagerFactory().getMetamodel();
-        //		EntityType<R> entity = metamodel.entity(resultClass);
+        String[] split = StringUtils.split(".", name, false);
+        methodName = split[split.length - 1];
+        split = Arrays.copyOf(split, split.length - 1);
+        try {
+            mapperInterface = Class.forName(StringUtils.join(".", split));
+        } catch (ClassNotFoundException e) {
+            LOGGER.info("未能加载接口类", e);
+        }
     }
 
-    public String getQueryString() {
-        return name;
+    @Override
+    public void setParameterValues(Object[] values) {
+        this.parameterValues = values;
+    }
+
+    protected Object invokeMapper() throws NoSuchMethodException {
+        Class[] classes = Stream.of(parameterValues).map(Object::getClass).toArray(Class[]::new);
+
+        Method method = ReflectionUtils.findMethod(mapperInterface, methodName, classes);
+        Optional.ofNullable(method).orElseThrow(() -> new NoSuchMapperMethodException("未找到mapper方法" + methodName));
+        return ReflectionUtils.invokeMethod(method,
+                session.getMapper(mapperInterface), parameterValues);
+
     }
 
     @Override
     public List<R> getResultList() {
-        return session.selectList(mappedStatement.getId(), new HashMap<>(0));
+        try {
+            Object rs =  invokeMapper();
+            Optional<Interceptor> interceptor = session.getConfiguration().getInterceptors().stream()
+                    .filter((i) -> PagePlugin.class.isAssignableFrom(i.getClass())).findFirst();
+            boolean page = interceptor.isPresent();
+            if (page) {
+                PagePlugin  pagePlugin = (PagePlugin) interceptor.get();
+                return pagePlugin.unWarpPage(parameterValues, null, rs);
+            }
+            return (List<R>) rs;
+        }catch (NoSuchMethodException e){
+            return (List<R>) invokeSessionMethod();
+        }
+    }
+
+    protected Object invokeSessionMethod() {
+        return null;
     }
 
     @Override
     public R getSingleResult() {
-        return null;
+        try {
+            return (R) invokeMapper();
+        } catch (NoSuchMethodException e) {
+            return (R) invokeSessionMethod();
+        }
     }
 
     @Override
@@ -199,6 +254,10 @@ public class MybatisNamedQueryImpl<R> implements TypedQuery<R> {
 
     @Override
     public <T> T unwrap(Class<T> cls) {
-        return null;
+        return (T) this;
+    }
+
+    public String getName() {
+        return name;
     }
 }

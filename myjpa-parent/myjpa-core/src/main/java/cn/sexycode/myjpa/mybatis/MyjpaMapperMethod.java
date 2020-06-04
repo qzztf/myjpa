@@ -56,6 +56,7 @@ public class MyjpaMapperMethod extends MapperMethod {
     }
 
     protected  <E> Object executeForPage(SqlSession sqlSession, Object[] args) {
+        PageContext.setMethod(this);
         List<E> result;
         Object param = method.convertArgsToSqlCommandParam(args);
         if (method.hasRowBounds()) {

@@ -11,11 +11,20 @@ public class PageContext {
 
     private static ThreadLocal<Boolean> count = new ThreadLocal<>();
 
+    public static void setMethod(MapperMethod mapperMethod){
+        method.set(mapperMethod);
+    }
+
     public static MapperMethod getMethod() {
         return method.get();
     }
 
     public static Boolean isCount() {
         return count.get();
+    }
+
+    public static void clear() {
+        method.remove();
+        count.remove();
     }
 }

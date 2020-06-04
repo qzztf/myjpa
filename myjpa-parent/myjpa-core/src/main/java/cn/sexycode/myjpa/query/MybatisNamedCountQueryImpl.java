@@ -1,15 +1,16 @@
 package cn.sexycode.myjpa.query;
 
-import cn.sexycode.myjpa.mybatis.NoSuchMapperMethodException;
+import cn.sexycode.myjpa.mybatis.MyjpaMapperMethod;
+import cn.sexycode.myjpa.mybatis.PageContext;
 import cn.sexycode.myjpa.session.Session;
 import cn.sexycode.util.core.object.ReflectionUtils;
+import org.apache.ibatis.binding.MapperMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * @author Steve Ebersole
@@ -36,9 +37,21 @@ public class MybatisNamedCountQueryImpl<R> extends MybatisNamedQueryImpl<R> {
 
     @Override
     protected Object invokeSessionMethod() {
-        Method method = ReflectionUtils.findMethod(session.getClass(), "selectList", new Class[]{String.class, Object.class});
+        try {
+
+        Method method = ReflectionUtils.findMethod(session.getClass(), "selectList", String.class, Object.class);
+        MapperMethod mapperMethod = PageContext.getMethod();
+        if (mapperMethod != null && mapperMethod instanceof MyjpaMapperMethod){
+            Object param = ((MyjpaMapperMethod) mapperMethod).getMethod().convertArgsToSqlCommandParam(parameterValues);
+            return ReflectionUtils.invokeMethod(method,
+                    session, new Object[]{name, param});
+        }
         return ReflectionUtils.invokeMethod(method,
                 session, new Object[]{name, parameterValues});
+        }finally {
+            PageContext.clear();
+        }
+
     }
 
     @Override

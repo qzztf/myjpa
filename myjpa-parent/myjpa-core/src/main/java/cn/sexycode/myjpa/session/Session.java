@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 /**
  * @author qzz
  */
-public interface Session extends EntityManager,SqlSession, Closeable {
+public interface Session extends EntityManager, SqlSession, Closeable {
     Logger LOGGER = Logger.getLogger(Session.class.getCanonicalName());
 
     /**

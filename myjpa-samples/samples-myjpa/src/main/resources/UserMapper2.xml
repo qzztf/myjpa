@@ -6,6 +6,9 @@
     <insert id="insert" parameterType="cn.sexycode.myjpa.samples.model.User">
         insert into user(id,full_name,account,password) values (#{id},#{fullName}, #{account}, #{password})
     </insert>
+    <update id="update" parameterType="cn.sexycode.myjpa.samples.model.User">
+        update user set full_name = #{fullName} where id = #{id}
+    </update>
     <select id="findByFullName" resultType="cn.sexycode.myjpa.samples.model.User">
     select * from user where id = #{id}
   </select>

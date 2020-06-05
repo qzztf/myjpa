@@ -15,6 +15,8 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 
+import static cn.sexycode.myjpa.boot.autoconfigure.MyjpaAutoConfiguration.*;
+
 /**
  * @author qinzaizhen
  */
@@ -22,11 +24,14 @@ import javax.sql.DataSource;
 @ConditionalOnClass({LocalContainerEntityManagerFactoryBean.class, EntityManager.class, JpaRepository.class})
 @EnableConfigurationProperties(JpaProperties.class)
 @AutoConfigureAfter({DataSourceAutoConfiguration.class})
-@Import({ MyjpaConfiguration.class, JpaRepositoriesAutoConfigureRegistrar.class })
+@Import({ MyjpaConfiguration.class, MyjpaDataConfiguration.class})
 @ConditionalOnBean(DataSource.class)
-/*@ConditionalOnMissingBean({JpaRepositoryFactoryBean.class,
-        JpaRepositoryConfigExtension.class})*/
-@ConditionalOnProperty(prefix = "spring.data.jpa.repositories", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class MyjpaAutoConfiguration {
 
+    @Configuration
+    @Import(MyjpaRepositoriesAutoConfigureRegistrar.class)
+    @ConditionalOnProperty(prefix = "spring.data.jpa.repositories", name = "enabled", havingValue = "true", matchIfMissing = true)
+    public static class MyjpaDataConfiguration{
+
+    }
 }

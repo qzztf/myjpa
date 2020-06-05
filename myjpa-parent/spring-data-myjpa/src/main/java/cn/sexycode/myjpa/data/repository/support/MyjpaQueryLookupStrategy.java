@@ -4,15 +4,12 @@ import cn.sexycode.myjpa.data.repository.query.MyjpaQueryImpl;
 import org.springframework.data.jpa.provider.PersistenceProvider;
 import org.springframework.data.jpa.provider.QueryExtractor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy;
-import org.springframework.data.jpa.repository.query.JpaQueryMethod;
-import org.springframework.data.jpa.repository.query.PartTreeJpaQuery;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.NamedQueries;
 import org.springframework.data.repository.core.RepositoryMetadata;
-import org.springframework.data.repository.query.EvaluationContextProvider;
 import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.data.repository.query.QueryLookupStrategy.Key;
+import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider;
 import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
@@ -144,7 +141,7 @@ public final class MyjpaQueryLookupStrategy {
 	 */
 	private static class DeclaredQueryLookupStrategy extends AbstractQueryLookupStrategy {
 
-		private final EvaluationContextProvider evaluationContextProvider;
+		private final QueryMethodEvaluationContextProvider evaluationContextProvider;
 
 		/**
 		 * Creates a new {@link DeclaredQueryLookupStrategy}.
@@ -154,7 +151,7 @@ public final class MyjpaQueryLookupStrategy {
 		 * @param evaluationContextProvider
 		 */
 		public DeclaredQueryLookupStrategy(EntityManager em, QueryExtractor extractor,
-				EvaluationContextProvider evaluationContextProvider) {
+				QueryMethodEvaluationContextProvider evaluationContextProvider) {
 
 			super(em, extractor);
 			this.evaluationContextProvider = evaluationContextProvider;
@@ -177,7 +174,7 @@ public final class MyjpaQueryLookupStrategy {
 	 * @return
 	 */
 	public static QueryLookupStrategy create(EntityManager em, @Nullable Key key, QueryExtractor extractor,
-			EvaluationContextProvider evaluationContextProvider) {
+			QueryMethodEvaluationContextProvider evaluationContextProvider) {
 
 		Assert.notNull(em, "EntityManager must not be null!");
 		Assert.notNull(extractor, "QueryExtractor must not be null!");

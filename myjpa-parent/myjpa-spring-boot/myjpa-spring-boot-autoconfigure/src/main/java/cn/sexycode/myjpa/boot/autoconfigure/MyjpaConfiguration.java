@@ -1,19 +1,7 @@
 package cn.sexycode.myjpa.boot.autoconfigure;
 
 import cn.sexycode.myjpa.orm.vendor.MyjpaVendorAdapter;
-import cn.sexycode.myjpa.query.DefaultQueryFactory;
-import cn.sexycode.myjpa.query.QueryFactory;
 import cn.sexycode.myjpa.spring.BeanFactoryAdapter;
-import cn.sexycode.sql.dialect.DialectFactory;
-import cn.sexycode.sql.dialect.DialectFactoryImpl;
-import cn.sexycode.sql.dialect.StandardDialectResolver;
-import cn.sexycode.util.core.cls.classloading.ClassLoaderService;
-import cn.sexycode.util.core.cls.classloading.ClassLoaderServiceImpl;
-import cn.sexycode.util.core.factory.BeanFactoryUtil;
-import cn.sexycode.util.core.factory.selector.StrategySelectorImpl;
-import cn.sexycode.util.core.service.Service;
-import cn.sexycode.util.core.service.ServiceRegistry;
-import cn.sexycode.util.core.service.StandardServiceRegistry;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -36,7 +24,10 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.util.ClassUtils;
 
 import javax.sql.DataSource;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * {@link JpaBaseConfiguration} implementation for MyJpa
@@ -94,41 +85,14 @@ public class MyjpaConfiguration extends JpaBaseConfiguration implements BeanFact
 				physicalNamingStrategy.getIfAvailable(),
 				implicitNamingStrategy.getIfAvailable(),
 				hibernatePropertiesCustomizers.getIfAvailable(Collections::emptyList));*/
-        BeanFactoryUtil.setBeanFactory(new BeanFactoryAdapter(beanFactory));
     }
 
-    @Bean("standardServiceRegistry")
+    @Bean("beanFactoryAdapter")
     @ConditionalOnMissingBean
-    public StandardServiceRegistry serviceRegistry() {
-        return new StandardServiceRegistry() {
-            private Map<Class, Service> serviceMap = new HashMap<Class, Service>() {{
-                put(ClassLoaderService.class, new ClassLoaderServiceImpl());
-                put(DialectFactory.class, new DialectFactoryImpl(new StandardDialectResolver(),
-                        new StrategySelectorImpl((ClassLoaderService) get(ClassLoaderService.class))));
-            }};
-
-            @Override
-            public ServiceRegistry getParentServiceRegistry() {
-                return null;
-            }
-
-            @Override
-            public <R extends Service> R getService(Class<R> aClass) {
-                return (R) serviceMap.get(aClass);
-            }
-
-            @Override
-            public void close() {
-
-            }
-        };
+    public BeanFactoryAdapter beanFactoryAdapter(BeanFactory beanFactory) {
+        return new BeanFactoryAdapter(beanFactory);
     }
 
-    @Bean
-    @ConditionalOnMissingBean
-    public QueryFactory queryFactory() {
-        return new DefaultQueryFactory();
-    }
 /*
 	private List<HibernatePropertiesCustomizer> determineHibernatePropertiesCustomizers(
 			PhysicalNamingStrategy physicalNamingStrategy,

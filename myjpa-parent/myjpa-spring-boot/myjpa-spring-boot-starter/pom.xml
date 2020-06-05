@@ -16,6 +16,10 @@
             <groupId>cn.sexycode</groupId>
             <artifactId>myjpa-spring-boot-autoconfigure</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.sexycode</groupId>
+            <artifactId>spring-orm-myjpa</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

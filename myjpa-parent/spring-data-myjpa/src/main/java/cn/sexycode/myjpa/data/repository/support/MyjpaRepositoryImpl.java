@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.provider.PersistenceProvider;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.support.CrudMethodMetadata;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -182,5 +183,15 @@ public class MyjpaRepositoryImpl<T, ID> implements JpaSpecificationExecutor<T>, 
     @Override
     public long count(Specification<T> spec) {
         return 0;
+    }
+
+    /**
+     * Configures the {@link CrudMethodMetadata} to be used with the repository.
+     *
+     * @param crudMethodMetadata must not be {@literal null}.
+     */
+    @Override
+    public void setRepositoryMethodMetadata(CrudMethodMetadata crudMethodMetadata) {
+
     }
 }

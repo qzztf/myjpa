@@ -5,11 +5,12 @@ import org.springframework.data.jpa.provider.QueryExtractor;
 import org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
+import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
 import org.springframework.data.repository.core.RepositoryInformation;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
-import org.springframework.data.repository.query.EvaluationContextProvider;
 import org.springframework.data.repository.query.QueryLookupStrategy;
+import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider;
 
 import javax.persistence.EntityManager;
 import java.io.Serializable;
@@ -49,7 +50,7 @@ public class MyjpaRepositoryFactoryBean extends JpaRepositoryFactoryBean {
         }
 
         @Override
-        protected Object getTargetRepository(RepositoryInformation information) {
+        protected JpaRepositoryImplementation<?, ?> getTargetRepository(RepositoryInformation information, EntityManager em) {
             return new MyjpaRepositoryImpl<T, I>((Class<T>) information.getDomainType(), em, repositoryInterface);
         }
 
@@ -60,7 +61,7 @@ public class MyjpaRepositoryFactoryBean extends JpaRepositoryFactoryBean {
 
         @Override
         protected Optional<QueryLookupStrategy> getQueryLookupStrategy(QueryLookupStrategy.Key key,
-                EvaluationContextProvider evaluationContextProvider) {
+                QueryMethodEvaluationContextProvider evaluationContextProvider) {
             return Optional.of(Optional
                     .ofNullable(MyjpaQueryLookupStrategy.create(em, key, extractor, evaluationContextProvider))
                     .orElse(JpaQueryLookupStrategy.create(em, key, extractor, evaluationContextProvider)));

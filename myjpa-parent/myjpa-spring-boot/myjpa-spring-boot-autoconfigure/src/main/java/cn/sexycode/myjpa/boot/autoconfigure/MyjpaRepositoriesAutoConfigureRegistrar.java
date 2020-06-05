@@ -32,7 +32,7 @@ import java.lang.annotation.Annotation;
  * @author Phillip Webb
  * @author Dave Syer
  */
-class JpaRepositoriesAutoConfigureRegistrar
+class MyjpaRepositoriesAutoConfigureRegistrar
         extends AbstractRepositoryConfigurationSourceSupport {
 
     @Override
@@ -47,7 +47,12 @@ class JpaRepositoriesAutoConfigureRegistrar
 
     @Override
     protected RepositoryConfigurationExtension getRepositoryConfigurationExtension() {
-        return new JpaRepositoryConfigExtension();
+        return new JpaRepositoryConfigExtension(){
+            @Override
+            public String getRepositoryFactoryBeanClassName() {
+                return MyjpaRepositoryFactoryBean.class.getName();
+            }
+        };
     }
 
     @EnableJpaRepositories(repositoryFactoryBeanClass = MyjpaRepositoryFactoryBean.class)

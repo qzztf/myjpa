@@ -14,6 +14,7 @@ import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.metamodel.Metamodel;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author qzz
@@ -25,10 +26,13 @@ public class SessionImpl implements Session {
 
     private SqlSession sqlSession;
 
+    private Map<String,Object> properties = new ConcurrentHashMap<>();
+
     public SessionImpl(SqlSession sqlSession, SessionFactory sessionFactory, MyjpaTransaction myjpaTransaction) {
         this.sqlSession = sqlSession;
         this.sessionFactory = sessionFactory;
         this.myjpaTransaction = myjpaTransaction;
+        properties.putAll(sessionFactory.getProperties());
     }
 
     @Override
@@ -109,12 +113,12 @@ public class SessionImpl implements Session {
 
     @Override
     public void setProperty(String propertyName, Object value) {
-
+        properties.put(propertyName,value);
     }
 
     @Override
     public Map<String, Object> getProperties() {
-        return null;
+        return properties;
     }
 
     @Override

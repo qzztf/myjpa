@@ -5,7 +5,7 @@
     <parent>
         <artifactId>myjpa-parent</artifactId>
         <groupId>cn.sexycode</groupId>
-        <version>0.0.3-SNAPSHOT</version>
+        <version>0.0.4-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,16 +15,20 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
-            <!--<exclusions>
+            <exclusions>
                 <exclusion>
                     <groupId>org.hibernate</groupId>
                     <artifactId>hibernate-core</artifactId>
                 </exclusion>
-            </exclusions>-->
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>cn.sexycode</groupId>
             <artifactId>myjpa-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.sexycode</groupId>
+            <artifactId>spring-orm-myjpa</artifactId>
         </dependency>
     </dependencies>
 

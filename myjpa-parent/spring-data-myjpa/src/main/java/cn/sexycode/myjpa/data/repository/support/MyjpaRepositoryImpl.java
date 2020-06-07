@@ -1,7 +1,9 @@
 package cn.sexycode.myjpa.data.repository.support;
 
+import cn.sexycode.myjpa.AvailableSettings;
 import cn.sexycode.myjpa.binding.ModelProxy;
 import cn.sexycode.myjpa.data.repository.MyjpaRepository;
+import cn.sexycode.util.core.str.StringUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.provider.PersistenceProvider;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.support.CrudMethodMetadata;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -93,7 +96,9 @@ public class MyjpaRepositoryImpl<T, ID> implements JpaSpecificationExecutor<T>, 
 
     @Override
     public Optional<T> findById(ID id) {
-        ModelProxy findModelProxy = new ModelProxy<>(id, repositoryInterface.getCanonicalName() + ".findById");
+        ModelProxy findModelProxy = new ModelProxy<>(id, StringUtils
+                .join(".", new String[] {repositoryInterface.getCanonicalName() , em.getProperties().getOrDefault(AvailableSettings.MybatisMapperMethodMapping.FIND,
+                        AvailableSettings.MybatisMapperMethodMapping.Mapping.FIND).toString()}));
         return Optional.ofNullable(em.find(domainClass, findModelProxy));
     }
 
@@ -180,5 +185,15 @@ public class MyjpaRepositoryImpl<T, ID> implements JpaSpecificationExecutor<T>, 
     @Override
     public long count(Specification<T> spec) {
         return 0;
+    }
+
+    /**
+     * Configures the {@link CrudMethodMetadata} to be used with the repository.
+     *
+     * @param crudMethodMetadata must not be {@literal null}.
+     */
+    @Override
+    public void setRepositoryMethodMetadata(CrudMethodMetadata crudMethodMetadata) {
+
     }
 }

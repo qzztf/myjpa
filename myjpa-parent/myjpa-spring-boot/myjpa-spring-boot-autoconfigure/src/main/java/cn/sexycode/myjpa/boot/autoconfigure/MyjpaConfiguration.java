@@ -1,18 +1,7 @@
 package cn.sexycode.myjpa.boot.autoconfigure;
 
 import cn.sexycode.myjpa.orm.vendor.MyjpaVendorAdapter;
-import cn.sexycode.myjpa.query.DefaultQueryFactory;
-import cn.sexycode.myjpa.query.QueryFactory;
-import cn.sexycode.sql.dialect.DialectFactory;
-import cn.sexycode.sql.dialect.DialectFactoryImpl;
-import cn.sexycode.sql.dialect.StandardDialectResolver;
-import cn.sexycode.util.core.cls.classloading.ClassLoaderService;
-import cn.sexycode.util.core.cls.classloading.ClassLoaderServiceImpl;
-import cn.sexycode.util.core.factory.BeanFactoryUtil;
-import cn.sexycode.util.core.factory.selector.StrategySelectorImpl;
-import cn.sexycode.util.core.service.Service;
-import cn.sexycode.util.core.service.ServiceRegistry;
-import cn.sexycode.util.core.service.StandardServiceRegistry;
+import cn.sexycode.myjpa.spring.BeanFactoryAdapter;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -35,11 +24,14 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.util.ClassUtils;
 
 import javax.sql.DataSource;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * {@link JpaBaseConfiguration} implementation for MyJpa
- * @author qinzaizhen
+ * {@link JpaBaseConfiguration} implementation for Myjpa
+ * @author qzz
  */
 @Configuration
 @ConditionalOnSingleCandidate(DataSource.class)
@@ -73,7 +65,6 @@ public class MyjpaConfiguration extends JpaBaseConfiguration implements BeanFact
 //	private final List<HibernatePropertiesCustomizer> hibernatePropertiesCustomizers;
 
     private BeanFactory beanFactory;
-
     MyjpaConfiguration(DataSource dataSource, JpaProperties jpaProperties,
                        ObjectProvider<JtaTransactionManager> jtaTransactionManager,
                        ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers,
@@ -82,8 +73,7 @@ public class MyjpaConfiguration extends JpaBaseConfiguration implements BeanFact
 //                       ObjectProvider<PhysicalNamingStrategy> physicalNamingStrategy,
 //                       ObjectProvider<ImplicitNamingStrategy> implicitNamingStrategy,
                        ObjectProvider<SqlSessionFactory> sessionFactories) {
-        super(dataSource, jpaProperties, jtaTransactionManager,
-                transactionManagerCustomizers);
+        super(dataSource, jpaProperties, jtaTransactionManager);
 		/*this.defaultDdlAutoProvider = new HibernateDefaultDdlAutoProvider(
 				providers.getIfAvailable(Collections::emptyList));*/
         this.poolMetadataProvider = new CompositeDataSourcePoolMetadataProvider(
@@ -93,46 +83,9 @@ public class MyjpaConfiguration extends JpaBaseConfiguration implements BeanFact
 				physicalNamingStrategy.getIfAvailable(),
 				implicitNamingStrategy.getIfAvailable(),
 				hibernatePropertiesCustomizers.getIfAvailable(Collections::emptyList));*/
-        BeanFactoryUtil.setBeanFactory(new cn.sexycode.util.core.factory.BeanFactory() {
-            @Override
-            public <T> T getBean(Class<T> clazz) {
-                return beanFactory.getBean(clazz);
-            }
-        });
     }
 
-    @Bean("standardServiceRegistry")
-    @ConditionalOnMissingBean
-    public StandardServiceRegistry serviceRegistry() {
-        return new StandardServiceRegistry() {
-            private Map<Class, Service> serviceMap = new HashMap<Class, Service>() {{
-                put(ClassLoaderService.class, new ClassLoaderServiceImpl());
-                put(DialectFactory.class, new DialectFactoryImpl(new StandardDialectResolver(),
-                        new StrategySelectorImpl((ClassLoaderService) get(ClassLoaderService.class))));
-            }};
 
-            @Override
-            public ServiceRegistry getParentServiceRegistry() {
-                return null;
-            }
-
-            @Override
-            public <R extends Service> R getService(Class<R> aClass) {
-                return (R) serviceMap.get(aClass);
-            }
-
-            @Override
-            public void close() {
-
-            }
-        };
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public QueryFactory queryFactory() {
-        return new DefaultQueryFactory();
-    }
 /*
 	private List<HibernatePropertiesCustomizer> determineHibernatePropertiesCustomizers(
 			PhysicalNamingStrategy physicalNamingStrategy,

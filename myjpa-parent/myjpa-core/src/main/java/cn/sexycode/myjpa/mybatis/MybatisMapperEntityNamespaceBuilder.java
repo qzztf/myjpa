@@ -72,7 +72,7 @@ public class MybatisMapperEntityNamespaceBuilder extends MapperAnnotationBuilder
                                 addEntityMappedStatement(id, method, mappedStatement);
                             }
                         } catch (Exception e) {
-                            LOGGER.info("添加实体类命名空间statement失败", e);
+                            LOGGER.debug("添加实体类命名空间statement失败", e);
                         }
                     }
                 }

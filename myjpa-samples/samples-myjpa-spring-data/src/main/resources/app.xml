@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-3.0.xsd http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+    <context:component-scan base-package="cn.sexycode.myjpa.samples"/>
+    <jpa:repositories base-package="cn.sexycode.myjpa.samples.dao" factory-class="cn.sexycode.myjpa.data.repository.support.MyjpaRepositoryFactoryBean" />
+    <!-- 数据库连接 -->
+    <!-- service包 -->
+    <!-- 使用cglib进行动态代理 -->
+    <!-- 支持注解方式声明式事务 -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
+    <!-- dao -->
+    <!-- 实体管理器 -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="cn.sexycode.myjpa.samples.model" />
+        <property name="jpaVendorAdapter">
+            <bean class="cn.sexycode.myjpa.orm.vendor.MyjpaVendorAdapter">
+                <property name="generateDdl" value="false" />
+                <property name="database" value="MYSQL" />
+                <property name="databasePlatform" value="cn.sexycode.sql.dialect.MySQLDialect" />
+                <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+                <!-- <property name="showSql" value="true" /> -->
+            </bean>
+        </property>
+        <property name="jpaDialect">
+            <bean class="cn.sexycode.myjpa.orm.vendor.MyjpaDialect" />
+        </property>
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="myjpa.mybatis.config.location" value="mybatis-config.xml" />
+            </map>
+        </property>
+    </bean>
+
+
+    <!-- 事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="cn.sexycode.myjpa.samples" />
+        <property name="sqlSessionFactoryBeanName" value="entityManagerFactory"/>
+    </bean>
+    <!-- 数据源 -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost:3306/jpademo?serverTimezone=Asia/Shanghai&amp;useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=false" />
+        <property name="username" value="root" />
+        <property name="password" value="123456" />
+        <property name="loginTimeout" value="60"/>
+        <property name="minIdle" value="5"/>
+        <property name="maxWait" value="60000"/>
+    </bean>
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="mybatis-config.xml"/>
+    </bean>
+
+    <bean class="cn.sexycode.myjpa.spring.BeanFactoryAdapter"/>
+
+</beans>

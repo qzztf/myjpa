@@ -1970,4 +1970,28 @@ public interface AvailableSettings {
      * @since 5.4
      */
     String SEQUENCE_INCREMENT_SIZE_MISMATCH_STRATEGY = "hibernate.id.sequence.increment_size_mismatch_strategy";
+
+    String MYBATIS_CONFIG_LOCATION = "myjpa.mybatis.config.location";
+    String MYBATIS_SESSION_FACTORY_BEAN_NAME = "myjpa.mybatis.sessionFactory.name";
+    /**
+     * 分页查询时，以statement id 加此后缀的语句为自定义统计总数语句
+     * 如: findByUser查询分页数据,如果后缀为Count, 那么findByUserCount则为计数语句
+     */
+    String MYBATIS_QUERY_COUNT_SUFFIX = "myjpa.mybatis.query.count.suffix";
+    interface MybatisMapperMethodMapping {
+        String FIND = "myjpa.jpa.entity.method.find";
+        String INSERT = "myjpa.jpa.entity.method.insert";
+        String REMOVE = "myjpa.jpa.entity.method.remove";
+        String UPDATE = "myjpa.jpa.entity.method.update";
+        class Mapping{
+            public static final String FIND = "findById";
+            public static final String INSERT = "insert";
+            public static final String REMOVE = "remove";
+            public static final String UPDATE = "update";
+        }
+    }
+
+    interface Defaults{
+        String DEFAULT_MYBATIS_QUERY_COUNT_SUFFIX = "Count";
+    }
 }

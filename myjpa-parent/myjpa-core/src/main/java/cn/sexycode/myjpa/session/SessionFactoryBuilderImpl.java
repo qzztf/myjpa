@@ -95,22 +95,7 @@ public class SessionFactoryBuilderImpl implements SessionFactoryBuilder {
                                     null));
                 }
             };
-            BootstrapContextImpl bootstrapContext = new BootstrapContextImpl(new StandardServiceRegistry() {
-                @Override
-                public ServiceRegistry getParentServiceRegistry() {
-                    return options.getServiceRegistry();
-                }
-
-                @Override
-                public <R extends Service> R getService(Class<R> aClass) {
-                    return options.getServiceRegistry().getService(aClass);
-                }
-
-                @Override
-                public void close() {
-
-                }
-            }, options);
+            BootstrapContextImpl bootstrapContext = new BootstrapContextImpl(BeanFactoryUtil.getBeanFactory().getBean(StandardServiceRegistry.class), options);
             bootstrapContext.injectScanEnvironment(options.getScanEnvironment());
             ManagedResources managedResources = MetadataBuildingProcess.prepare(metadataSources, bootstrapContext);
             this.metadata = MetadataBuildingProcess.complete(managedResources, bootstrapContext, options);

@@ -5,8 +5,17 @@ import cn.sexycode.myjpa.Configuration;
 import cn.sexycode.myjpa.MyjpaPersistenceProvider;
 import cn.sexycode.myjpa.session.Session;
 import cn.sexycode.myjpa.session.SessionFactory;
+import cn.sexycode.myjpa.spring.BeanFactoryAdapter;
 import cn.sexycode.sql.dialect.MySQLDialect;
+import cn.sexycode.util.core.factory.BeanFactoryUtil;
+import cn.sexycode.util.core.factory.FactoryBean;
+import cn.sexycode.util.core.str.StringUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
@@ -44,16 +53,23 @@ import java.util.Map;
  * @see HibernateJpaDialect
  * @since 2.0
  */
-public class MyjpaVendorAdapter extends AbstractJpaVendorAdapter {
+public class MyjpaVendorAdapter extends AbstractJpaVendorAdapter implements InitializingBean {
 
     private final MyjpaDialect jpaDialect = new MyjpaDialect();
 
     private SqlSessionFactory sessionFactory;
-
-    private final PersistenceProvider persistenceProvider;
+    private String sqlSessionFactoryBeanName;
+    private PersistenceProvider persistenceProvider;
 
     public MyjpaVendorAdapter() {
-        persistenceProvider = null;
+        if (StringUtils.isNotEmpty(getSqlSessionFactoryBeanName())){
+            this.sessionFactory = BeanFactoryUtil.getBeanFactory().getBean(getSqlSessionFactoryBeanName());
+            persistenceProvider = new MyjpaPersistenceProvider(sessionFactory);
+        }else if (getSessionFactory() != null){
+            persistenceProvider = new MyjpaPersistenceProvider(getSessionFactory());
+        }else{
+            persistenceProvider = null;
+        }
     }
 
     public MyjpaVendorAdapter(SqlSessionFactory sessionFactory) {
@@ -89,6 +105,9 @@ public class MyjpaVendorAdapter extends AbstractJpaVendorAdapter {
         }
         if (isShowSql()) {
             jpaProperties.put(AvailableSettings.SHOW_SQL, "true");
+        }
+        if(StringUtils.isNotEmpty(getSqlSessionFactoryBeanName())){
+            jpaProperties.put(AvailableSettings.MYBATIS_SESSION_FACTORY_BEAN_NAME, getSqlSessionFactoryBeanName());
         }
         return jpaProperties;
     }
@@ -134,4 +153,43 @@ public class MyjpaVendorAdapter extends AbstractJpaVendorAdapter {
         return Session.class;
     }
 
+    public String getSqlSessionFactoryBeanName() {
+        return sqlSessionFactoryBeanName;
+    }
+
+    public void setSqlSessionFactoryBeanName(String sqlSessionFactoryBeanName) {
+        this.sqlSessionFactoryBeanName = sqlSessionFactoryBeanName;
+    }
+
+    public SqlSessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
+    public void setSessionFactory(SqlSessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
+    /**
+     * Invoked by the containing {@code BeanFactory} after it has set all bean properties
+     * and satisfied {@link BeanFactoryAware}, {@code ApplicationContextAware} etc.
+     * <p>This method allows the bean instance to perform validation of its overall
+     * configuration and final initialization when all bean properties have been set.
+     *
+     * @throws Exception in the event of misconfiguration (such as failure to set an
+     *                   essential property) or if initialization fails for any other reason
+     */
+    @Override
+    public void afterPropertiesSet() {
+        if (getPersistenceProvider() == null) {
+            //初始化 persistenceProvider
+            if (StringUtils.isNotEmpty(getSqlSessionFactoryBeanName())) {
+                this.sessionFactory = BeanFactoryUtil.getBeanFactory().getBean(getSqlSessionFactoryBeanName());
+                persistenceProvider = new MyjpaPersistenceProvider(sessionFactory);
+            } else if (getSessionFactory() != null) {
+                persistenceProvider = new MyjpaPersistenceProvider(getSessionFactory());
+            }else{
+                persistenceProvider = new MyjpaPersistenceProvider();
+            }
+        }
+    }
 }

@@ -5,7 +5,10 @@ import cn.sexycode.myjpa.boot.PersistenceXmlParser;
 import cn.sexycode.myjpa.boot.ProviderChecker;
 import cn.sexycode.myjpa.mybatis.MyjpaConfiguration;
 import cn.sexycode.myjpa.session.SessionFactoryBuilderImpl;
+import cn.sexycode.util.core.factory.BeanFactoryUtil;
 import cn.sexycode.util.core.object.ObjectUtils;
+import cn.sexycode.util.core.properties.PropertiesUtil;
+import cn.sexycode.util.core.str.StringUtils;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -24,7 +27,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * The Hibernate {@link PersistenceProvider} implementation
+ * The myjpa {@link PersistenceProvider} implementation
  *
  * @author qzz
  */
@@ -55,6 +58,9 @@ public class MyjpaPersistenceProvider implements PersistenceProvider {
                 String.format("Starting createEntityManagerFactory for persistenceUnitName %s", persistenceUnitName));
         Properties prop = new Properties();
         prop.putAll(wrap(properties));
+        if (StringUtils.startsWithIgnoreCase(BeanFactoryUtil.getBeanFactory().getClass().getName(),BeanFactoryUtil.class.getName())){
+            BeanFactoryUtil.setBeanFactory(new DefaultBeanFactory());
+        }
         try {
             if (ObjectUtils.isEmpty(persistenceUnitInfo)) {
                 final List<ParsedPersistenceXmlDescriptor> units;
@@ -95,17 +101,17 @@ public class MyjpaPersistenceProvider implements PersistenceProvider {
                 }
             }
             if (sessionFactory != null) {
-                return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, properties)
-                        .sqlSessionFactory(sessionFactory).build((MyjpaConfiguration) getConfig(sessionFactory.getConfiguration(), properties));
+                return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, prop)
+                        .sqlSessionFactory(sessionFactory).build((MyjpaConfiguration) getConfig(sessionFactory.getConfiguration(), prop));
             }
 
             InputStream configStream = Resources
-                    .getResourceAsStream(ClassLoader.getSystemClassLoader(), Consts.DEFAULT_CFG_FILE);
+                    .getResourceAsStream(ClassLoader.getSystemClassLoader(), PropertiesUtil.getString(AvailableSettings.MYBATIS_CONFIG_LOCATION, prop, Consts.DEFAULT_CFG_FILE));
             if (configStream != null) {
                 return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, prop).build(configStream, prop);
             }
-            return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, properties)
-                    .build(((MyjpaConfiguration) getConfig(null, properties)));
+            return new SessionFactoryBuilderImpl(this.persistenceUnitInfo, prop)
+                    .build(((MyjpaConfiguration) getConfig(null, prop)));
         } catch (PersistenceException pe) {
             throw pe;
         } catch (Exception e) {

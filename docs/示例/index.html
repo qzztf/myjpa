@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>myjpa与spring-boot · GitBook</title>
+        <title>示例 · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,10 +57,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="myjpa与spring-boot-data-jpa.html" />
+    <link rel="next" href="单独使用myjpa.html" />
     
     
-    <link rel="prev" href="myjpa与spring.html" />
+    <link rel="prev" href="../_book" />
     
 
     </head>
@@ -91,7 +91,7 @@
     
         <li class="chapter " data-level="1.1" data-path="../">
             
-                <a href="../">
+                <a href="../_book">
             
                     
                     简介
@@ -102,9 +102,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2" data-path="./">
+        <li class="chapter active" data-level="1.2" data-path="./">
             
-                <a href="./">
+                <a href="">
             
                     
                     示例
@@ -142,7 +142,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.2.3" data-path="myjpa与spring-boot.html">
+        <li class="chapter " data-level="1.2.3" data-path="myjpa与spring-boot.html">
             
                 <a href="myjpa与spring-boot.html">
             
@@ -216,7 +216,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >myjpa与spring-boot</a>
+        <a href="../_book" >示例</a>
     </h1>
 </div>
 
@@ -231,48 +231,8 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <ol>
-<li><p>&#x5F15;&#x5165;&#x4F9D;&#x8D56;</p>
-<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>cn.sexycode<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>myjpa-spring-boot-starter<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>0.0.4-SNAPSHOT<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span>
-<span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.mybatis.spring.boot<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>mybatis-spring-boot-starter<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>2.1.3<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span>
-<span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span>
-</code></pre>
-</li>
-<li><p>&#x914D;&#x7F6E;&#x6570;&#x636E;&#x6E90;&#x548C;mapper&#x626B;&#x63CF;</p>
-<pre><code class="lang-yaml"><span class="hljs-attr">mybatis:</span>
-<span class="hljs-attr">  mapper-locations:</span> UserMapper.xml
-
-<span class="hljs-attr">spring:</span>
-<span class="hljs-attr">  datasource:</span>
-<span class="hljs-attr">    password:</span>
-      zxcf123456
-<span class="hljs-attr">    username:</span> root
-<span class="hljs-attr">    url:</span> jdbc:mysql://localhost:<span class="hljs-number">3306</span>/jpademo?serverTimezone=Asia/Shanghai&amp;useUnicode=<span class="hljs-literal">true</span>&amp;characterEncoding=utf8&amp;useSSL=<span class="hljs-literal">false</span>
-</code></pre>
-<pre><code class="lang-java"><span class="hljs-meta">@MapperScan</span>(<span class="hljs-string">&quot;cn.sexycode.myjpa.samples.dao&quot;</span>)
-</code></pre>
-</li>
-<li><p>&#x4F7F;&#x7528;</p>
-<pre><code class="lang-java"><span class="hljs-meta">@SpringBootApplication</span>(scanBasePackages = <span class="hljs-string">&quot;cn.sexycode.myjpa.samples&quot;</span>)
-<span class="hljs-meta">@MapperScan</span>(<span class="hljs-string">&quot;cn.sexycode.myjpa.samples.dao&quot;</span>)
-<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyJpaSamplesApplication</span> </span>{
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>{
-        ConfigurableApplicationContext context = SpringApplication.run(MyJpaSamplesApplication.class);
-
-        UserDao userDao = context.getBean(UserDao.class);
-        System.out.println(<span class="hljs-string">&quot;user: &quot;</span> + userDao.findByFullName(<span class="hljs-string">&quot;1&quot;</span>));
-    }
-}
-</code></pre>
-</li>
-</ol>
+                                <h1 id="&#x8BF4;&#x660E;">&#x8BF4;&#x660E;</h1>
+<p>&#x76EE;&#x524D;myjpa&#x53EF;&#x4EE5;&#x5355;&#x72EC;&#x4F7F;&#x7528;&#xFF0C;&#x4E5F;&#x53EF;&#x4EE5;&#x4E0E;spring, spring boot, spring data jpa&#x7ED3;&#x5408;&#x8D77;&#x6765;&#x4F7F;&#x7528;&#x3002;</p>
 
                                 
                                 </section>
@@ -300,12 +260,12 @@
 
             
                 
-                <a href="myjpa与spring.html" class="navigation navigation-prev " aria-label="Previous page: myjpa与spring">
+                <a href="../_book" class="navigation navigation-prev " aria-label="Previous page: 简介">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="myjpa与spring-boot-data-jpa.html" class="navigation navigation-next " aria-label="Next page: myjpa与spring-boot-data-jpa">
+                <a href="单独使用myjpa.html" class="navigation navigation-next " aria-label="Next page: 单独使用myjpa">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -316,7 +276,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"myjpa与spring-boot","level":"1.2.3","depth":2,"next":{"title":"myjpa与spring-boot-data-jpa","level":"1.2.4","depth":2,"path":"示例/myjpa与spring-boot-data-jpa.md","ref":"示例/myjpa与spring-boot-data-jpa.md","articles":[]},"previous":{"title":"myjpa与spring","level":"1.2.2","depth":2,"path":"示例/myjpa与spring.md","ref":"示例/myjpa与spring.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"示例/myjpa与spring-boot.md","mtime":"2020-06-07T12:04:07.181Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-06-07T12:28:22.965Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"示例","level":"1.2","depth":1,"next":{"title":"单独使用myjpa","level":"1.2.1","depth":2,"path":"示例/单独使用myjpa.md","ref":"示例/单独使用myjpa.md","articles":[]},"previous":{"title":"简介","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"示例/README.md","mtime":"2020-06-07T15:09:12.960Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-06-07T15:14:55.113Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

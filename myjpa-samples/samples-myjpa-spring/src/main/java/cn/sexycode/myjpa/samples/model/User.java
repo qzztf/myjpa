@@ -8,7 +8,7 @@ import javax.persistence.*;
  * @author qzz
  */
 @Entity
-@Table()
+@Table
 @Data
 public class User {
     @Id

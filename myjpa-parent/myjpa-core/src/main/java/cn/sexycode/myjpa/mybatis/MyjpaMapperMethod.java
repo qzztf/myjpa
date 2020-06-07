@@ -42,7 +42,7 @@ public class MyjpaMapperMethod extends MapperMethod {
                 //自定义的分页方式
                 result = executeForPage(sqlSession, args);
             } else {
-                super.execute(sqlSession, args);
+                result = super.execute(sqlSession, args);
             }
         } else {
             super.execute(sqlSession, args);

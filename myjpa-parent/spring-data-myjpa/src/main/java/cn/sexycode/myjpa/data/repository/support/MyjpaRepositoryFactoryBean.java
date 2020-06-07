@@ -33,17 +33,17 @@ public class MyjpaRepositoryFactoryBean extends JpaRepositoryFactoryBean {
 
     @Override
     protected RepositoryFactorySupport createRepositoryFactory(EntityManager entityManager) {
-        return new MyJpaRepositoryFactory(entityManager);
+        return new MyjpaRepositoryFactory(entityManager);
     }
 
 
-    private class MyJpaRepositoryFactory<T, I extends Serializable> extends JpaRepositoryFactory {
+    private class MyjpaRepositoryFactory<T, I extends Serializable> extends JpaRepositoryFactory {
 
         private final EntityManager em;
 
         private final QueryExtractor extractor;
 
-        public MyJpaRepositoryFactory(EntityManager em) {
+        public MyjpaRepositoryFactory(EntityManager em) {
             super(em);
             this.em = em;
             this.extractor = PersistenceProvider.fromEntityManager(em);
@@ -63,8 +63,7 @@ public class MyjpaRepositoryFactoryBean extends JpaRepositoryFactoryBean {
         protected Optional<QueryLookupStrategy> getQueryLookupStrategy(QueryLookupStrategy.Key key,
                 QueryMethodEvaluationContextProvider evaluationContextProvider) {
             return Optional.of(Optional
-                    .ofNullable(MyjpaQueryLookupStrategy.create(em, key, extractor, evaluationContextProvider))
-                    .orElse(JpaQueryLookupStrategy.create(em, key, extractor, evaluationContextProvider)));
+                    .ofNullable(MyjpaQueryLookupStrategy.create(em, key, extractor, evaluationContextProvider))).orElse(super.getQueryLookupStrategy(key,evaluationContextProvider));
         }
     }
 

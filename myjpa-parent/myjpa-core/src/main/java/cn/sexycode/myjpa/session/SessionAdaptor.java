@@ -1,7 +1,9 @@
 package cn.sexycode.myjpa.session;
 
+import cn.sexycode.myjpa.AvailableSettings;
 import cn.sexycode.myjpa.binding.ModelProxy;
 import cn.sexycode.util.core.object.ObjectUtils;
+import cn.sexycode.util.core.str.StringUtils;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
@@ -45,7 +47,9 @@ public class SessionAdaptor {
                     ModelProxy modelProxy = (ModelProxy) param;
                     return invokeMethod.invoke(session, modelProxy.getStatement(), modelProxy.getModel());
                 } else {
-                    String  statementId = param.getClass().getCanonicalName() + "." + invokeMethod.getName();
+                    String  statementId =  StringUtils.join(".", new String[] { param.getClass().getCanonicalName(), session.getSessionFactory().getProperties()
+                            .getOrDefault(AvailableSettings.MybatisMapperMethodMapping.FIND,
+                                    invokeMethod.getName()).toString()});
                     return invokeMethod.invoke(session, statementId, param);
                 }
             } catch (IllegalAccessException | InvocationTargetException e) {

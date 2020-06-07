@@ -70,12 +70,16 @@ public interface Session extends EntityManager, SqlSession, Closeable {
 
     @Override
     default void persist(Object entity) {
-        new SessionAdaptor(this).execute("persist", entity);
+        ModelProxy findModelProxy = new ModelProxy(entity, StringUtils.join(".", new String[] { entity.getClass().getCanonicalName(), getSessionFactory().getProperties()
+                .getOrDefault(AvailableSettings.MybatisMapperMethodMapping.INSERT, AvailableSettings.MybatisMapperMethodMapping.Mapping.INSERT).toString()}));
+        new SessionAdaptor(this).execute("persist", findModelProxy);
     }
 
     @Override
     default <T> T merge(T entity) {
-        new SessionAdaptor(this).execute("merge", entity);
+        ModelProxy findModelProxy = new ModelProxy(entity, StringUtils.join(".", new String[] { entity.getClass().getCanonicalName(), getSessionFactory().getProperties()
+                .getOrDefault(AvailableSettings.MybatisMapperMethodMapping.UPDATE, AvailableSettings.MybatisMapperMethodMapping.Mapping.UPDATE).toString()}));
+        new SessionAdaptor(this).execute("merge", findModelProxy);
         return entity;
     }
 
@@ -84,7 +88,9 @@ public interface Session extends EntityManager, SqlSession, Closeable {
      */
     @Override
     default void remove(Object entity) {
-        new SessionAdaptor(this).execute("remove", entity);
+        ModelProxy findModelProxy = new ModelProxy(entity, StringUtils.join(".", new String[] { entity.getClass().getCanonicalName(), getSessionFactory().getProperties()
+                .getOrDefault(AvailableSettings.MybatisMapperMethodMapping.REMOVE, AvailableSettings.MybatisMapperMethodMapping.Mapping.REMOVE).toString()}));
+        new SessionAdaptor(this).execute("remove", findModelProxy);
     }
 
 

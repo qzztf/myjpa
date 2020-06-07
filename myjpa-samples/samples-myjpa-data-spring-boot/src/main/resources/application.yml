@@ -1,0 +1,10 @@
+mybatis:
+  mapper-locations: UserMapper.xml
+
+spring:
+  datasource:
+    password:
+      zxcf123456
+    username: root
+    url: jdbc:mysql://localhost:3306/jpademo?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false
+debug: true

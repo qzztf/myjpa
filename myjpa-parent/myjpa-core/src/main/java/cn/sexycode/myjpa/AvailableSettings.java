@@ -1980,12 +1980,18 @@ public interface AvailableSettings {
     String MYBATIS_QUERY_COUNT_SUFFIX = "myjpa.mybatis.query.count.suffix";
     interface MybatisMapperMethodMapping {
         String FIND = "myjpa.jpa.entity.method.find";
+        String INSERT = "myjpa.jpa.entity.method.insert";
+        String REMOVE = "myjpa.jpa.entity.method.remove";
+        String UPDATE = "myjpa.jpa.entity.method.update";
         class Mapping{
             public static final String FIND = "findById";
+            public static final String INSERT = "insert";
+            public static final String REMOVE = "remove";
+            public static final String UPDATE = "update";
         }
     }
 
     interface Defaults{
-        String DEFAULt_MYBATIS_QUERY_COUNT_SUFFIX = "Count";
+        String DEFAULT_MYBATIS_QUERY_COUNT_SUFFIX = "Count";
     }
 }

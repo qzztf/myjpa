@@ -30,8 +30,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * {@link JpaBaseConfiguration} implementation for MyJpa
- * @author qinzaizhen
+ * {@link JpaBaseConfiguration} implementation for Myjpa
+ * @author qzz
  */
 @Configuration
 @ConditionalOnSingleCandidate(DataSource.class)
@@ -65,7 +65,6 @@ public class MyjpaConfiguration extends JpaBaseConfiguration implements BeanFact
 //	private final List<HibernatePropertiesCustomizer> hibernatePropertiesCustomizers;
 
     private BeanFactory beanFactory;
-
     MyjpaConfiguration(DataSource dataSource, JpaProperties jpaProperties,
                        ObjectProvider<JtaTransactionManager> jtaTransactionManager,
                        ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers,
@@ -74,8 +73,7 @@ public class MyjpaConfiguration extends JpaBaseConfiguration implements BeanFact
 //                       ObjectProvider<PhysicalNamingStrategy> physicalNamingStrategy,
 //                       ObjectProvider<ImplicitNamingStrategy> implicitNamingStrategy,
                        ObjectProvider<SqlSessionFactory> sessionFactories) {
-        super(dataSource, jpaProperties, jtaTransactionManager,
-                transactionManagerCustomizers);
+        super(dataSource, jpaProperties, jtaTransactionManager);
 		/*this.defaultDdlAutoProvider = new HibernateDefaultDdlAutoProvider(
 				providers.getIfAvailable(Collections::emptyList));*/
         this.poolMetadataProvider = new CompositeDataSourcePoolMetadataProvider(
@@ -87,11 +85,6 @@ public class MyjpaConfiguration extends JpaBaseConfiguration implements BeanFact
 				hibernatePropertiesCustomizers.getIfAvailable(Collections::emptyList));*/
     }
 
-    @Bean("beanFactoryAdapter")
-    @ConditionalOnMissingBean
-    public BeanFactoryAdapter beanFactoryAdapter(BeanFactory beanFactory) {
-        return new BeanFactoryAdapter(beanFactory);
-    }
 
 /*
 	private List<HibernatePropertiesCustomizer> determineHibernatePropertiesCustomizers(

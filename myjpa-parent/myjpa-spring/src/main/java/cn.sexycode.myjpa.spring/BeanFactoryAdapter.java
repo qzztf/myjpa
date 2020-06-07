@@ -17,7 +17,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 
 /**
- * @author qinzaizhen
+ * @author qzz
  */
 public class BeanFactoryAdapter implements BeanFactory, BeanDefinitionRegistryPostProcessor {
     private org.springframework.beans.factory.BeanFactory beanFactory;

@@ -187,6 +187,8 @@ public class MyjpaVendorAdapter extends AbstractJpaVendorAdapter implements Init
                 persistenceProvider = new MyjpaPersistenceProvider(sessionFactory);
             } else if (getSessionFactory() != null) {
                 persistenceProvider = new MyjpaPersistenceProvider(getSessionFactory());
+            }else{
+                persistenceProvider = new MyjpaPersistenceProvider();
             }
         }
     }

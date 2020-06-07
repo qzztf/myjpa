@@ -1,11 +1,10 @@
 package cn.sexycode.myjpa.data.repository.query;
 
 import cn.sexycode.myjpa.AvailableSettings;
-import cn.sexycode.myjpa.query.AbstractMybatisQuery;
-import cn.sexycode.myjpa.query.MybatisNamedQueryImpl;
 import cn.sexycode.myjpa.query.MybatisQuery;
 import cn.sexycode.util.core.properties.PropertiesUtil;
 import org.springframework.data.jpa.repository.query.AbstractJpaQuery;
+import org.springframework.data.jpa.repository.query.JpaParametersParameterAccessor;
 import org.springframework.data.jpa.repository.query.JpaQueryMethod;
 
 import javax.persistence.EntityManager;
@@ -23,22 +22,22 @@ public class MyjpaQueryImpl extends AbstractJpaQuery {
     }
 
     @Override
-    protected Query doCreateQuery(Object[] values) {
+    protected Query doCreateQuery(JpaParametersParameterAccessor accessor) {
         MybatisQuery query = this.getEntityManager().createNamedQuery(getQueryMethod().getNamedQueryName()).unwrap(
                 MybatisQuery.class);
-        query.setParameterValues(values);
+        query.setParameterValues(accessor.getValues());
         return query;
     }
 
     @Override
-    protected Query doCreateCountQuery(Object[] values) {
+    protected Query doCreateCountQuery(JpaParametersParameterAccessor accessor) {
         EntityManager entityManager = getEntityManager();
         MybatisQuery namedQuery = this.getEntityManager().createNamedQuery(
                 getQueryMethod().getNamedQueryName() + PropertiesUtil
                         .getString(AvailableSettings.MYBATIS_QUERY_COUNT_SUFFIX, entityManager.getProperties(),
-                                AvailableSettings.Defaults.DEFAULt_MYBATIS_QUERY_COUNT_SUFFIX)).unwrap(
+                                AvailableSettings.Defaults.DEFAULT_MYBATIS_QUERY_COUNT_SUFFIX)).unwrap(
                 MybatisQuery.class);
-        namedQuery.setParameterValues(values);
+        namedQuery.setParameterValues(accessor.getValues());
         return namedQuery;
     }
 }

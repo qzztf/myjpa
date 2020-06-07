@@ -4,9 +4,7 @@ import cn.sexycode.myjpa.AvailableSettings;
 import cn.sexycode.myjpa.session.Session;
 import cn.sexycode.util.core.object.ObjectUtils;
 import cn.sexycode.util.core.properties.PropertiesUtil;
-import cn.sexycode.util.core.str.StringUtils;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +36,7 @@ public class DefaultQueryFactory implements QueryFactory {
         }
         return name.endsWith(PropertiesUtil
                 .getString(AvailableSettings.MYBATIS_QUERY_COUNT_SUFFIX, session.getProperties(),
-                        AvailableSettings.Defaults.DEFAULt_MYBATIS_QUERY_COUNT_SUFFIX)) ? new MybatisNamedCountQueryImpl<>(session,name,resultClass) :
+                        AvailableSettings.Defaults.DEFAULT_MYBATIS_QUERY_COUNT_SUFFIX)) ? new MybatisNamedCountQueryImpl<>(session,name,resultClass) :
          new MybatisNamedQueryImpl<>(session, name, resultClass);
     }
 

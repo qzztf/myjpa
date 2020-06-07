@@ -1,0 +1,432 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>myjpa与spring · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="myjpa与spring-boot.html" />
+    
+    
+    <link rel="prev" href="单独使用myjpa.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    简介
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    示例
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" data-path="单独使用myjpa.html">
+            
+                <a href="单独使用myjpa.html">
+            
+                    
+                    单独使用myjpa
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.2.2" data-path="myjpa与spring.html">
+            
+                <a href="myjpa与spring.html">
+            
+                    
+                    myjpa与spring
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3" data-path="myjpa与spring-boot.html">
+            
+                <a href="myjpa与spring-boot.html">
+            
+                    
+                    myjpa与spring-boot
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.4" data-path="myjpa与spring-boot-data-jpa.html">
+            
+                <a href="myjpa与spring-boot-data-jpa.html">
+            
+                    
+                    myjpa与spring-boot-data-jpa
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.5" data-path="myjpa与spring-data-jpa.html">
+            
+                <a href="myjpa与spring-data-jpa.html">
+            
+                    
+                    myjpa与spring-data-jpa
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >myjpa与spring</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <p>&#x6211;&#x4EEC;&#x66F4;&#x591A;&#x7684;&#x662F;&#x7ED3;&#x5408;spring&#x6765;&#x4F7F;&#x7528;myjpa.</p>
+<p>&#x5728;spring &#x4E0E;mybatis&#x7684;&#x7ED3;&#x5408;&#x4E2D;&#xFF0C;&#x5927;&#x5BB6;&#x90FD;&#x5F88;&#x719F;&#x6089;&#x3002;&#x914D;&#x7F6E;<code>SqlSessionFactoryBean</code>&#x548C;mapper&#x626B;&#x63CF;&#xFF0C;&#x5C31;&#x53EF;&#x4EE5;&#x7701;&#x53BB;mybatis&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x3002;</p>
+<p>&#x540C;&#x6837;&#x7684;&#xFF0C;&#x800C;&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x4E5F;&#x53EF;&#x4EE5;&#x91C7;&#x53D6;&#x6B64;&#x79CD;&#x65B9;&#x5F0F;&#xFF0C;&#x7531;spring&#x53BB;&#x521D;&#x59CB;&#x5316;<code>SqlSessionFactoryBean</code>&#x548C;mapper&#x626B;&#x63CF;&#x3002;</p>
+<p>&#x53E6;&#x5916;&#x4E00;&#x79CD;&#x65B9;&#x5F0F;&#x53BB;&#x7C7B;&#x4F3C;&#x76F4;&#x63A5;&#x4F7F;&#x7528;myjpa&#xFF0C;&#x901A;&#x8FC7;mybatis&#x7684;&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x6765;&#x521D;&#x59CB;&#x5316;<code>SqlSessionFactoryBean</code>&#x548C;mapper&#x3002;</p>
+<p>&#x4E24;&#x79CD;&#x65B9;&#x5F0F;&#x9009;&#x5176;&#x4E00;&#x3002;</p>
+<ol>
+<li><p>&#x5F15;&#x5165;&#x4F9D;&#x8D56;</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span>
+ <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>cn.sexycode<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span>
+ <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-orm-myjpa<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span>
+ <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>0.0.4-SNAPSHOT<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span>
+ <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.mybatis<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span>
+ <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>mybatis-spring<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span>
+ <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>2.0.3<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span>
+</code></pre>
+</li>
+<li><p>&#x914D;&#x7F6E;&#x5B9E;&#x4F53;&#x7BA1;&#x7406;&#x5668;<code>LocalContainerEntityManagerFactoryBean</code></p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;entityManagerFactory&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;dataSource&quot;</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;dataSource&quot;</span> /&gt;</span>
+  <span class="hljs-comment">&lt;!--&#x5B9E;&#x4F53;&#x76EE;&#x5F55;--&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;packagesToScan&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;cn.sexycode.myjpa.samples.model&quot;</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;jpaVendorAdapter&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;cn.sexycode.myjpa.orm.vendor.MyjpaVendorAdapter&quot;</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;generateDdl&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;false&quot;</span> /&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;database&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;MYSQL&quot;</span> /&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;databasePlatform&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;cn.sexycode.sql.dialect.MySQLDialect&quot;</span> /&gt;</span>
+      <span class="hljs-comment">&lt;!--&#x8FD9;&#x4E2A;&#x5C5E;&#x6027;&#x5F53;&#x4F7F;&#x7528;spring&#x6765;&#x521D;&#x59CB;&#x5316;sqlSessionFactory&#x4F7F;&#x7528;--&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;sqlSessionFactoryBeanName&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;sqlSessionFactory&quot;</span>/&gt;</span>
+      <span class="hljs-comment">&lt;!-- &lt;property name=&quot;showSql&quot; value=&quot;true&quot; /&gt; --&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">bean</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">property</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;jpaDialect&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;cn.sexycode.myjpa.orm.vendor.MyjpaDialect&quot;</span> /&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">property</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;jpaPropertyMap&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">map</span>&gt;</span>
+      <span class="hljs-comment">&lt;!--&#x76F4;&#x63A5;&#x7531;Mybatis&#x7684;&#x914D;&#x7F6E;&#x521D;&#x59CB;&#x5316;sqlSessionFactory&#x65F6;&#x4F7F;&#x7528;--&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">entry</span> <span class="hljs-attr">key</span>=<span class="hljs-string">&quot;myjpa.mybatis.config.location&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;mybatis-config.xml&quot;</span> /&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">map</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">property</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">bean</span>&gt;</span>
+</code></pre>
+</li>
+<li><p>&#x914D;&#x7F6E;&#x6570;&#x636E;&#x6E90;&#xFF0C;&#x4E8B;&#x52A1;&#x7BA1;&#x7406;&#x5668;</p>
+<pre><code class="lang-xml"><span class="hljs-comment">&lt;!-- &#x4E8B;&#x52A1;&#x7BA1;&#x7406;&#x5668; --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;transactionManager&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;org.springframework.orm.jpa.JpaTransactionManager&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;entityManagerFactory&quot;</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;entityManagerFactory&quot;</span>/&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">bean</span>&gt;</span>
+<span class="hljs-comment">&lt;!-- &#x6570;&#x636E;&#x6E90; --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;dataSource&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;com.alibaba.druid.pool.DruidDataSource&quot;</span> <span class="hljs-attr">init-method</span>=<span class="hljs-string">&quot;init&quot;</span> <span class="hljs-attr">destroy-method</span>=<span class="hljs-string">&quot;close&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;driverClassName&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;com.mysql.cj.jdbc.Driver&quot;</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;url&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;jdbc:mysql://localhost:3306/jpademo?serverTimezone=Asia/Shanghai&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf8&amp;amp;useSSL=false&quot;</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;username&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;root&quot;</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;password&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;zxcf123456&quot;</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;loginTimeout&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;60&quot;</span>/&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;minIdle&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;5&quot;</span>/&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;maxWait&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;60000&quot;</span>/&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">bean</span>&gt;</span>
+</code></pre>
+</li>
+<li><p>&#x914D;&#x7F6E;SqlSessionFactoryBean&#x548C;mapper&#x626B;&#x63CF;&#xFF08;&#x7531;spring&#x521D;&#x59CB;&#x5316;sqlSessionFactory&#x65F6;&#x914D;&#x7F6E;&#x8FD9;&#x4E24;&#x4E2A;&#xFF09;</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;org.mybatis.spring.mapper.MapperScannerConfigurer&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;basePackage&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;cn.sexycode.myjpa.samples&quot;</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;sqlSessionFactoryBeanName&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;entityManagerFactory&quot;</span>/&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">bean</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;sqlSessionFactory&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;org.mybatis.spring.SqlSessionFactoryBean&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;dataSource&quot;</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;dataSource&quot;</span>/&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;configLocation&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;mybatis-config.xml&quot;</span>/&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">bean</span>&gt;</span>
+</code></pre>
+</li>
+<li><p>model&#x548C;mapper&#x63A5;&#x53E3;&#xFF0C;mapper xml&#x6587;&#x4EF6;</p>
+<p>Model</p>
+<pre><code class="lang-java"><span class="hljs-meta">@Entity</span>
+<span class="hljs-meta">@Table</span>
+<span class="hljs-meta">@Data</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">User</span> </span>{
+    <span class="hljs-meta">@Id</span>
+    <span class="hljs-meta">@GeneratedValue</span>
+    <span class="hljs-keyword">private</span> String id;
+
+    <span class="hljs-meta">@Column</span>
+    <span class="hljs-keyword">private</span> String fullName;
+}
+</code></pre>
+<p>mapper&#x63A5;&#x53E3;</p>
+<pre><code class="lang-java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">UserDao</span> </span>{
+    <span class="hljs-function">List&lt;User&gt; <span class="hljs-title">findByFullName</span><span class="hljs-params">(String name)</span></span>;
+}
+</code></pre>
+<p>xml&#x6587;&#x4EF6;</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">mapper</span> <span class="hljs-attr">namespace</span>=<span class="hljs-string">&quot;cn.sexycode.myjpa.samples.dao.UserDao&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">insert</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;save&quot;</span> <span class="hljs-attr">parameterType</span>=<span class="hljs-string">&quot;cn.sexycode.myjpa.samples.model.User&quot;</span>&gt;</span>
+        insert into user(id,full_name) values (#{id},#{fullName})
+    <span class="hljs-tag">&lt;/<span class="hljs-name">insert</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">select</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;findByFullName&quot;</span> <span class="hljs-attr">resultType</span>=<span class="hljs-string">&quot;cn.sexycode.myjpa.samples.model.User&quot;</span>&gt;</span>
+    select * from user where id = #{id}
+  <span class="hljs-tag">&lt;/<span class="hljs-name">select</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">mapper</span>&gt;</span>
+</code></pre>
+</li>
+<li><p>myjpa&#x7684;<code>BeanFactoryAdapter</code></p>
+<p>&#x7531;&#x4E8E;&#x5F15;&#x5165;spring&#xFF0C;&#x5219;BeanFactory&#x4F7F;&#x7528;spring&#x7684;&#xFF0C;&#x914D;&#x7F6E;&#x6B64;&#x9002;&#x914D;&#x5668;&#x5373;&#x53EF;&#x3002;</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;cn.sexycode.myjpa.spring.BeanFactoryAdapter&quot;</span>/&gt;</span>
+</code></pre>
+</li>
+</ol>
+<ol>
+<li><p>&#x4F7F;&#x7528;</p>
+<pre><code class="lang-java">ClassPathXmlApplicationContext context = <span class="hljs-keyword">new</span> ClassPathXmlApplicationContext(<span class="hljs-string">&quot;app.xml&quot;</span>);
+UserDao userDao = context.getBean(UserDao.class);
+System.out.println(<span class="hljs-string">&quot;user: &quot;</span> + userDao.findByFullName(<span class="hljs-string">&quot;1&quot;</span>));
+</code></pre>
+<p>&#x4F7F;&#x7528;&#x8D77;&#x6765;&#x548C;&#x76F4;&#x63A5;&#x4F7F;&#x7528;mybatis&#x5C45;&#x7136;&#x8FD9;&#x4E48;&#x76F8;&#x50CF;&#x3002;</p>
+</li>
+</ol>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="单独使用myjpa.html" class="navigation navigation-prev " aria-label="Previous page: 单独使用myjpa">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="myjpa与spring-boot.html" class="navigation navigation-next " aria-label="Next page: myjpa与spring-boot">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"myjpa与spring","level":"1.2.2","depth":2,"next":{"title":"myjpa与spring-boot","level":"1.2.3","depth":2,"path":"示例/myjpa与spring-boot.md","ref":"示例/myjpa与spring-boot.md","articles":[]},"previous":{"title":"单独使用myjpa","level":"1.2.1","depth":2,"path":"示例/单独使用myjpa.md","ref":"示例/单独使用myjpa.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"示例/myjpa与spring.md","mtime":"2020-06-07T07:33:20.960Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-06-07T12:28:22.965Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

@@ -1,6 +1,8 @@
-package javax.persistence;
+package cn.sexycode.myjpa.mapping;
 
 import org.apache.ibatis.mapping.ParameterMapping;
+
+import javax.persistence.Parameter;
 
 public class MyjpaParameterImpl implements Parameter {
     private ParameterMapping mapping;

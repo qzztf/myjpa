@@ -1,7 +1,8 @@
 package cn.sexycode.myjpa.spring;
 
 /**
- * @author qinzaizhen
+ * bean名称
+ * @author qzz
  */
 public interface Beans {
     String CLASS_LOADER_SERVICE = "myjpa.internal.classLoaderService";

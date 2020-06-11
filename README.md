@@ -12,6 +12,7 @@
 在此由衷感谢这些项目提供思路。
 
 最后，文档目前在完善中。
+[文档地址](http://myjpa.cn)
 
 roadmap:
 -[x] 解析jpa注解（Entity）

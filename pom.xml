@@ -9,7 +9,7 @@
         <version>1.0</version>
     </parent>
     <artifactId>myjpa-build</artifactId>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>0.0.5-SNAPSHOT</version>
     <description>The plugin for mybatis to handle jpa.</description>
     <url>https://github.com/qzzsunly/my-jpa</url>
     <packaging>pom</packaging>

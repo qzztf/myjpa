@@ -5,7 +5,7 @@
     <parent>
         <artifactId>myjpa-dependencies</artifactId>
         <groupId>cn.sexycode</groupId>
-        <version>0.0.4-SNAPSHOT</version>
+        <version>0.0.5-SNAPSHOT</version>
         <relativePath>../myjpa-dependencies/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>

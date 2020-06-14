@@ -1,4 +1,4 @@
-package cn.sexycode.myjpa.query;
+package cn.sexycode.myjpa.query.criteria;
 
 import javax.persistence.Tuple;
 import javax.persistence.criteria.*;
@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author qinzaizhen
+ * @author qzz
  */
-public class MybatisCriteriaBuilder implements CriteriaBuilder {
+public class MybatisCriteriaBuilder extends DefaultFilter implements CriteriaBuilder {
     /**
      * Create a <code>CriteriaQuery</code> object.
      *

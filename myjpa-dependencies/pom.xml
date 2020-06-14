@@ -6,7 +6,7 @@
     <parent>
         <groupId>cn.sexycode</groupId>
         <artifactId>myjpa-build</artifactId>
-        <version>0.0.4-SNAPSHOT</version>
+        <version>0.0.5-SNAPSHOT</version>
     </parent>
     <artifactId>myjpa-dependencies</artifactId>
     <packaging>pom</packaging>

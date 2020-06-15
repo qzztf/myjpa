@@ -7,9 +7,8 @@ import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author qzz
@@ -314,7 +313,10 @@ public class MybatisCriteriaBuilder extends DefaultFilter implements CriteriaBui
      */
     @Override
     public Predicate and(Expression<Boolean> x, Expression<Boolean> y) {
-        return null;
+        List<WhereClause> whereClauses = getFieldLogic().getWhereClauses();
+        whereClauses.add((WhereClause) x);
+        whereClauses.add((WhereClause) y);
+        return (Predicate) getFieldLogic();
     }
 
     /**
@@ -326,7 +328,10 @@ public class MybatisCriteriaBuilder extends DefaultFilter implements CriteriaBui
      */
     @Override
     public Predicate and(Predicate... restrictions) {
-        return null;
+        List<WhereClause> whereClauses = getFieldLogic().getWhereClauses();
+        whereClauses.addAll(Arrays.stream(restrictions).map(restriction -> (WhereClause) restriction)
+                .collect(Collectors.toList()));
+        return (Predicate) getFieldLogic();
     }
 
     /**
@@ -338,7 +343,11 @@ public class MybatisCriteriaBuilder extends DefaultFilter implements CriteriaBui
      */
     @Override
     public Predicate or(Expression<Boolean> x, Expression<Boolean> y) {
-        return null;
+        DefaultFieldLogic fieldLogic = new DefaultFieldLogic(FieldRelation.OR);
+        getFieldLogic().getWhereClauses().add(fieldLogic);
+        fieldLogic.getWhereClauses().add((WhereClause) x);
+        fieldLogic.getWhereClauses().add((WhereClause) y);
+        return fieldLogic;
     }
 
     /**

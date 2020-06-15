@@ -1,5 +1,6 @@
 package cn.sexycode.myjpa.query.criteria;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Selection;
@@ -20,6 +21,7 @@ public class DefaultField<T> implements Field , Expression<T> {
     // 比较值
     private Object value;
 
+    private CriteriaBuilder criteriaBuilder;
     // 字段前缀名，一般用于表的别名，如user.
     // private String preFieldName="";
 
@@ -42,6 +44,10 @@ public class DefaultField<T> implements Field , Expression<T> {
             this.value = value;
         }
 
+    }
+
+    public DefaultField(CriteriaBuilder criteriaBuilder) {
+        this.criteriaBuilder = criteriaBuilder;
     }
 
     /**
@@ -179,12 +185,12 @@ public class DefaultField<T> implements Field , Expression<T> {
 
     @Override
     public Predicate isNull() {
-        return (Predicate) new DefaultFieldLogic().isNull(field);
+        return criteriaBuilder.isNull(this);
     }
 
     @Override
     public Predicate isNotNull() {
-        return (Predicate) new DefaultFieldLogic().isNotNull(field);
+        return criteriaBuilder.isNotNull(this);
     }
 
     @Override

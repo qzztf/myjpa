@@ -1,8 +1,6 @@
 package cn.sexycode.myjpa.query.criteria;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
-import jdk.nashorn.internal.objects.annotations.Setter;
-
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Selection;
@@ -25,8 +23,13 @@ public class DefaultFieldLogic implements FieldLogic, Predicate {
      * 字段关系
      */
     private FieldRelation fieldRelation = FieldRelation.AND;
+    private CriteriaBuilder criteriaBuilder;
 
     public DefaultFieldLogic() {
+    }
+
+    public DefaultFieldLogic(CriteriaBuilder criteriaBuilder) {
+        this.criteriaBuilder = criteriaBuilder;
     }
 
     public DefaultFieldLogic(FieldRelation fieldRelation) {

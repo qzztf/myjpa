@@ -21,7 +21,7 @@ public class App
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
         CriteriaQuery<Object> query = criteriaBuilder.createQuery();
         Root<User> user = query.from(User.class);
-        Predicate id = criteriaBuilder.equal("id", 1);
+        Predicate id = criteriaBuilder.equal(user.get("id"), 1);
         query.where(id);
     }
 }

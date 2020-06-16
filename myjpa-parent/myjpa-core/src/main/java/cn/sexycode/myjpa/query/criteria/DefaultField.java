@@ -205,7 +205,7 @@ public class DefaultField<T> implements Field , Expression<T> {
 
     @Override
     public Predicate in(Expression values) {
-        return null;
+        return criteriaBuilder.in(values);
     }
 
     @Override

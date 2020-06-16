@@ -4,6 +4,7 @@ import cn.sexycode.myjpa.session.Session;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
 /**
@@ -19,4 +20,6 @@ public interface QueryFactory {
     Query createQuery(Session session, String qlString);
 
     <T> TypedQuery<T> createQuery(Session session, CriteriaQuery<T> criteriaQuery);
+
+    CriteriaBuilder createCriteriaBuilder(Session session);
 }

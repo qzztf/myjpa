@@ -1,6 +1,7 @@
 package cn.sexycode.myjpa.session;
 
 import cn.sexycode.myjpa.query.QueryFactory;
+import cn.sexycode.myjpa.query.criteria.MybatisCriteriaBuilder;
 import cn.sexycode.myjpa.transaction.MyjpaTransaction;
 import cn.sexycode.util.core.factory.BeanFactoryUtil;
 import org.apache.ibatis.session.Configuration;
@@ -227,7 +228,7 @@ public class SessionImpl implements Session {
 
     @Override
     public CriteriaBuilder getCriteriaBuilder() {
-        return null;
+        return BeanFactoryUtil.getBeanFactory().getBean(QueryFactory.class).createCriteriaBuilder(this);
     }
 
     @Override

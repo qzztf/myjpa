@@ -1,5 +1,6 @@
 package cn.sexycode.myjpa.query.criteria;
 
+import javax.persistence.EntityManager;
 import javax.persistence.Tuple;
 import javax.persistence.criteria.*;
 import java.math.BigDecimal;
@@ -13,7 +14,13 @@ import java.util.stream.Collectors;
 /**
  * @author qzz
  */
-public class MybatisCriteriaBuilder extends DefaultFilter implements CriteriaBuilder {
+public class MybatisCriteriaBuilder implements CriteriaBuilder {
+    private EntityManager entityManager;
+
+    public MybatisCriteriaBuilder(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
     /**
      * Create a <code>CriteriaQuery</code> object.
      *
@@ -21,7 +28,7 @@ public class MybatisCriteriaBuilder extends DefaultFilter implements CriteriaBui
      */
     @Override
     public CriteriaQuery<Object> createQuery() {
-        return null;
+        return new DefaultFilter<>(this, entityManager);
     }
 
     /**
@@ -33,7 +40,7 @@ public class MybatisCriteriaBuilder extends DefaultFilter implements CriteriaBui
      */
     @Override
     public <T> CriteriaQuery<T> createQuery(Class<T> resultClass) {
-        return null;
+        return new DefaultFilter<>(this, entityManager, resultClass);
     }
 
     /**
@@ -313,10 +320,11 @@ public class MybatisCriteriaBuilder extends DefaultFilter implements CriteriaBui
      */
     @Override
     public Predicate and(Expression<Boolean> x, Expression<Boolean> y) {
-        List<WhereClause> whereClauses = getFieldLogic().getWhereClauses();
+        DefaultFieldLogic fieldLogic = new DefaultFieldLogic();
+        List<WhereClause> whereClauses = fieldLogic.getWhereClauses();
         whereClauses.add((WhereClause) x);
         whereClauses.add((WhereClause) y);
-        return (Predicate) getFieldLogic();
+        return fieldLogic;
     }
 
     /**
@@ -328,10 +336,11 @@ public class MybatisCriteriaBuilder extends DefaultFilter implements CriteriaBui
      */
     @Override
     public Predicate and(Predicate... restrictions) {
-        List<WhereClause> whereClauses = getFieldLogic().getWhereClauses();
+        DefaultFieldLogic fieldLogic = new DefaultFieldLogic();
+        List<WhereClause> whereClauses = fieldLogic.getWhereClauses();
         whereClauses.addAll(Arrays.stream(restrictions).map(restriction -> (WhereClause) restriction)
                 .collect(Collectors.toList()));
-        return (Predicate) getFieldLogic();
+        return fieldLogic;
     }
 
     /**
@@ -344,7 +353,6 @@ public class MybatisCriteriaBuilder extends DefaultFilter implements CriteriaBui
     @Override
     public Predicate or(Expression<Boolean> x, Expression<Boolean> y) {
         DefaultFieldLogic fieldLogic = new DefaultFieldLogic(FieldRelation.OR);
-        getFieldLogic().getWhereClauses().add(fieldLogic);
         fieldLogic.getWhereClauses().add((WhereClause) x);
         fieldLogic.getWhereClauses().add((WhereClause) y);
         return fieldLogic;
@@ -363,8 +371,7 @@ public class MybatisCriteriaBuilder extends DefaultFilter implements CriteriaBui
         List<WhereClause> whereClauses = fieldLogic.getWhereClauses();
         whereClauses.addAll(Arrays.stream(restrictions).map(restriction -> (WhereClause) restriction)
                 .collect(Collectors.toList()));
-        getFieldLogic().getWhereClauses().add(fieldLogic);
-        return (Predicate) getFieldLogic();
+        return fieldLogic;
     }
 
     /**
@@ -375,9 +382,9 @@ public class MybatisCriteriaBuilder extends DefaultFilter implements CriteriaBui
      */
     @Override
     public Predicate not(Expression<Boolean> restriction) {
-        FieldLogic fieldLogic = getFieldLogic();
+        DefaultFieldLogic fieldLogic = new DefaultFieldLogic(FieldRelation.NOT);
         fieldLogic.getWhereClauses().add((WhereClause) restriction);
-        return (Predicate) fieldLogic;
+        return fieldLogic;
     }
 
     /**
@@ -388,7 +395,7 @@ public class MybatisCriteriaBuilder extends DefaultFilter implements CriteriaBui
      */
     @Override
     public Predicate conjunction() {
-        return (Predicate) getFieldLogic();
+        return new DefaultFieldLogic();
     }
 
     /**
@@ -399,7 +406,7 @@ public class MybatisCriteriaBuilder extends DefaultFilter implements CriteriaBui
      */
     @Override
     public Predicate disjunction() {
-        return or();
+        return new DefaultFieldLogic(FieldRelation.OR);
     }
 
     /**

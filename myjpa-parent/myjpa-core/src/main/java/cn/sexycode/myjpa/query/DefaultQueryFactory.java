@@ -1,6 +1,7 @@
 package cn.sexycode.myjpa.query;
 
 import cn.sexycode.myjpa.AvailableSettings;
+import cn.sexycode.myjpa.query.criteria.MybatisCriteriaBuilder;
 import cn.sexycode.myjpa.session.Session;
 import cn.sexycode.util.core.object.ObjectUtils;
 import cn.sexycode.util.core.properties.PropertiesUtil;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
 /**
@@ -48,5 +50,10 @@ public class DefaultQueryFactory implements QueryFactory {
     @Override
     public <T> TypedQuery<T> createQuery(Session session, CriteriaQuery<T> criteriaQuery) {
         return null;
+    }
+
+    @Override
+    public CriteriaBuilder createCriteriaBuilder(Session session) {
+        return new MybatisCriteriaBuilder(session);
     }
 }

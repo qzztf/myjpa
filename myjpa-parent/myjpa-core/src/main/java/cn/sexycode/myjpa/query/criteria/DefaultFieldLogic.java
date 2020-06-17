@@ -3,7 +3,6 @@ package cn.sexycode.myjpa.query.criteria;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Selection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -11,8 +10,9 @@ import java.util.stream.Collectors;
 
 /**
  * 查询条件组合
+ * @author qzz
  */
-public class DefaultFieldLogic implements FieldLogic, Predicate {
+public class DefaultFieldLogic extends AbstractPredicateImpl implements FieldLogic {
 
     /**
      * 查询字段组合列表
@@ -26,13 +26,16 @@ public class DefaultFieldLogic implements FieldLogic, Predicate {
     private CriteriaBuilder criteriaBuilder;
 
     public DefaultFieldLogic() {
+        super(null);
     }
 
     public DefaultFieldLogic(CriteriaBuilder criteriaBuilder) {
+        super(criteriaBuilder);
         this.criteriaBuilder = criteriaBuilder;
     }
 
     public DefaultFieldLogic(FieldRelation fieldRelation) {
+        super(null);
         this.fieldRelation = fieldRelation;
     }
 
@@ -93,7 +96,7 @@ public class DefaultFieldLogic implements FieldLogic, Predicate {
 
     @Override
     public List<Expression<Boolean>> getExpressions() {
-        return whereClauses.stream().map(whereClause -> ((Expression) whereClause)).collect(Collectors.toList());
+        return whereClauses.stream().map(whereClause -> ((Expression<Boolean>) whereClause)).collect(Collectors.toList());
     }
 
     @Override
@@ -132,33 +135,4 @@ public class DefaultFieldLogic implements FieldLogic, Predicate {
         return this;
     }
 
-    @Override
-    public <X> Expression<X> as(Class<X> type) {
-        return null;
-    }
-
-    @Override
-    public Selection<Boolean> alias(String name) {
-        return null;
-    }
-
-    @Override
-    public boolean isCompoundSelection() {
-        return false;
-    }
-
-    @Override
-    public List<Selection<?>> getCompoundSelectionItems() {
-        return null;
-    }
-
-    @Override
-    public Class<? extends Boolean> getJavaType() {
-        return null;
-    }
-
-    @Override
-    public String getAlias() {
-        return null;
-    }
 }

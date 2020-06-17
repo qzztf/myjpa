@@ -1,5 +1,7 @@
 package cn.sexycode.myjpa.query.criteria;
 
+import javax.persistence.criteria.Predicate;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -7,14 +9,18 @@ import java.util.List;
  *
  * @author qzz
  */
-public interface FieldLogic extends WhereClause {
+public interface FieldLogic extends WhereClause, Predicate {
     default FieldLogic eq(String name, Object obj) {
         getWhereClauses().add(new DefaultField(name, OP.EQUAL, obj));
         return this;
     }
+    default FieldLogic neq(String name, Object obj) {
+        getWhereClauses().add(new DefaultField(name, OP.NOT_EQUAL, obj));
+        return this;
+    }
 
-    default FieldLogic between(String name, List obj) {
-        getWhereClauses().add(new DefaultField(name, OP.BETWEEN, obj));
+    default FieldLogic between(String name, Object x, Object y) {
+        getWhereClauses().add(new DefaultField(name, OP.BETWEEN, Arrays.asList(x,y)));
         return this;
     }
 

@@ -12,7 +12,7 @@ import java.util.StringTokenizer;
 /**
  * 默认条件接口实现类。
  */
-public class DefaultField<T> implements Field , Expression<T> {
+public class DefaultField<T> extends AbstractExpressionImpl<T> implements Field<T> {
 
     // 字段
     private String field;
@@ -21,19 +21,29 @@ public class DefaultField<T> implements Field , Expression<T> {
     // 比较值
     private Object value;
 
+
     private CriteriaBuilder criteriaBuilder;
     // 字段前缀名，一般用于表的别名，如user.
     // private String preFieldName="";
 
     public DefaultField() {
+        super(null, null);
+    }
+
+    public DefaultField(CriteriaBuilder criteriaBuilder, String field, Class<T> javaType) {
+        super(criteriaBuilder, javaType);
+        this.field = field;
+        this.criteriaBuilder = criteriaBuilder;
     }
 
     public DefaultField(String field, Object value) {
+        super(null, null);
         this.field = field;
         this.value = value;
     }
 
     public DefaultField(String field, OP compare, Object value) {
+        super(null, null);
         this.field = field;
         this.compare = compare;
         this.value = value;
@@ -46,9 +56,6 @@ public class DefaultField<T> implements Field , Expression<T> {
 
     }
 
-    public DefaultField(CriteriaBuilder criteriaBuilder) {
-        this.criteriaBuilder = criteriaBuilder;
-    }
 
     /**
      * 针对in查询方式，根据传入的value的类型做不同的处理。 value 是 string，则分隔字符串，然后合并为符合in规范的字符串。

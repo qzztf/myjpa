@@ -128,8 +128,8 @@ public class DefaultFilter<T> implements Filter, CriteriaQuery<T> {
     }
 
     @Override
-    public Filter between(String name, List obj) {
-        fieldLogic.between(name, obj);
+    public Filter between(String name, Object x, Object y) {
+        fieldLogic.between(name, x, y);
         return this;
     }
 

@@ -1,11 +1,13 @@
 package cn.sexycode.myjpa.query.criteria;
 
+import javax.persistence.criteria.Expression;
+
 /**
  * 字段接口类。
  *
  * @author qzz
  */
-public interface Field extends WhereClause {
+public interface Field<T> extends WhereClause, Expression<T> {
     /**
      * 返回字段名
      *

@@ -4,7 +4,7 @@ package cn.sexycode.myjpa.query.criteria;
  * 操作符
  * @author qzz
  */
-public enum OP {
+public enum OP implements Operation{
     /**
      * 等于
      */
@@ -68,4 +68,13 @@ public enum OP {
         return desc;
     }
 
+    /**
+     * 返回条件的sql片段
+     *
+     * @return SQL片段
+     */
+    @Override
+    public String getSql() {
+        return op;
+    }
 }

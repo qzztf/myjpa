@@ -40,7 +40,7 @@ public interface Filter {
 
     Filter eq(String name, Object obj);
 
-    Filter between(String name, List obj);
+    Filter between(String name, Object x, Object y);
 
     Filter le(String name, Object obj);
 

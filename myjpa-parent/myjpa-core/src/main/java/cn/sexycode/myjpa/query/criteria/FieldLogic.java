@@ -9,43 +9,43 @@ import java.util.List;
  *
  * @author qzz
  */
-public interface FieldLogic extends WhereClause, Predicate {
+public interface FieldLogic extends Clause, Predicate {
     default FieldLogic eq(String name, Object obj) {
-        getWhereClauses().add(new DefaultField(name, OP.EQUAL, obj));
+        getClauses().add(new DefaultField(name, OP.EQUAL, obj));
         return this;
     }
     default FieldLogic neq(String name, Object obj) {
-        getWhereClauses().add(new DefaultField(name, OP.NOT_EQUAL, obj));
+        getClauses().add(new DefaultField(name, OP.NOT_EQUAL, obj));
         return this;
     }
 
     default FieldLogic between(String name, Object x, Object y) {
-        getWhereClauses().add(new DefaultField(name, OP.BETWEEN, Arrays.asList(x,y)));
+        getClauses().add(new DefaultField(name, OP.BETWEEN, Arrays.asList(x,y)));
         return this;
     }
 
     default FieldLogic le(String name, Object obj) {
-        getWhereClauses().add(new DefaultField(name, OP.LESS_EQUAL, obj));
+        getClauses().add(new DefaultField(name, OP.LESS_EQUAL, obj));
         return this;
     }
 
     default FieldLogic lt(String name, Object obj) {
-        getWhereClauses().add(new DefaultField(name, OP.LESS, obj));
+        getClauses().add(new DefaultField(name, OP.LESS, obj));
         return this;
     }
 
     default FieldLogic ge(String name, Object obj) {
-        getWhereClauses().add(new DefaultField(name, OP.GREAT_EQUAL, obj));
+        getClauses().add(new DefaultField(name, OP.GREAT_EQUAL, obj));
         return this;
     }
 
     default FieldLogic gt(String name, Object obj) {
-        getWhereClauses().add(new DefaultField(name, OP.GREAT, obj));
+        getClauses().add(new DefaultField(name, OP.GREAT, obj));
         return this;
     }
 
     default FieldLogic isNull(String name) {
-        getWhereClauses().add(new DefaultField(name, OP.IS_NULL, null));
+        getClauses().add(new DefaultField(name, OP.IS_NULL, null));
         return this;
     }
 
@@ -54,15 +54,15 @@ public interface FieldLogic extends WhereClause, Predicate {
      *
      * @return 字段条件
      */
-    List<WhereClause> getWhereClauses();
+    List<Clause> getClauses();
 
     default FieldLogic isNotNull(String name){
-        getWhereClauses().add(new DefaultField(name, OP.NOTNULL, null));
+        getClauses().add(new DefaultField(name, OP.NOTNULL, null));
         return this;
     }
 
     default FieldLogic in(String name, Object[] values){
-        getWhereClauses().add(new DefaultField(name, OP.IN, values));
+        getClauses().add(new DefaultField(name, OP.IN, values));
         return this;
     }
 }

@@ -321,9 +321,9 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
     @Override
     public Predicate and(Expression<Boolean> x, Expression<Boolean> y) {
         DefaultFieldLogic fieldLogic = new DefaultFieldLogic();
-        List<WhereClause> whereClauses = fieldLogic.getWhereClauses();
-        whereClauses.add((WhereClause) x);
-        whereClauses.add((WhereClause) y);
+        List<Clause> clauses = fieldLogic.getClauses();
+        clauses.add((Clause) x);
+        clauses.add((Clause) y);
         return fieldLogic;
     }
 
@@ -337,8 +337,8 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
     @Override
     public Predicate and(Predicate... restrictions) {
         DefaultFieldLogic fieldLogic = new DefaultFieldLogic();
-        List<WhereClause> whereClauses = fieldLogic.getWhereClauses();
-        whereClauses.addAll(Arrays.stream(restrictions).map(restriction -> (WhereClause) restriction)
+        List<Clause> clauses = fieldLogic.getClauses();
+        clauses.addAll(Arrays.stream(restrictions).map(restriction -> (Clause) restriction)
                 .collect(Collectors.toList()));
         return fieldLogic;
     }
@@ -353,8 +353,8 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
     @Override
     public Predicate or(Expression<Boolean> x, Expression<Boolean> y) {
         DefaultFieldLogic fieldLogic = new DefaultFieldLogic(FieldRelation.OR);
-        fieldLogic.getWhereClauses().add((WhereClause) x);
-        fieldLogic.getWhereClauses().add((WhereClause) y);
+        fieldLogic.getClauses().add((Clause) x);
+        fieldLogic.getClauses().add((Clause) y);
         return fieldLogic;
     }
 
@@ -368,8 +368,8 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
     @Override
     public Predicate or(Predicate... restrictions) {
         DefaultFieldLogic fieldLogic = new DefaultFieldLogic(FieldRelation.OR);
-        List<WhereClause> whereClauses = fieldLogic.getWhereClauses();
-        whereClauses.addAll(Arrays.stream(restrictions).map(restriction -> (WhereClause) restriction)
+        List<Clause> clauses = fieldLogic.getClauses();
+        clauses.addAll(Arrays.stream(restrictions).map(restriction -> (Clause) restriction)
                 .collect(Collectors.toList()));
         return fieldLogic;
     }
@@ -383,7 +383,7 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
     @Override
     public Predicate not(Expression<Boolean> restriction) {
         DefaultFieldLogic fieldLogic = new DefaultFieldLogic(FieldRelation.NOT);
-        fieldLogic.getWhereClauses().add((WhereClause) restriction);
+        fieldLogic.getClauses().add((Clause) restriction);
         return fieldLogic;
     }
 
@@ -465,7 +465,7 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
     @Override
     public Predicate equal(Expression<?> x, Expression<?> y) {
         DefaultFieldLogic fieldLogic = new DefaultFieldLogic();
-        fieldLogic.getWhereClauses().add((WhereClause) x);
+        fieldLogic.getClauses().add((Clause) x);
         return fieldLogic;
     }
 
@@ -490,7 +490,7 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
      */
     @Override
     public Predicate notEqual(Expression<?> x, Expression<?> y) {
-        return new DefaultFieldLogic().neq(((DefaultField) x).getField(), ((DefaultField) y).getValue());
+        return new ComparisonPredicate(this, OP.NOT_EQUAL, x, y) ;
     }
 
     /**
@@ -502,7 +502,7 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
      */
     @Override
     public Predicate notEqual(Expression<?> x, Object y) {
-        return new DefaultFieldLogic().neq(((DefaultField) x).getField(),  y);
+        return new ComparisonPredicate(this, OP.NOT_EQUAL, x, y) ;
     }
 
     /**
@@ -516,7 +516,7 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
     @Override
     public <Y extends Comparable<? super Y>> Predicate greaterThan(Expression<? extends Y> x,
             Expression<? extends Y> y) {
-        return new DefaultFieldLogic().gt(((DefaultField) x).getField(), ((DefaultField) y).getValue());
+        return new ComparisonPredicate(this, OP.GREAT, x, y) ;
     }
 
     /**
@@ -529,7 +529,7 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
      */
     @Override
     public <Y extends Comparable<? super Y>> Predicate greaterThan(Expression<? extends Y> x, Y y) {
-        return new DefaultFieldLogic().gt(((DefaultField) x).getField(),  y);
+        return new ComparisonPredicate(this, OP.GREAT, x, y) ;
     }
 
     /**
@@ -543,7 +543,7 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
     @Override
     public <Y extends Comparable<? super Y>> Predicate greaterThanOrEqualTo(Expression<? extends Y> x,
             Expression<? extends Y> y) {
-        return new DefaultFieldLogic().ge(((DefaultField) x).getField(), ((DefaultField) y).getValue());
+        return new ComparisonPredicate(this, OP.GREAT_EQUAL, x, y) ;
     }
 
     /**
@@ -556,7 +556,7 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
      */
     @Override
     public <Y extends Comparable<? super Y>> Predicate greaterThanOrEqualTo(Expression<? extends Y> x, Y y) {
-        return new DefaultFieldLogic().ge(((DefaultField) x).getField(), y);
+        return new ComparisonPredicate(this, OP.GREAT_EQUAL, x, y) ;
     }
 
     /**
@@ -569,7 +569,7 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
      */
     @Override
     public <Y extends Comparable<? super Y>> Predicate lessThan(Expression<? extends Y> x, Expression<? extends Y> y) {
-        return new DefaultFieldLogic().lt(((DefaultField) x).getField(), ((DefaultField) y).getValue());
+        return new ComparisonPredicate(this, OP.LESS, x, y) ;
     }
 
     /**
@@ -582,7 +582,7 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
      */
     @Override
     public <Y extends Comparable<? super Y>> Predicate lessThan(Expression<? extends Y> x, Y y) {
-        return new DefaultFieldLogic().lt(((DefaultField) x).getField(), y);
+        return new ComparisonPredicate(this, OP.LESS, x, y) ;
     }
 
     /**
@@ -596,7 +596,7 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
     @Override
     public <Y extends Comparable<? super Y>> Predicate lessThanOrEqualTo(Expression<? extends Y> x,
             Expression<? extends Y> y) {
-        return new DefaultFieldLogic().le(((DefaultField) x).getField(), ((DefaultField) y).getValue());
+        return new ComparisonPredicate(this, OP.LESS_EQUAL, x, y) ;
     }
 
     /**
@@ -609,7 +609,7 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
      */
     @Override
     public <Y extends Comparable<? super Y>> Predicate lessThanOrEqualTo(Expression<? extends Y> x, Y y) {
-        return new DefaultFieldLogic().le(((DefaultField) x).getField(), y);
+        return new ComparisonPredicate(this, OP.LESS_EQUAL, x, y) ;
     }
 
     /**
@@ -624,7 +624,7 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
     @Override
     public <Y extends Comparable<? super Y>> Predicate between(Expression<? extends Y> v, Expression<? extends Y> x,
             Expression<? extends Y> y) {
-        return new DefaultFieldLogic().between(((DefaultField) v).getField(), ((DefaultField) x).getValue(), ((DefaultField) y).getValue());
+        return new BetweenPredicate<>(this, v, x, y);
     }
 
     /**
@@ -638,7 +638,7 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
      */
     @Override
     public <Y extends Comparable<? super Y>> Predicate between(Expression<? extends Y> v, Y x, Y y) {
-        return new DefaultFieldLogic().between(((DefaultField) v).getField(), x, y);
+        return new BetweenPredicate<>(this, v, x, y);
     }
 
     /**
@@ -651,7 +651,7 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
      */
     @Override
     public Predicate gt(Expression<? extends Number> x, Expression<? extends Number> y) {
-        return new DefaultFieldLogic().gt(((DefaultField) x).getField(), ((DefaultField) y).getField());
+        return new ComparisonPredicate(this, OP.GREAT, x, y) ;
     }
 
     /**
@@ -664,7 +664,7 @@ public class MybatisCriteriaBuilder implements CriteriaBuilder {
      */
     @Override
     public Predicate gt(Expression<? extends Number> x, Number y) {
-        return null;
+        return new ComparisonPredicate(this, OP.GREAT, x, y) ;
     }
 
     /**

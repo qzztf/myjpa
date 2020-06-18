@@ -17,7 +17,7 @@ public class DefaultFieldLogic extends AbstractPredicateImpl implements FieldLog
     /**
      * 查询字段组合列表
      */
-    private List<WhereClause> whereClauses = new ArrayList<>();
+    private List<Clause> clauses = new ArrayList<>();
 
     /**
      * 字段关系
@@ -40,24 +40,24 @@ public class DefaultFieldLogic extends AbstractPredicateImpl implements FieldLog
     }
 
     @Override
-    public List<WhereClause> getWhereClauses() {
-        return whereClauses;
+    public List<Clause> getClauses() {
+        return clauses;
     }
 
     @Override
     public String getSql() {
-        if (whereClauses.size() == 0) {
+        if (clauses.size() == 0) {
             return "";
         }
-        if (whereClauses.size() == 1 && !FieldRelation.NOT.equals(fieldRelation)) {
-            return whereClauses.get(0).getSql();
+        if (clauses.size() == 1 && !FieldRelation.NOT.equals(fieldRelation)) {
+            return clauses.get(0).getSql();
         }
 
         StringBuilder sqlBuf = new StringBuilder("(");
         int i = 0;
         if (FieldRelation.NOT.equals(fieldRelation)) {
             sqlBuf.append(" NOT (");
-            for (WhereClause clause : whereClauses) {
+            for (Clause clause : clauses) {
                 if (i++ > 0) {
                     sqlBuf.append(" ").append(FieldRelation.AND).append(" ");
                 }
@@ -68,7 +68,7 @@ public class DefaultFieldLogic extends AbstractPredicateImpl implements FieldLog
             return sqlBuf.toString();
         }
 
-        for (WhereClause clause : whereClauses) {
+        for (Clause clause : clauses) {
             if (i++ > 0) {
                 sqlBuf.append(" ").append(fieldRelation).append(" ");
             }
@@ -96,7 +96,7 @@ public class DefaultFieldLogic extends AbstractPredicateImpl implements FieldLog
 
     @Override
     public List<Expression<Boolean>> getExpressions() {
-        return whereClauses.stream().map(whereClause -> ((Expression<Boolean>) whereClause)).collect(Collectors.toList());
+        return clauses.stream().map(whereClause -> ((Expression<Boolean>) whereClause)).collect(Collectors.toList());
     }
 
     @Override

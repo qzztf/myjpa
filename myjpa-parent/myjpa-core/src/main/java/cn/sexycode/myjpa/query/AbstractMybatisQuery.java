@@ -3,11 +3,8 @@ package cn.sexycode.myjpa.query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.FlushModeType;
-import javax.persistence.LockModeType;
-import javax.persistence.Parameter;
-import javax.persistence.TypedQuery;
-import java.util.Map;
+import javax.persistence.*;
+import java.util.*;
 
 /**
  * @author Steve Ebersole
@@ -16,6 +13,10 @@ public abstract class AbstractMybatisQuery<R> implements MybatisQuery<R> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMybatisQuery.class);
 
+    @Override
+    public List<R> getResultList() {
+        return null;
+    }
 
     @Override
     public R getSingleResult() {
@@ -100,5 +101,80 @@ public abstract class AbstractMybatisQuery<R> implements MybatisQuery<R> {
     @Override
     public <T> T unwrap(Class<T> cls) {
         return (T) this;
+    }
+
+    @Override
+    public <T> TypedQuery<R> setParameter(Parameter<T> param, T value) {
+        return this;
+    }
+
+    @Override
+    public TypedQuery<R> setParameter(Parameter<Calendar> param, Calendar value, TemporalType temporalType) {
+        return this;
+    }
+
+    @Override
+    public TypedQuery<R> setParameter(Parameter<Date> param, Date value, TemporalType temporalType) {
+        return this;
+    }
+
+    @Override
+    public TypedQuery<R> setParameter(String name, Object value) {
+        return this;
+    }
+
+    @Override
+    public TypedQuery<R> setParameter(String name, Calendar value, TemporalType temporalType) {
+        return this;
+    }
+
+    @Override
+    public TypedQuery<R> setParameter(String name, Date value, TemporalType temporalType) {
+        return this;
+    }
+
+    @Override
+    public TypedQuery<R> setParameter(int position, Object value) {
+        return this;
+    }
+
+    @Override
+    public TypedQuery<R> setParameter(int position, Calendar value, TemporalType temporalType) {
+        return null;
+    }
+
+    @Override
+    public TypedQuery<R> setParameter(int position, Date value, TemporalType temporalType) {
+        return null;
+    }
+
+    @Override
+    public Set<Parameter<?>> getParameters() {
+        return null;
+    }
+
+    @Override
+    public Parameter<?> getParameter(String name) {
+        return null;
+    }
+
+    @Override
+    public <T> Parameter<T> getParameter(String name, Class<T> type) {
+        return null;
+    }
+
+    @Override
+    public Parameter<?> getParameter(int position) {
+        return null;
+    }
+
+    @Override
+    public <T> Parameter<T> getParameter(int position, Class<T> type) {
+        return null;
+    }
+
+    @Override
+    public void setParameterValues(Object[] values) {
+
     }
 }

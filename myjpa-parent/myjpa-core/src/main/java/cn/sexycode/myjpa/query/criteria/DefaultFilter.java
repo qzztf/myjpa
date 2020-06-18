@@ -75,8 +75,8 @@ public class DefaultFilter<T> implements Filter, CriteriaQuery<T> {
 
     //初始化参数
     private void initParams(FieldLogic fedLog) {
-        List<WhereClause> list = fedLog.getWhereClauses();
-        for (WhereClause clause : list) {
+        List<Clause> list = fedLog.getClauses();
+        for (Clause clause : list) {
             if (clause instanceof Field) {
                 Field field = (Field) clause;
                 if (OP.IS_NULL.equals(field.getCompare()) || OP.NOTNULL.equals(field.getCompare())) {
@@ -117,7 +117,7 @@ public class DefaultFilter<T> implements Filter, CriteriaQuery<T> {
 
     @Override
     public Filter addFilter(String name, Object obj, OP queryType) {
-        fieldLogic.getWhereClauses().add(new DefaultField(name, queryType, obj));
+        fieldLogic.getClauses().add(new DefaultField(name, queryType, obj));
         return this;
     }
 
@@ -230,12 +230,14 @@ public class DefaultFilter<T> implements Filter, CriteriaQuery<T> {
 
     @Override
     public CriteriaQuery<T> where(Expression<Boolean> restriction) {
-        return null;
+        getFieldLogic().getClauses().add((Clause) restriction);
+        return this;
     }
 
     @Override
     public CriteriaQuery<T> where(Predicate... restrictions) {
-        return null;
+        Arrays.stream(restrictions).forEach(r -> getFieldLogic().getClauses().add(((Clause) r)));
+        return this;
     }
 
     @Override
@@ -300,7 +302,7 @@ public class DefaultFilter<T> implements Filter, CriteriaQuery<T> {
 
     @Override
     public Class<T> getResultType() {
-        return null;
+        return resultClass;
     }
 
     @Override

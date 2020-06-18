@@ -7,7 +7,7 @@ import javax.persistence.criteria.Selection;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class AbstractExpressionImpl<T> implements Expression<T>, WhereClause {
+public abstract class AbstractExpressionImpl<T> implements Expression<T>, Clause {
 
     private CriteriaBuilder criteriaBuilder;
     private Class<T> javaType;

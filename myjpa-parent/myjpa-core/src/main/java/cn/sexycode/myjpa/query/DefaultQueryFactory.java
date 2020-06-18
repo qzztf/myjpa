@@ -1,6 +1,7 @@
 package cn.sexycode.myjpa.query;
 
 import cn.sexycode.myjpa.AvailableSettings;
+import cn.sexycode.myjpa.query.criteria.DefaultFilter;
 import cn.sexycode.myjpa.query.criteria.MybatisCriteriaBuilder;
 import cn.sexycode.myjpa.session.Session;
 import cn.sexycode.util.core.object.ObjectUtils;
@@ -22,7 +23,7 @@ public class DefaultQueryFactory implements QueryFactory {
 
     @Override
     public <T> TypedQuery<T> createQuery(Session session, String qlString, Class<T> resultClass) {
-        return new MybatisQueryImpl<>(session, qlString, resultClass);
+        return new MybatisTypedQueryImpl<>(session, qlString, resultClass);
     }
 
     @Override
@@ -49,7 +50,8 @@ public class DefaultQueryFactory implements QueryFactory {
 
     @Override
     public <T> TypedQuery<T> createQuery(Session session, CriteriaQuery<T> criteriaQuery) {
-        return null;
+        DefaultFilter<T> filter = (DefaultFilter<T>) criteriaQuery;
+        return new MybatisTypedQueryImpl<>(session, filter.getSqlSelect(), filter.getResultType());
     }
 
     @Override

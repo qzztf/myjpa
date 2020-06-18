@@ -7,7 +7,7 @@ import javax.persistence.criteria.Expression;
  *
  * @author qzz
  */
-public interface Field<T> extends WhereClause, Expression<T> {
+public interface Field<T> extends Clause, Expression<T> {
     /**
      * 返回字段名
      *

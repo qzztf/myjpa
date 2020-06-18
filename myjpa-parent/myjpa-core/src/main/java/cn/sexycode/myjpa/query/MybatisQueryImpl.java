@@ -9,22 +9,16 @@ import java.util.*;
 /**
  * @author Steve Ebersole
  */
-public class MybatisQueryImpl<R> implements TypedQuery<R> {
+public class MybatisQueryImpl implements Query {
     private final String qlString;
 	private Session session;
-	private Class<R> resultClass;
 
 	//    private MappedStatement mappedStatement;
 
     private List<Parameter<?>> parameters = new LinkedList<>();
-	public MybatisQueryImpl(
-			Session session, String qlString) {
-        this(session, qlString, null);
-	}
 
-	public MybatisQueryImpl(Session session, String qlString, Class<R> resultClass) {
+	public MybatisQueryImpl(Session session, String qlString) {
         this.qlString = qlString;
-		this.resultClass = resultClass;
 		this.session = session;
         Metamodel metamodel = session.getEntityManagerFactory().getMetamodel();
         //		EntityType<R> entity = metamodel.entity(resultClass);
@@ -36,12 +30,12 @@ public class MybatisQueryImpl<R> implements TypedQuery<R> {
 	}
 
 	@Override
-	public List<R> getResultList() {
+	public List getResultList() {
 		return null;
 	}
 
 	@Override
-	public R getSingleResult() {
+	public Object getSingleResult() {
 		return null;
 	}
 
@@ -51,7 +45,7 @@ public class MybatisQueryImpl<R> implements TypedQuery<R> {
 	}
 
 	@Override
-	public TypedQuery<R> setMaxResults(int maxResult) {
+	public Query setMaxResults(int maxResult) {
 		return null;
 	}
 
@@ -61,7 +55,7 @@ public class MybatisQueryImpl<R> implements TypedQuery<R> {
 	}
 
 	@Override
-	public TypedQuery<R> setFirstResult(int startPosition) {
+	public Query setFirstResult(int startPosition) {
 		return null;
 	}
 
@@ -71,7 +65,7 @@ public class MybatisQueryImpl<R> implements TypedQuery<R> {
 	}
 
 	@Override
-	public TypedQuery<R> setHint(String hintName, Object value) {
+	public Query setHint(String hintName, Object value) {
 		return null;
 	}
 
@@ -81,47 +75,47 @@ public class MybatisQueryImpl<R> implements TypedQuery<R> {
 	}
 
 	@Override
-	public <T> TypedQuery<R> setParameter(Parameter<T> param, T value) {
+	public <T> Query setParameter(Parameter<T> param, T value) {
 		return null;
 	}
 
 	@Override
-	public TypedQuery<R> setParameter(Parameter<Calendar> param, Calendar value, TemporalType temporalType) {
+	public Query setParameter(Parameter<Calendar> param, Calendar value, TemporalType temporalType) {
 		return null;
 	}
 
 	@Override
-	public TypedQuery<R> setParameter(Parameter<Date> param, Date value, TemporalType temporalType) {
+	public Query setParameter(Parameter<Date> param, Date value, TemporalType temporalType) {
 		return null;
 	}
 
 	@Override
-	public TypedQuery<R> setParameter(String name, Object value) {
+	public Query setParameter(String name, Object value) {
 		return null;
 	}
 
 	@Override
-	public TypedQuery<R> setParameter(String name, Calendar value, TemporalType temporalType) {
+	public Query setParameter(String name, Calendar value, TemporalType temporalType) {
 		return null;
 	}
 
 	@Override
-	public TypedQuery<R> setParameter(String name, Date value, TemporalType temporalType) {
+	public Query setParameter(String name, Date value, TemporalType temporalType) {
 		return null;
 	}
 
 	@Override
-	public TypedQuery<R> setParameter(int position, Object value) {
+	public Query setParameter(int position, Object value) {
 		return null;
 	}
 
 	@Override
-	public TypedQuery<R> setParameter(int position, Calendar value, TemporalType temporalType) {
+	public Query setParameter(int position, Calendar value, TemporalType temporalType) {
 		return null;
 	}
 
 	@Override
-	public TypedQuery<R> setParameter(int position, Date value, TemporalType temporalType) {
+	public Query setParameter(int position, Date value, TemporalType temporalType) {
 		return null;
 	}
 
@@ -171,7 +165,7 @@ public class MybatisQueryImpl<R> implements TypedQuery<R> {
 	}
 
 	@Override
-	public TypedQuery<R> setFlushMode(FlushModeType flushMode) {
+	public Query setFlushMode(FlushModeType flushMode) {
 		return null;
 	}
 
@@ -181,7 +175,7 @@ public class MybatisQueryImpl<R> implements TypedQuery<R> {
 	}
 
 	@Override
-	public TypedQuery<R> setLockMode(LockModeType lockMode) {
+	public Query setLockMode(LockModeType lockMode) {
 		return null;
 	}
 

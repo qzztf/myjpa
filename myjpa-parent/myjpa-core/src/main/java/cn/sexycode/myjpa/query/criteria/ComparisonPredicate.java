@@ -21,6 +21,13 @@ public class ComparisonPredicate extends AbstractPredicateImpl {
         this.right = right;
     }
 
+    public ComparisonPredicate(CriteriaBuilder criteriaBuilder, Operation operation, Expression<?> left, Object right) {
+        super(criteriaBuilder);
+        this.operation = operation;
+        this.left = left;
+        this.right = new LiteralExpression<>(criteriaBuilder, right);
+    }
+
     /**
      * 返回条件的sql片段
      *
@@ -29,6 +36,6 @@ public class ComparisonPredicate extends AbstractPredicateImpl {
     @Override
     public String getSql() {
         return String
-                .format("%s%s%s", ((WhereClause) left).getSql(), operation.getSql(), ((WhereClause) right).getSql());
+                .format("%s %s %s", ((Clause) left).getSql(), operation.getSql(), ((Clause) right).getSql());
     }
 }

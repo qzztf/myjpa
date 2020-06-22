@@ -1,7 +1,10 @@
 package cn.sexycode.myjpa.metamodel.internal;
 
 import cn.sexycode.myjpa.mapping.PersistentClass;
+import cn.sexycode.myjpa.mapping.Property;
 import cn.sexycode.myjpa.session.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.MappedSuperclass;
 import javax.persistence.metamodel.*;
@@ -22,6 +25,8 @@ import java.util.*;
  *
  */
 class MetadataContext {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MetadataContext.class);
 
     private final SessionFactory sessionFactory;
     private Set<MappedSuperclass> knownMappedSuperclasses;
@@ -128,8 +133,8 @@ class MetadataContext {
     }
 
     public void wrapUp() {
-        /*if ( LOG.isTraceEnabled() ) {
-            LOG.trace( "Wrapping up metadata context..." );
+        if ( LOGGER.isTraceEnabled() ) {
+            LOGGER.trace( "Wrapping up metadata context..." );
         }
 
         boolean staticMetamodelScanEnabled = JpaStaticMetaModelPopulationSetting
@@ -140,8 +145,8 @@ class MetadataContext {
             if ( PersistentClass.class.isAssignableFrom( mapping.getClass() ) ) {
                 @SuppressWarnings("unchecked")
                 final PersistentClass safeMapping = (PersistentClass) mapping;
-                if ( LOG.isTraceEnabled() ) {
-                    LOG.trace( "Starting entity [" + safeMapping.getEntityName() + ']' );
+                if ( LOGGER.isTraceEnabled() ) {
+                    LOGGER.trace( "Starting entity [" + safeMapping.getEntityName() + ']' );
                 }
                 try {
                     final EntityTypeDescriptor<?> jpaMapping = entityTypesByPersistentClass.get( safeMapping );
@@ -225,7 +230,7 @@ class MetadataContext {
             for ( EmbeddedTypeDescriptor embeddable : embeddables ) {
                 populateStaticMetamodel( embeddable );
             }
-        }*/
+        }
     }
 
     private <X> void applyIdMetadata(PersistentClass persistentClass, EntityTypeImpl<X> jpaEntityType) {

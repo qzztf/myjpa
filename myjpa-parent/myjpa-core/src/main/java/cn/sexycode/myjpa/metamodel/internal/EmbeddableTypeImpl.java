@@ -1,23 +1,28 @@
 package cn.sexycode.myjpa.metamodel.internal;
 
+import cn.sexycode.myjpa.session.SessionFactory;
 
-import javax.persistence.metamodel.EmbeddableType;
 import java.io.Serializable;
 
 /**
+ * Standard Hibernate implementation of JPA's {@link javax.persistence.metamodel.EmbeddableType}
+ * contract
  *
+ * @author Emmanuel Bernard
+ * @author Steve Ebersole`
  */
-public class EmbeddableTypeImpl<X>
-		extends AbstractManagedType<X>
-		implements EmbeddableType<X>, Serializable {
+public class EmbeddableTypeImpl<J>
+		extends AbstractManagedType<J>
+		implements EmbeddedTypeDescriptor<J>, Serializable {
 
-	private final AbstractManagedType parent;
-//	private final ComponentType hibernateType;
+	private final ManagedTypeDescriptor<?> parent;
 
-	public EmbeddableTypeImpl(Class<X> javaType, AbstractManagedType parent) {
-		super( javaType, null, null );
+	public EmbeddableTypeImpl(
+			Class<J> javaType,
+			ManagedTypeDescriptor<?> parent,
+			SessionFactory sessionFactory) {
+		super( javaType, null, null, sessionFactory );
 		this.parent = parent;
-//		this.hibernateType = hibernateType;
 	}
 
 	@Override
@@ -25,11 +30,9 @@ public class EmbeddableTypeImpl<X>
 		return PersistenceType.EMBEDDABLE;
 	}
 
-	public AbstractManagedType getParent() {
+	@Override
+	public ManagedTypeDescriptor<?> getParent() {
 		return parent;
 	}
 
-	/*public ComponentType getHibernateType() {
-		return hibernateType;
-	}*/
 }

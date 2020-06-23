@@ -1,5 +1,7 @@
 package cn.sexycode.myjpa.metamodel.internal;
 
+import cn.sexycode.myjpa.session.SessionFactory;
+import cn.sexycode.util.core.exception.AssertionFailure;
 
 import javax.persistence.metamodel.*;
 import java.io.Serializable;
@@ -11,97 +13,104 @@ import java.util.Set;
 /**
  * Defines commonality for the JPA {@link ManagedType} hierarchy of interfaces.
  *
- *
+ * @author Steve Ebersole
  */
-public abstract class AbstractManagedType<X> 
-		extends AbstractType<X>
-		implements ManagedType<X>, Serializable {
+public abstract class AbstractManagedType<J>
+		extends AbstractType<J>
+		implements ManagedTypeDescriptor<J>, Serializable {
 
-	private final  AbstractManagedType<? super X> superType;
+	private final SessionFactory sessionFactory;
 
-	private final Map<String,Attribute<X, ?>> declaredAttributes
-			= new HashMap<String, Attribute<X,?>>();
-	private final Map<String, SingularAttribute<X, ?>> declaredSingularAttributes
-			= new HashMap<String, SingularAttribute<X,?>>();
-	private final Map<String, PluralAttribute<X, ?, ?>> declaredPluralAttributes
-			= new HashMap<String, PluralAttribute<X,?,?>>();
+	private final ManagedTypeDescriptor<? super J> superType;
 
-	protected AbstractManagedType(Class<X> javaType, String typeName, AbstractManagedType<? super X> superType) {
+	private final Map<String, PersistentAttributeDescriptor<J, ?>> declaredAttributes = new HashMap<>();
+	private final Map<String, SingularPersistentAttribute<J, ?>> declaredSingularAttributes = new HashMap<>();
+	private final Map<String, PluralPersistentAttribute<J, ?, ?>> declaredPluralAttributes = new HashMap<>();
+
+	private transient InFlightAccess<J> inFlightAccess;
+
+	protected AbstractManagedType(
+			Class<J> javaType,
+			String typeName,
+			ManagedTypeDescriptor<? super J> superType,
+			SessionFactory sessionFactory) {
 		super( javaType, typeName );
 		this.superType = superType;
+		this.sessionFactory = sessionFactory;
+
+		this.inFlightAccess = createInFlightAccess();
 	}
 
-	protected AbstractManagedType<? super X> getSupertype() {
+	protected InFlightAccess<J> createInFlightAccess() {
+		return new InFlightAccessImpl();
+	}
+
+	@Override
+	public String getName() {
+		return getTypeName();
+	}
+
+	@Override
+	public ManagedTypeDescriptor<? super J> getSuperType() {
 		return superType;
 	}
 
-	private boolean locked;
+	protected SessionFactory sessionFactory() {
+		return sessionFactory;
+	}
 
-	public Builder<X> getBuilder() {
-		if ( locked ) {
+	@Override
+	public InFlightAccess<J> getInFlightAccess() {
+		if ( inFlightAccess == null ) {
 			throw new IllegalStateException( "Type has been locked" );
 		}
-		return new Builder<X>() {
-			@Override
-			@SuppressWarnings("unchecked")
-			public void addAttribute(Attribute<X,?> attribute) {
-				declaredAttributes.put( attribute.getName(), attribute );
-				final Bindable.BindableType bindableType = ( ( Bindable ) attribute ).getBindableType();
-				switch ( bindableType ) {
-					case SINGULAR_ATTRIBUTE : {
-						declaredSingularAttributes.put( attribute.getName(), (SingularAttribute<X,?>) attribute );
-						break;
-					}
-					case PLURAL_ATTRIBUTE : {
-						declaredPluralAttributes.put(attribute.getName(), (PluralAttribute<X,?,?>) attribute );
-						break;
-					}
-					default : {
-//						throw new AssertionFailure( "unknown bindable type: " + bindableType );
-					}
-				}
-			}
-		};
-	}
 
-	public void lock() {
-		locked = true;
+		return inFlightAccess;
 	}
-
-	public interface Builder<X> {
-		void addAttribute(Attribute<X, ?> attribute);
-	}
-
 
 	@Override
 	@SuppressWarnings({ "unchecked" })
-	public Set<Attribute<? super X, ?>> getAttributes() {
-		HashSet attributes = new HashSet<Attribute<X, ?>>( declaredAttributes.values() );
-		if ( getSupertype() != null ) {
-			attributes.addAll( getSupertype().getAttributes() );
+	public Set<Attribute<? super J, ?>> getAttributes() {
+		HashSet attributes = new HashSet<Attribute<J, ?>>( declaredAttributes.values() );
+		if ( getSuperType() != null ) {
+			attributes.addAll( getSuperType().getAttributes() );
 		}
 		return attributes;
 	}
 
 	@Override
-	public Set<Attribute<X, ?>> getDeclaredAttributes() {
-		return new HashSet<Attribute<X, ?>>( declaredAttributes.values() );
+	public Set<Attribute<J, ?>> getDeclaredAttributes() {
+		return new HashSet<>( declaredAttributes.values() );
 	}
 
 	@Override
 	@SuppressWarnings({ "unchecked" })
-	public Attribute<? super X, ?> getAttribute(String name) {
-		Attribute<? super X, ?> attribute = declaredAttributes.get( name );
-		if ( attribute == null && getSupertype() != null ) {
-			attribute = getSupertype().getAttribute( name );
+	public PersistentAttributeDescriptor<? super J, ?> getAttribute(String name) {
+		PersistentAttributeDescriptor<? super J, ?> attribute = declaredAttributes.get( name );
+		if ( attribute == null && getSuperType() != null ) {
+			attribute = getSuperType().getAttribute( name );
 		}
 		checkNotNull( "Attribute ", attribute, name );
 		return attribute;
 	}
 
 	@Override
-	public Attribute<X, ?> getDeclaredAttribute(String name) {
-		Attribute<X, ?> attr = declaredAttributes.get( name );
+	public PersistentAttributeDescriptor<J, ?> findDeclaredAttribute(String name) {
+		return declaredAttributes.get( name );
+	}
+
+	@Override
+	public PersistentAttributeDescriptor<? super J, ?> findAttribute(String name) {
+		PersistentAttributeDescriptor<? super J, ?> attribute = findDeclaredAttribute( name );
+		if ( attribute == null && getSuperType() != null ) {
+			attribute = getSuperType().findAttribute( name );
+		}
+		return attribute;
+	}
+
+	@Override
+	public PersistentAttributeDescriptor<J, ?> getDeclaredAttribute(String name) {
+		PersistentAttributeDescriptor<J, ?> attr = declaredAttributes.get( name );
 		checkNotNull( "Attribute ", attr, name );
 		return attr;
 	}
@@ -122,54 +131,54 @@ public abstract class AbstractManagedType<X>
 
 	@Override
 	@SuppressWarnings({ "unchecked" })
-	public Set<SingularAttribute<? super X, ?>> getSingularAttributes() {
-		HashSet attributes = new HashSet<SingularAttribute<X, ?>>( declaredSingularAttributes.values() );
-		if ( getSupertype() != null ) {
-			attributes.addAll( getSupertype().getSingularAttributes() );
+	public Set<SingularAttribute<? super J, ?>> getSingularAttributes() {
+		HashSet attributes = new HashSet<SingularAttribute<J, ?>>( declaredSingularAttributes.values() );
+		if ( getSuperType() != null ) {
+			attributes.addAll( getSuperType().getSingularAttributes() );
 		}
 		return attributes;
 	}
 
 	@Override
-	public Set<SingularAttribute<X, ?>> getDeclaredSingularAttributes() {
-		return new HashSet<SingularAttribute<X, ?>>( declaredSingularAttributes.values() );
+	public Set<SingularAttribute<J, ?>> getDeclaredSingularAttributes() {
+		return new HashSet<SingularAttribute<J, ?>>( declaredSingularAttributes.values() );
 	}
 
 	@Override
 	@SuppressWarnings({ "unchecked" })
-	public SingularAttribute<? super X, ?> getSingularAttribute(String name) {
-		SingularAttribute<? super X, ?> attribute = declaredSingularAttributes.get( name );
-		if ( attribute == null && getSupertype() != null ) {
-			attribute = getSupertype().getSingularAttribute( name );
+	public SingularAttribute<? super J, ?> getSingularAttribute(String name) {
+		SingularAttribute<? super J, ?> attribute = declaredSingularAttributes.get( name );
+		if ( attribute == null && getSuperType() != null ) {
+			attribute = getSuperType().getSingularAttribute( name );
 		}
 		checkNotNull( "SingularAttribute ", attribute, name );
 		return attribute;
 	}
 
 	@Override
-	public SingularAttribute<X, ?> getDeclaredSingularAttribute(String name) {
-		final SingularAttribute<X, ?> attr = declaredSingularAttributes.get( name );
+	public SingularAttribute<J, ?> getDeclaredSingularAttribute(String name) {
+		final SingularAttribute<J, ?> attr = declaredSingularAttributes.get( name );
 		checkNotNull( "SingularAttribute ", attr, name );
 		return attr;
 	}
 
 	@Override
 	@SuppressWarnings({ "unchecked" })
-	public <Y> SingularAttribute<? super X, Y> getSingularAttribute(String name, Class<Y> type) {
-		SingularAttribute<? super X, ?> attribute = declaredSingularAttributes.get( name );
-		if ( attribute == null && getSupertype() != null ) {
-			attribute = getSupertype().getSingularAttribute( name );
+	public <Y> SingularPersistentAttribute<? super J, Y> getSingularAttribute(String name, Class<Y> type) {
+		SingularAttribute<? super J, ?> attribute = declaredSingularAttributes.get( name );
+		if ( attribute == null && getSuperType() != null ) {
+			attribute = getSuperType().getSingularAttribute( name );
 		}
 		checkTypeForSingleAttribute( "SingularAttribute ", attribute, name, type );
-		return ( SingularAttribute<? super X, Y> ) attribute;
+		return (SingularPersistentAttribute) attribute;
 	}
 
 	@Override
 	@SuppressWarnings( "unchecked")
-	public <Y> SingularAttribute<X, Y> getDeclaredSingularAttribute(String name, Class<Y> javaType) {
-		final SingularAttribute<X, ?> attr = declaredSingularAttributes.get( name );
+	public <Y> SingularPersistentAttribute<J, Y> getDeclaredSingularAttribute(String name, Class<Y> javaType) {
+		final SingularAttribute<J, ?> attr = declaredSingularAttributes.get( name );
 		checkTypeForSingleAttribute( "SingularAttribute ", attr, name, javaType );
-		return ( SingularAttribute<X, Y> ) attr;
+		return (SingularPersistentAttribute) attr;
 	}
 
 	private <Y> void checkTypeForSingleAttribute(
@@ -183,8 +192,8 @@ public abstract class AbstractManagedType<X>
 			}
 			throw new IllegalArgumentException(
 					attributeType + " named " + name
-					+ ( javaType != null ? " and of type " + javaType.getName() : "" )
-					+ " is not present"
+							+ ( javaType != null ? " and of type " + javaType.getName() : "" )
+							+ " is not present"
 			);
 		}
 	}
@@ -223,35 +232,37 @@ public abstract class AbstractManagedType<X>
 
 	@Override
 	@SuppressWarnings({ "unchecked" })
-	public Set<PluralAttribute<? super X, ?, ?>> getPluralAttributes() {
-		HashSet attributes = new HashSet<PluralAttribute<? super X, ?, ?>>( declaredPluralAttributes.values() );
-		if ( getSupertype() != null ) {
-			attributes.addAll( getSupertype().getPluralAttributes() );
+	public Set<PluralAttribute<? super J, ?, ?>> getPluralAttributes() {
+		HashSet attributes = new HashSet<PluralAttribute<? super J, ?, ?>>( declaredPluralAttributes.values() );
+		if ( getSuperType() != null ) {
+			attributes.addAll( getSuperType().getPluralAttributes() );
 		}
 		return attributes;
 	}
 
 	@Override
-	public Set<PluralAttribute<X, ?, ?>> getDeclaredPluralAttributes() {
-		return new HashSet<PluralAttribute<X,?,?>>( declaredPluralAttributes.values() );
+	public Set<PluralAttribute<J, ?, ?>> getDeclaredPluralAttributes() {
+		return new HashSet<PluralAttribute<J,?,?>>( declaredPluralAttributes.values() );
 	}
 
 	@Override
 	@SuppressWarnings({ "unchecked" })
-	public CollectionAttribute<? super X, ?> getCollection(String name) {
-		PluralAttribute<? super X, ?, ?> attribute = getPluralAttribute( name );
-		if ( attribute == null && getSupertype() != null ) {
-			attribute = getSupertype().getPluralAttribute( name );
+	public CollectionAttribute<? super J, ?> getCollection(String name) {
+		PluralPersistentAttribute attribute = getPluralAttribute( name );
+		if ( attribute == null && getSuperType() != null ) {
+			attribute = getSuperType().getPluralAttribute( name );
 		}
 		basicCollectionCheck( attribute, name );
-		return ( CollectionAttribute<X, ?> ) attribute;
+		return ( CollectionAttribute<J, ?> ) attribute;
 	}
 
-	private PluralAttribute<? super X, ?, ?> getPluralAttribute(String name) {
+	@Override
+	@SuppressWarnings("unchecked")
+	public PluralPersistentAttribute<? super J, ?, ?> getPluralAttribute(String name) {
 		return declaredPluralAttributes.get( name );
 	}
 
-	private void basicCollectionCheck(PluralAttribute<? super X, ?, ?> attribute, String name) {
+	private void basicCollectionCheck(PluralAttribute<? super J, ?, ?> attribute, String name) {
 		checkNotNull( "CollectionAttribute", attribute, name );
 		if ( ! CollectionAttribute.class.isAssignableFrom( attribute.getClass() ) ) {
 			throw new IllegalArgumentException( name + " is not a CollectionAttribute: " + attribute.getClass() );
@@ -260,24 +271,24 @@ public abstract class AbstractManagedType<X>
 
 	@Override
 	@SuppressWarnings( "unchecked")
-	public CollectionAttribute<X, ?> getDeclaredCollection(String name) {
-		final PluralAttribute<X,?,?> attribute = declaredPluralAttributes.get( name );
+	public CollectionAttribute<J, ?> getDeclaredCollection(String name) {
+		final PluralAttribute<J,?,?> attribute = declaredPluralAttributes.get( name );
 		basicCollectionCheck( attribute, name );
-		return ( CollectionAttribute<X, ?> ) attribute;
+		return ( CollectionAttribute<J, ?> ) attribute;
 	}
 
 	@Override
 	@SuppressWarnings({ "unchecked" })
-	public SetAttribute<? super X, ?> getSet(String name) {
-		PluralAttribute<? super X, ?, ?> attribute = getPluralAttribute( name );
-		if ( attribute == null && getSupertype() != null ) {
-			attribute = getSupertype().getPluralAttribute( name );
+	public SetPersistentAttribute<? super J, ?> getSet(String name) {
+		PluralAttribute<? super J, ?, ?> attribute = getPluralAttribute( name );
+		if ( attribute == null && getSuperType() != null ) {
+			attribute = getSuperType().getPluralAttribute( name );
 		}
 		basicSetCheck( attribute, name );
-		return (SetAttribute<? super X, ?>) attribute;
+		return (SetPersistentAttribute) attribute;
 	}
 
-	private void basicSetCheck(PluralAttribute<? super X, ?, ?> attribute, String name) {
+	private void basicSetCheck(PluralAttribute<? super J, ?, ?> attribute, String name) {
 		checkNotNull( "SetAttribute", attribute, name );
 		if ( ! SetAttribute.class.isAssignableFrom( attribute.getClass() ) ) {
 			throw new IllegalArgumentException( name + " is not a SetAttribute: " + attribute.getClass() );
@@ -286,24 +297,24 @@ public abstract class AbstractManagedType<X>
 
 	@Override
 	@SuppressWarnings( "unchecked")
-	public SetAttribute<X, ?> getDeclaredSet(String name) {
-		final PluralAttribute<X,?,?> attribute = declaredPluralAttributes.get( name );
+	public SetPersistentAttribute<J, ?> getDeclaredSet(String name) {
+		final PluralAttribute<J,?,?> attribute = declaredPluralAttributes.get( name );
 		basicSetCheck( attribute, name );
-		return ( SetAttribute<X, ?> ) attribute;
+		return (SetPersistentAttribute) attribute;
 	}
 
 	@Override
 	@SuppressWarnings({ "unchecked" })
-	public ListAttribute<? super X, ?> getList(String name) {
-		PluralAttribute<? super X, ?, ?> attribute = getPluralAttribute( name );
-		if ( attribute == null && getSupertype() != null ) {
-			attribute = getSupertype().getPluralAttribute( name );
+	public ListPersistentAttribute<? super J, ?> getList(String name) {
+		PluralAttribute<? super J, ?, ?> attribute = getPluralAttribute( name );
+		if ( attribute == null && getSuperType() != null ) {
+			attribute = getSuperType().getPluralAttribute( name );
 		}
 		basicListCheck( attribute, name );
-		return (ListAttribute<? super X, ?>) attribute;
+		return (ListPersistentAttribute) attribute;
 	}
 
-	private void basicListCheck(PluralAttribute<? super X, ?, ?> attribute, String name) {
+	private void basicListCheck(PluralAttribute<? super J, ?, ?> attribute, String name) {
 		checkNotNull( "ListAttribute", attribute, name );
 		if ( ! ListAttribute.class.isAssignableFrom( attribute.getClass() ) ) {
 			throw new IllegalArgumentException( name + " is not a ListAttribute: " + attribute.getClass() );
@@ -312,24 +323,24 @@ public abstract class AbstractManagedType<X>
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public ListAttribute<X, ?> getDeclaredList(String name) {
-		final PluralAttribute<X,?,?> attribute = declaredPluralAttributes.get( name );
+	public ListPersistentAttribute<J, ?> getDeclaredList(String name) {
+		final PluralAttribute<J,?,?> attribute = declaredPluralAttributes.get( name );
 		basicListCheck( attribute, name );
-		return ( ListAttribute<X, ?> ) attribute;
+		return (ListPersistentAttribute) attribute;
 	}
 
 	@Override
 	@SuppressWarnings({ "unchecked" })
-	public MapAttribute<? super X, ?, ?> getMap(String name) {
-		PluralAttribute<? super X, ?, ?> attribute = getPluralAttribute( name );
-		if ( attribute == null && getSupertype() != null ) {
-			attribute = getSupertype().getPluralAttribute( name );
+	public MapPersistentAttribute<? super J, ?, ?> getMap(String name) {
+		PluralAttribute<? super J, ?, ?> attribute = getPluralAttribute( name );
+		if ( attribute == null && getSuperType() != null ) {
+			attribute = getSuperType().getPluralAttribute( name );
 		}
 		basicMapCheck( attribute, name );
-		return (MapAttribute<? super X, ?, ?>) attribute;
+		return (MapPersistentAttribute) attribute;
 	}
 
-	private void basicMapCheck(PluralAttribute<? super X, ?, ?> attribute, String name) {
+	private void basicMapCheck(PluralAttribute<? super J, ?, ?> attribute, String name) {
 		checkNotNull( "MapAttribute", attribute, name );
 		if ( ! MapAttribute.class.isAssignableFrom( attribute.getClass() ) ) {
 			throw new IllegalArgumentException( name + " is not a MapAttribute: " + attribute.getClass() );
@@ -338,29 +349,29 @@ public abstract class AbstractManagedType<X>
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public MapAttribute<X, ?, ?> getDeclaredMap(String name) {
-		final PluralAttribute<X,?,?> attribute = declaredPluralAttributes.get( name );
+	public MapPersistentAttribute<J, ?, ?> getDeclaredMap(String name) {
+		final PluralAttribute<J,?,?> attribute = declaredPluralAttributes.get( name );
 		basicMapCheck( attribute, name );
-		return ( MapAttribute<X,?,?> ) attribute;
+		return (MapPersistentAttribute) attribute;
 	}
 
 	@Override
 	@SuppressWarnings({ "unchecked" })
-	public <E> CollectionAttribute<? super X, E> getCollection(String name, Class<E> elementType) {
-		PluralAttribute<? super X, ?, ?> attribute = declaredPluralAttributes.get( name );
-		if ( attribute == null && getSupertype() != null ) {
-			attribute = getSupertype().getPluralAttribute( name );
+	public <E> BagPersistentAttribute<? super J, E> getCollection(String name, Class<E> elementType) {
+		PluralAttribute<? super J, ?, ?> attribute = declaredPluralAttributes.get( name );
+		if ( attribute == null && getSuperType() != null ) {
+			attribute = getSuperType().getPluralAttribute( name );
 		}
 		checkCollectionElementType( attribute, name, elementType );
-		return ( CollectionAttribute<? super X, E> ) attribute;
+		return (BagPersistentAttribute) attribute;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <E> CollectionAttribute<X, E> getDeclaredCollection(String name, Class<E> elementType) {
-		final PluralAttribute<X,?,?> attribute = declaredPluralAttributes.get( name );
+	public <E> CollectionAttribute<J, E> getDeclaredCollection(String name, Class<E> elementType) {
+		final PluralAttribute<J,?,?> attribute = declaredPluralAttributes.get( name );
 		checkCollectionElementType( attribute, name, elementType );
-		return ( CollectionAttribute<X, E> ) attribute;
+		return (CollectionAttribute) attribute;
 	}
 
 	private <E> void checkCollectionElementType(PluralAttribute<?,?,?> attribute, String name, Class<E> elementType) {
@@ -378,76 +389,76 @@ public abstract class AbstractManagedType<X>
 				|| attribute.getCollectionType() != collectionType ) {
 			throw new IllegalArgumentException(
 					attributeType + " named " + name
-					+ ( elementType != null ? " and of element type " + elementType : "" )
-					+ " is not present"
+							+ ( elementType != null ? " and of element type " + elementType : "" )
+							+ " is not present"
 			);
 		}
 	}
 
 	@Override
 	@SuppressWarnings({ "unchecked" })
-	public <E> SetAttribute<? super X, E> getSet(String name, Class<E> elementType) {
-		PluralAttribute<? super X, ?, ?> attribute = declaredPluralAttributes.get( name );
-		if ( attribute == null && getSupertype() != null ) {
-			attribute = getSupertype().getPluralAttribute( name );
+	public <E> SetAttribute<? super J, E> getSet(String name, Class<E> elementType) {
+		PluralAttribute<? super J, ?, ?> attribute = declaredPluralAttributes.get( name );
+		if ( attribute == null && getSuperType() != null ) {
+			attribute = getSuperType().getPluralAttribute( name );
 		}
 		checkSetElementType( attribute, name, elementType );
-		return ( SetAttribute<? super X, E> ) attribute;
+		return ( SetAttribute<? super J, E> ) attribute;
 	}
 
-	private <E> void checkSetElementType(PluralAttribute<? super X, ?, ?> attribute, String name, Class<E> elementType) {
+	private <E> void checkSetElementType(PluralAttribute<? super J, ?, ?> attribute, String name, Class<E> elementType) {
 		checkTypeForPluralAttributes( "SetAttribute", attribute, name, elementType, PluralAttribute.CollectionType.SET );
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <E> SetAttribute<X, E> getDeclaredSet(String name, Class<E> elementType) {
-		final PluralAttribute<X,?,?> attribute = declaredPluralAttributes.get( name );
+	public <E> SetAttribute<J, E> getDeclaredSet(String name, Class<E> elementType) {
+		final PluralAttribute<J,?,?> attribute = declaredPluralAttributes.get( name );
 		checkSetElementType( attribute, name, elementType );
-		return ( SetAttribute<X, E> ) attribute;
+		return ( SetAttribute<J, E> ) attribute;
 	}
 
 	@Override
 	@SuppressWarnings({ "unchecked" })
-	public <E> ListAttribute<? super X, E> getList(String name, Class<E> elementType) {
-		PluralAttribute<? super X, ?, ?> attribute = declaredPluralAttributes.get( name );
-		if ( attribute == null && getSupertype() != null ) {
-			attribute = getSupertype().getPluralAttribute( name );
+	public <E> ListAttribute<? super J, E> getList(String name, Class<E> elementType) {
+		PluralAttribute<? super J, ?, ?> attribute = declaredPluralAttributes.get( name );
+		if ( attribute == null && getSuperType() != null ) {
+			attribute = getSuperType().getPluralAttribute( name );
 		}
 		checkListElementType( attribute, name, elementType );
-		return ( ListAttribute<? super X, E> ) attribute;
+		return ( ListAttribute<? super J, E> ) attribute;
 	}
 
-	private <E> void checkListElementType(PluralAttribute<? super X, ?, ?> attribute, String name, Class<E> elementType) {
+	private <E> void checkListElementType(PluralAttribute<? super J, ?, ?> attribute, String name, Class<E> elementType) {
 		checkTypeForPluralAttributes( "ListAttribute", attribute, name, elementType, PluralAttribute.CollectionType.LIST );
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <E> ListAttribute<X, E> getDeclaredList(String name, Class<E> elementType) {
-		final PluralAttribute<X,?,?> attribute = declaredPluralAttributes.get( name );
+	public <E> ListAttribute<J, E> getDeclaredList(String name, Class<E> elementType) {
+		final PluralAttribute<J,?,?> attribute = declaredPluralAttributes.get( name );
 		checkListElementType( attribute, name, elementType );
-		return ( ListAttribute<X, E> ) attribute;
+		return ( ListAttribute<J, E> ) attribute;
 	}
 
 	@Override
 	@SuppressWarnings({ "unchecked" })
-	public <K, V> MapAttribute<? super X, K, V> getMap(String name, Class<K> keyType, Class<V> valueType) {
-		PluralAttribute<? super X, ?, ?> attribute = getPluralAttribute( name );
-		if ( attribute == null && getSupertype() != null ) {
-			attribute = getSupertype().getPluralAttribute( name );
+	public <K, V> MapAttribute<? super J, K, V> getMap(String name, Class<K> keyType, Class<V> valueType) {
+		PluralAttribute<? super J, ?, ?> attribute = getPluralAttribute( name );
+		if ( attribute == null && getSuperType() != null ) {
+			attribute = getSuperType().getPluralAttribute( name );
 		}
 		checkMapValueType( attribute, name, valueType );
-		final MapAttribute<? super X, K, V> mapAttribute = ( MapAttribute<? super X, K, V> ) attribute;
+		final MapAttribute<? super J, K, V> mapAttribute = ( MapAttribute<? super J, K, V> ) attribute;
 		checkMapKeyType( mapAttribute, name, keyType );
 		return mapAttribute;
 	}
 
-	private <V> void checkMapValueType(PluralAttribute<? super X, ?, ?> attribute, String name, Class<V> valueType) {
+	private <V> void checkMapValueType(PluralAttribute<? super J, ?, ?> attribute, String name, Class<V> valueType) {
 		checkTypeForPluralAttributes( "MapAttribute", attribute, name, valueType, PluralAttribute.CollectionType.MAP);
 	}
 
-	private <K,V> void checkMapKeyType(MapAttribute<? super X, K, V> mapAttribute, String name, Class<K> keyType) {
+	private <K,V> void checkMapKeyType(MapAttribute<? super J, K, V> mapAttribute, String name, Class<K> keyType) {
 		if ( mapAttribute.getKeyJavaType() != keyType ) {
 			throw new IllegalArgumentException( "MapAttribute named " + name + " does not support a key of type " + keyType );
 		}
@@ -455,11 +466,52 @@ public abstract class AbstractManagedType<X>
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <K, V> MapAttribute<X, K, V> getDeclaredMap(String name, Class<K> keyType, Class<V> valueType) {
-		final PluralAttribute<X,?,?> attribute = declaredPluralAttributes.get( name );
+	public <K, V> MapAttribute<J, K, V> getDeclaredMap(String name, Class<K> keyType, Class<V> valueType) {
+		final PluralAttribute<J,?,?> attribute = declaredPluralAttributes.get( name );
 		checkMapValueType( attribute, name, valueType );
-		final MapAttribute<X, K, V> mapAttribute = ( MapAttribute<X, K, V> ) attribute;
+		final MapAttribute<J, K, V> mapAttribute = ( MapAttribute<J, K, V> ) attribute;
 		checkMapKeyType( mapAttribute, name, keyType );
 		return mapAttribute;
+	}
+
+/*
+	@Override
+	public <S extends J> ManagedTypeDescriptor<S> findSubType(String subTypeName) {
+		return DomainModelHelper.resolveSubType( this, subTypeName, sessionFactory() );
+	}
+
+	@Override
+	public <S extends J> ManagedTypeDescriptor<S> findSubType(Class<S> subType) {
+		return DomainModelHelper.resolveSubType( this, subType, sessionFactory() );
+	}*/
+
+	protected class InFlightAccessImpl implements InFlightAccess<J> {
+		@Override
+		@SuppressWarnings("unchecked")
+		public void addAttribute(PersistentAttributeDescriptor<J, ?> attribute) {
+			// put it in the collective group of attributes
+			declaredAttributes.put( attribute.getName(), attribute );
+
+			// additionally classify as singular or plural attribute
+			final Bindable.BindableType bindableType = ( ( Bindable ) attribute ).getBindableType();
+			switch ( bindableType ) {
+				case SINGULAR_ATTRIBUTE : {
+					declaredSingularAttributes.put( attribute.getName(), (SingularPersistentAttribute<J,?>) attribute );
+					break;
+				}
+				case PLURAL_ATTRIBUTE : {
+					declaredPluralAttributes.put(attribute.getName(), (PluralPersistentAttribute<J,?,?>) attribute );
+					break;
+				}
+				default : {
+					throw new AssertionFailure( "unknown bindable type: " + bindableType );
+				}
+			}
+		}
+
+		@Override
+		public void finishUp() {
+			inFlightAccess = null;
+		}
 	}
 }

@@ -1,25 +1,26 @@
 package cn.sexycode.myjpa.metamodel.internal;
 
+import cn.sexycode.myjpa.session.SessionFactory;
 
-import javax.persistence.MappedSuperclass;
-import javax.persistence.metamodel.MappedSuperclassType;
 
 /**
- *
- *
+ * @author Emmanuel Bernard
+ * @author Steve Ebersole
  */
-public class MappedSuperclassTypeImpl<X> extends AbstractIdentifiableType<X> implements MappedSuperclassType<X> {
+public class MappedSuperclassTypeImpl<X> extends AbstractIdentifiableType<X> implements MappedSuperclassTypeDescriptor<X> {
     public MappedSuperclassTypeImpl(
             Class<X> javaType,
             MappedSuperclass mappedSuperclass,
-            AbstractIdentifiableType<? super X> superType) {
+            IdentifiableTypeDescriptor<? super X> superType,
+            SessionFactory sessionFactory) {
         super(
                 javaType,
                 javaType.getName(),
                 superType,
-                (superType != null && superType.hasIdClass()),
-                true,
-                true
+                false,
+                mappedSuperclass.hasIdentifierProperty(),
+                mappedSuperclass.isVersioned(),
+                sessionFactory
         );
     }
 
@@ -27,4 +28,5 @@ public class MappedSuperclassTypeImpl<X> extends AbstractIdentifiableType<X> imp
     public PersistenceType getPersistenceType() {
         return PersistenceType.MAPPED_SUPERCLASS;
     }
+
 }

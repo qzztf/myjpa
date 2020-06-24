@@ -52,12 +52,8 @@ class MetadataContext {
     private List<PersistentClass> stackOfPersistentClassesBeingProcessed = new ArrayList<>();
 
     public MetadataContext(
-            SessionFactory sessionFactory,
-            Set<MappedSuperclass> mappedSuperclasses,
-            JpaMetaModelPopulationSetting jpaMetaModelPopulationSetting) {
+            SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
-        this.knownMappedSuperclasses = mappedSuperclasses;
-        this.ignoreUnsupported = jpaMetaModelPopulationSetting == JpaMetaModelPopulationSetting.IGNORE_UNSUPPORTED;
     }
 
     /*package*/ SessionFactory getSessionFactory() {

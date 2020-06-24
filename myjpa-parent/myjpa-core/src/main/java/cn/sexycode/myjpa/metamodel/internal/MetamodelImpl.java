@@ -106,7 +106,7 @@ public class MetamodelImpl implements Metamodel, Serializable {
      */
     public void initialize(Metadata mappingMetadata) {
 
-        MetadataContext context = new MetadataContext(sessionFactory, null);
+        MetadataContext context = new MetadataContext(sessionFactory);
 
         for (PersistentClass entityBinding : mappingMetadata.getEntityBindings()) {
             locateOrBuildEntityType(entityBinding, context);

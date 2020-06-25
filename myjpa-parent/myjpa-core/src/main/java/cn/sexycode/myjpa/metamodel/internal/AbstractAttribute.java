@@ -1,8 +1,8 @@
 package cn.sexycode.myjpa.metamodel.internal;
 
+import cn.sexycode.util.core.object.ReflectHelper;
 
 import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.ManagedType;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -13,27 +13,34 @@ import java.lang.reflect.Method;
 /**
  * Models the commonality of the JPA {@link Attribute} hierarchy.
  *
+ * @param <D> The type of the class (D)eclaring this attribute
+ * @param <J> The (J)ava type of this attribute
  *
+ * @author Steve Ebersole
  */
-public abstract class AbstractAttribute<X, Y>
-		implements Attribute<X, Y>, Serializable {
+public abstract class AbstractAttribute<D, J>
+		implements PersistentAttributeDescriptor<D, J>, Serializable {
+	private final ManagedTypeDescriptor<D> declaringType;
 	private final String name;
-	private final Class<Y> javaType;
-	private final AbstractManagedType<X> declaringType;
-	private transient Member member;
-	private final PersistentAttributeType persistentAttributeType;
 
-	public AbstractAttribute(
+	private final PersistentAttributeType attributeNature;
+
+	private final SimpleTypeDescriptor<?> valueType;
+	private transient Member member;
+
+
+	@SuppressWarnings("WeakerAccess")
+	protected AbstractAttribute(
+			ManagedTypeDescriptor<D> declaringType,
 			String name,
-			Class<Y> javaType,
-			AbstractManagedType<X> declaringType,
-			Member member,
-			PersistentAttributeType persistentAttributeType) {
-		this.name = name;
-		this.javaType = javaType;
+			PersistentAttributeType attributeNature,
+			SimpleTypeDescriptor<?> valueType,
+			Member member) {
 		this.declaringType = declaringType;
+		this.name = name;
+		this.attributeNature = attributeNature;
+		this.valueType = valueType;
 		this.member = member;
-		this.persistentAttributeType = persistentAttributeType;
 	}
 
 	@Override
@@ -42,13 +49,8 @@ public abstract class AbstractAttribute<X, Y>
 	}
 
 	@Override
-	public ManagedType<X> getDeclaringType() {
+	public ManagedTypeDescriptor<D> getDeclaringType() {
 		return declaringType;
-	}
-
-	@Override
-	public Class<Y> getJavaType() {
-		return javaType;
 	}
 
 	@Override
@@ -58,16 +60,27 @@ public abstract class AbstractAttribute<X, Y>
 
 	@Override
 	public PersistentAttributeType getPersistentAttributeType() {
-		return persistentAttributeType;
+		return attributeNature;
+	}
+
+	@Override
+	public SimpleTypeDescriptor<?> getValueGraphType() {
+		return valueType;
+	}
+
+	@Override
+	public String toString() {
+		return declaringType.getName() + '#' + name + '(' + attributeNature + ')';
 	}
 
 	/**
 	 * Used by JDK serialization...
 	 *
 	 * @param ois The input stream from which we are being read...
-	 * @throws IOException Indicates a general IO stream exception
+	 * @throws java.io.IOException Indicates a general IO stream exception
 	 * @throws ClassNotFoundException Indicates a class resolution issue
 	 */
+	@SuppressWarnings("unchecked")
 	protected void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
 		ois.defaultReadObject();
 		final String memberDeclaringClassName = ( String ) ois.readObject();
@@ -80,9 +93,9 @@ public abstract class AbstractAttribute<X, Y>
 				declaringType.getJavaType().getClassLoader()
 		);
 		try {
-			/*this.member = "method".equals( memberType )
+			this.member = "method".equals( memberType )
 					? memberDeclaringClass.getMethod( memberName, ReflectHelper.NO_PARAM_SIGNATURE )
-					: memberDeclaringClass.getField( memberName );*/
+					: memberDeclaringClass.getField( memberName );
 		}
 		catch ( Exception e ) {
 			throw new IllegalStateException(
@@ -103,6 +116,6 @@ public abstract class AbstractAttribute<X, Y>
 		oos.writeObject( getJavaMember().getDeclaringClass().getName() );
 		oos.writeObject( getJavaMember().getName() );
 		// should only ever be a field or the getter-method...
-        oos.writeObject(getJavaMember() instanceof Method ? "method" : "field");
+		oos.writeObject( Method.class.isInstance( getJavaMember() ) ? "method" : "field" );
 	}
 }

@@ -11,12 +11,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.Type;
+import java.lang.reflect.Field;
 import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * A factory for building {@link Attribute} instances.  Exposes 3 main services for building<ol>
@@ -60,9 +61,9 @@ public class AttributeFactory {
 		if ( attributeMetadata == null ) {
 			return null;
 		}
-		if ( attributeMetadata.isPlural() ) {
+		/*if ( attributeMetadata.isPlural() ) {
 			return buildPluralAttribute( (PluralAttributeMetadata) attributeMetadata );
-		}
+		}*/
 		final SingularAttributeMetadata<X, Y> singularAttributeMetadata = (SingularAttributeMetadata<X, Y>) attributeMetadata;
 		final SimpleTypeDescriptor<Y> metaModelType = determineSimpleType( singularAttributeMetadata.getValueContext() );
 		return new SingularAttributeImpl(
@@ -149,8 +150,7 @@ public class AttributeFactory {
 		);
 	}
 
-	@SuppressWarnings("unchecked")
-	private <X, Y, E, K> PersistentAttributeDescriptor<X, Y> buildPluralAttribute(PluralAttributeMetadata<X, Y, E> attributeMetadata) {
+	/*private <X, Y, E, K> PersistentAttributeDescriptor<X, Y> buildPluralAttribute(PluralAttributeMetadata<X, Y, E> attributeMetadata) {
 		final PluralAttributeBuilder info = new PluralAttributeBuilder(
 				attributeMetadata.getOwnerType(),
 				determineSimpleType( attributeMetadata.getElementValueContext() ),
@@ -165,7 +165,7 @@ public class AttributeFactory {
 				.property( attributeMetadata.getPropertyMapping() )
 				.persistentAttributeType( attributeMetadata.getJpaAttributeNature() )
 				.build();
-	}
+	}*/
 
 	@SuppressWarnings("unchecked")
 	private <Y> SimpleTypeDescriptor<Y> determineSimpleType(ValueContext typeContext) {
@@ -176,8 +176,8 @@ public class AttributeFactory {
 						Type.PersistenceType.BASIC
 				);
 			}
-			case ENTITY: {
-				final org.hibernate.type.EntityType type = (EntityType) typeContext.getHibernateValue().getType();
+			/*case ENTITY: {
+				final EntityType type = (EntityType) typeContext.getHibernateValue().getType();
 				return context.locateEntityType( type.getAssociatedEntityName() );
 			}
 			case EMBEDDABLE: {
@@ -211,7 +211,7 @@ public class AttributeFactory {
 				inFlightAccess.finishUp();
 
 				return embeddableType;
-			}
+			}*/
 			default: {
 				throw new AssertionFailure( "Unknown type : " + typeContext.getValueClassification() );
 			}

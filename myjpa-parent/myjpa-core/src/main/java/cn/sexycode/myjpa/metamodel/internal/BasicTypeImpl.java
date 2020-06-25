@@ -1,10 +1,12 @@
 package cn.sexycode.myjpa.metamodel.internal;
 
-import javax.persistence.metamodel.BasicType;
 import java.io.Serializable;
 
-public class BasicTypeImpl<X> implements BasicType<X>, Serializable {
-	private final Class<X> clazz;
+/**
+ * @author Emmanuel Bernard
+ */
+public class BasicTypeImpl<J> implements BasicTypeDescriptor<J>, Serializable {
+	private final Class<J> clazz;
 	private PersistenceType persistenceType;
 
 	@Override
@@ -13,12 +15,17 @@ public class BasicTypeImpl<X> implements BasicType<X>, Serializable {
 	}
 
 	@Override
-	public Class<X> getJavaType() {
+	public Class<J> getJavaType() {
 		return clazz;
 	}
 
-	public BasicTypeImpl(Class<X> clazz, PersistenceType persistenceType) {
+	public BasicTypeImpl(Class<J> clazz, PersistenceType persistenceType) {
 		this.clazz = clazz;
 		this.persistenceType = persistenceType;
+	}
+
+	@Override
+	public String getTypeName() {
+		return clazz.getName();
 	}
 }

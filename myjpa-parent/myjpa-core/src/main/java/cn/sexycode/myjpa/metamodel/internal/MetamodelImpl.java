@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * implementation of the JPA {@link javax.persistence.metamodel.Metamodel} contract.
@@ -22,10 +23,31 @@ public class MetamodelImpl implements Metamodel, Serializable {
     private final Map<String, Set<String>> collectionRolesByEntityParticipant = new ConcurrentHashMap<>();
 
 
-    private final Map<Class<?>, EntityTypeImpl<?>> jpaEntityTypeMap = new ConcurrentHashMap<>();
-    private final Map<Class<?>, EmbeddableTypeImpl<?>> jpaEmbeddableTypeMap = new ConcurrentHashMap<>();
+    private final Map<Class<?>, EntityTypeDescriptor<?>> jpaEntityTypeMap = new ConcurrentHashMap<>();
+    private final Map<Class<?>, EmbeddedTypeDescriptor<?>> jpaEmbeddableTypeMap = new ConcurrentHashMap<>();
     private final Map<Class<?>, MappedSuperclassType<?>> jpaMappedSuperclassTypeMap = new ConcurrentHashMap<>();
-    private final Map<String, EntityTypeImpl<?>> jpaEntityTypesByEntityName = new ConcurrentHashMap<>();
+    private final Map<String, EntityTypeDescriptor<?>> jpaEntityTypesByEntityName = new ConcurrentHashMap<>();
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // NOTE : Relational/mapping information is not part of the JPA metamodel
+    // (type system).  However, this relational/mapping info *is* part of the
+    // Hibernate metamodel.  This is a mismatch.  Normally this is not a
+    // problem - ignoring Hibernate's representation mode (entity mode),
+    // an entity (or mapped superclass) *Class* always refers to the same
+    // EntityType (JPA) and EntityPersister (Hibernate)..  The problem is
+    // in regards to embeddables.  For an embeddable, as with the rest of its
+    // metamodel, Hibernate combines the embeddable's relational/mapping
+    // while JPA does not.  This is consistent with each's model paradigm.
+    // However, it causes a mismatch in that while JPA expects a single
+    // "type descriptor" for a given embeddable class, Hibernate incorporates
+    // the relational/mapping info so we have a "type descriptor" for each
+    // usage of that embeddable.  Think embeddable versus embedded.
+    //
+    // To account for this, we track both paradigms here...
+
+    /**
+     * There can be multiple instances of an Embeddable type, each one being relative to its parent entity.
+     */
+    private final Set<EmbeddedTypeDescriptor<?>> jpaEmbeddableTypes = new CopyOnWriteArraySet<>();
 
     private final transient Map<String, EntityGraph> entityGraphMap = new ConcurrentHashMap<>();
     private final SessionFactory sessionFactory;
@@ -113,7 +135,9 @@ public class MetamodelImpl implements Metamodel, Serializable {
         }
         context.wrapUp();
         this.jpaEntityTypeMap.putAll(context.getEntityTypeMap());
-        this.jpaEmbeddableTypeMap.putAll(context.getEmbeddableTypeMap());
+        for ( EmbeddedTypeDescriptor<?> embeddable: jpaEmbeddableTypes ) {
+            this.jpaEmbeddableTypeMap.put( embeddable.getJavaType(), embeddable );
+        }
         this.jpaMappedSuperclassTypeMap.putAll(context.getMappedSuperclassTypeMap());
         this.jpaEntityTypesByEntityName.putAll(context.getEntityTypesByEntityName());
 

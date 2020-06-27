@@ -31,7 +31,7 @@ class MetadataContext {
 
     private final SessionFactory sessionFactory;
     private Set<MappedSuperclass> knownMappedSuperclasses;
-    private final boolean ignoreUnsupported;
+    private final boolean ignoreUnsupported = true;
     private final AttributeFactory attributeFactory = new AttributeFactory( this );
 
     private Map<Class<?>, EntityTypeDescriptor<?>> entityTypes = new HashMap<>();

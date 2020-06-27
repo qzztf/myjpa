@@ -92,7 +92,7 @@ public class MetamodelImpl implements Metamodel, Serializable {
         if (embeddableType == null) {
             EmbeddableTypeImpl type = new EmbeddableTypeImpl(
                     cls,
-                    null
+                    null, sessionFactory
             );
             jpaEmbeddableTypeMap.put(cls, type);
             embeddableType = type;
@@ -143,8 +143,8 @@ public class MetamodelImpl implements Metamodel, Serializable {
 
     }
 
-    private static EntityTypeImpl<?> locateOrBuildEntityType(PersistentClass persistentClass, MetadataContext context) {
-        EntityTypeImpl<?> entityType = context.locateEntityType(persistentClass);
+    private static EntityTypeDescriptor<?> locateOrBuildEntityType(PersistentClass persistentClass, MetadataContext context) {
+        EntityTypeDescriptor<?> entityType = context.locateEntityType(persistentClass);
         if (entityType == null) {
             entityType = buildEntityType(persistentClass, context);
         }
@@ -157,7 +157,7 @@ public class MetamodelImpl implements Metamodel, Serializable {
         final Class javaType = persistentClass.getMappedClass();
         context.pushEntityWorkedOn(persistentClass);
 
-        EntityTypeImpl entityType = new EntityTypeImpl(javaType, null, persistentClass);
+        EntityTypeImpl entityType = new EntityTypeImpl(javaType, null, persistentClass, context.getSessionFactory());
 
         context.registerEntityType(persistentClass, entityType);
         return entityType;

@@ -2,22 +2,24 @@ package cn.sexycode.myjpa.mapping;
 
 import cn.sexycode.myjpa.binding.MappingException;
 import cn.sexycode.myjpa.binding.MetadataBuildingContext;
+import cn.sexycode.myjpa.metamodel.internal.MappedSuperclass;
+import cn.sexycode.sql.mapping.Table;
+import cn.sexycode.util.core.collection.JoinedIterator;
 import cn.sexycode.util.core.exception.ClassLoadingException;
 import cn.sexycode.util.core.service.ServiceRegistry;
 
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Table;
 import javax.persistence.criteria.Join;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
  * Mapping for an entity.
  *
  */
-public abstract class PersistentClass implements Serializable {
+public abstract class PersistentClass implements AttributeContainer, Serializable {
 
     public static final String NULL_DISCRIMINATOR_MAPPING = "null";
     public static final String NOT_NULL_DISCRIMINATOR_MAPPING = "not null";
@@ -105,6 +107,20 @@ public abstract class PersistentClass implements Serializable {
             throw new MappingException("entity class not found: " + className, e);
         }
 
+    }
+    // The following methods are added to support @MappedSuperclass in the metamodel
+    public Iterator getDeclaredPropertyIterator() {
+        ArrayList iterators = new ArrayList();
+        iterators.add( declaredProperties.iterator() );
+        return new JoinedIterator( iterators );
+    }
+
+
+    @Override
+    public void addProperty(Property p) {
+        properties.add( p );
+        declaredProperties.add( p );
+        p.setPersistentClass( this );
     }
 
     public Class getProxyInterface() {

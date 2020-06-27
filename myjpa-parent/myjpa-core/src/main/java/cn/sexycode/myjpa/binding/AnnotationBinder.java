@@ -7,13 +7,13 @@ import cn.sexycode.util.core.cls.XPackage;
 import cn.sexycode.util.core.exception.AnnotationException;
 import cn.sexycode.util.core.exception.AssertionFailure;
 import cn.sexycode.util.core.exception.ClassLoadingException;
+import cn.sexycode.util.core.str.StringUtils;
+import com.sun.tools.javac.comp.Check;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * JSR 175 annotation binder which reads the annotations from classes, applies the
@@ -400,7 +400,6 @@ public final class AnnotationBinder {
 //		bindFilters( clazzToProcess, entityBinder, context );
 */
 		entityBinder.bindEntity();
-/*
 		if ( inheritanceState.hasTable() ) {
 			Check checkAnn = clazzToProcess.getAnnotation( Check.class );
 			String constraints = checkAnn == null
@@ -422,7 +421,7 @@ public final class AnnotationBinder {
 		}
 		else {
 			if ( clazzToProcess.isAnnotationPresent( Table.class ) ) {
-				LOG.invalidTableAnnotation( clazzToProcess.getName() );
+				LOG.info( clazzToProcess.getName() );
 			}
 
 			if ( inheritanceState.getType() == InheritanceType.SINGLE_TABLE ) {
@@ -579,7 +578,6 @@ public final class AnnotationBinder {
 		else {
 			superEntity.addSubclass( ( Subclass ) persistentClass );
 		}
-*/
         context.getMetadataCollector().addEntityBinding(persistentClass);
 /*
 		//Process secondary tables and complementary definitions (ie o.h.a.Table)

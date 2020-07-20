@@ -447,9 +447,9 @@ public final class AnnotationBinder {
 		javax.persistence.SecondaryTables secTabsAnn = clazzToProcess.getAnnotation(
 				javax.persistence.SecondaryTables.class
 		);
-		entityBinder.firstLevelSecondaryTablesBinding( secTabAnn, secTabsAnn );
+//		entityBinder.firstLevelSecondaryTablesBinding( secTabAnn, secTabsAnn );
 
-		OnDelete onDeleteAnn = clazzToProcess.getAnnotation( OnDelete.class );
+//		OnDelete onDeleteAnn = clazzToProcess.getAnnotation( OnDelete.class );
 		boolean onDeleteAppropriate = false;
 
 		// todo : sucks that this is separate from RootClass distinction

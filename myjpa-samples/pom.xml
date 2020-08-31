@@ -8,7 +8,7 @@
     <groupId>cn.sexycode</groupId>
     <artifactId>myjpa-samples</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>0.0.4</version>
     <modules>
         <module>samples-myjpa</module>
         <module>samples-myjpa-spring</module>
@@ -18,7 +18,7 @@
     </modules>
 
     <properties>
-        <myjpa.version>0.0.4-SNAPSHOT</myjpa.version>
+        <myjpa.version>0.0.4</myjpa.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
@@ -104,7 +104,7 @@
         <dependency>
             <groupId>cn.sexycode</groupId>
             <artifactId>spring-data-myjpa</artifactId>
-            <version>0.0.4-SNAPSHOT</version>
+            <version>0.0.4</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>-->

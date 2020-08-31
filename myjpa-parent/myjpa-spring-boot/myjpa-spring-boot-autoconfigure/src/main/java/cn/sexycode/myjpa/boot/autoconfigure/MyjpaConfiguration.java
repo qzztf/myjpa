@@ -1,7 +1,7 @@
 package cn.sexycode.myjpa.boot.autoconfigure;
 
 import cn.sexycode.myjpa.orm.vendor.MyjpaVendorAdapter;
-import cn.sexycode.myjpa.spring.BeanFactoryAdapter;
+import cn.sexycode.myjpa.spring.factory.BeanFactoryAdapter;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;

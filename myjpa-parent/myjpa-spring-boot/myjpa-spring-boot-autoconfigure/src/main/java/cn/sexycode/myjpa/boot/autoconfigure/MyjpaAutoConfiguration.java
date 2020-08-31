@@ -1,6 +1,6 @@
 package cn.sexycode.myjpa.boot.autoconfigure;
 
-import cn.sexycode.myjpa.spring.BeanFactoryAdapter;
+import cn.sexycode.myjpa.spring.factory.BeanFactoryAdapter;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -19,7 +19,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 
-import static cn.sexycode.myjpa.boot.autoconfigure.MyjpaAutoConfiguration.*;
+import static cn.sexycode.myjpa.boot.autoconfigure.MyjpaAutoConfiguration.MyjpaDataConfiguration;
 
 /**
  * @author qinzaizhen

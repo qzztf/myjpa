@@ -1,5 +1,6 @@
 package cn.sexycode.myjpa.query;
 
+import cn.sexycode.myjpa.binding.MyjpaParameterImpl;
 import cn.sexycode.myjpa.mybatis.NoSuchMapperMethodException;
 import cn.sexycode.myjpa.mybatis.PagePlugin;
 import cn.sexycode.myjpa.session.Session;

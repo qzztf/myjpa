@@ -16,8 +16,8 @@ public class Demo {
         EntityManager em = entityManagerFactory.createEntityManager();
         em.getTransaction().begin();
         User user = new User();
-        user.setId("8");
-        user.setAccount("ffdfdfddd");
+        user.setId("88");
+        user.setAccount("ffdfdfddd1");
         user.setPassword("1111");
         user.setFullName("qzz");
         //以上两行为新建状态

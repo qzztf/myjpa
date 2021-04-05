@@ -24,6 +24,7 @@ public class MybatisMapperRegistry extends MapperRegistry {
         super(config);
         this.config = config;
         this.innerMapperRegistry = Optional.ofNullable(mapperRegistry).orElse(new MapperRegistry(config));
+        initEntityMapper();
     }
 
     public MybatisMapperRegistry(Configuration config) {
@@ -33,21 +34,21 @@ public class MybatisMapperRegistry extends MapperRegistry {
     @Override
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
 
-            final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
-            if (mapperProxyFactory == null) {
-                return innerMapperRegistry.getMapper(type, sqlSession);
-            }
-            try {
-                return mapperProxyFactory.newInstance(sqlSession);
-            } catch (Exception e) {
-                throw new BindingException("Error getting mapper instance.", e);
-            }
+        final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
+        if (mapperProxyFactory == null) {
+            return innerMapperRegistry.getMapper(type, sqlSession);
+        }
+        try {
+            return mapperProxyFactory.newInstance(sqlSession);
+        } catch (Exception e) {
+            throw new BindingException("Error getting mapper instance.", e);
+        }
 
     }
 
     @Override
     public <T> boolean hasMapper(Class<T> type) {
-        return innerMapperRegistry.hasMapper(type);
+        return innerMapperRegistry.hasMapper(type) && knownMappers.containsKey(type);
     }
 
     @Override
@@ -78,10 +79,12 @@ public class MybatisMapperRegistry extends MapperRegistry {
      */
     @Override
     public Collection<Class<?>> getMappers() {
-        return Collections.unmodifiableCollection(knownMappers.keySet());
+        Set<Class<?>> set = new HashSet<>(knownMappers.keySet());
+        set.addAll(super.getMappers());
+        return Collections.unmodifiableCollection(set);
     }
 
-    void initEntityMapper() {
+    private void initEntityMapper() {
         innerMapperRegistry.getMappers().forEach(this::addMapper);
     }
 }

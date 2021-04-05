@@ -36,6 +36,10 @@
             <groupId>cn.sexycode</groupId>
             <artifactId>mysql</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.sexycode</groupId>
+            <artifactId>solo-core</artifactId>
+        </dependency>
         <!--<dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-spring</artifactId>

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>myjpa-parent</artifactId>
         <groupId>cn.sexycode</groupId>
-        <version>0.0.5-SNAPSHOT</version>
+        <version>${myjpa.version}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -29,12 +29,14 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>cn.sexycode</groupId>
             <artifactId>mysql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.sexycode</groupId>
+            <artifactId>solo-core</artifactId>
         </dependency>
         <!--<dependency>
             <groupId>org.mybatis</groupId>
@@ -51,19 +53,19 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.17</version>
+            <version>8.0.25</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13-beta-3</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.4.4.Final</version>
+            <version>5.6.2.Final</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -75,7 +77,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.25</version>
+            <version>1.7.32</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

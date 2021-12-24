@@ -6,11 +6,11 @@
     <parent>
         <groupId>cn.sexycode</groupId>
         <artifactId>myjpa-build</artifactId>
-        <version>0.0.5-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
     <artifactId>myjpa-dependencies</artifactId>
     <packaging>pom</packaging>
-
+    <version>${myjpa.version}</version>
     <modules>
         <module>../myjpa-parent</module>
     </modules>
@@ -20,10 +20,10 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.plugin.compiler.version>3.1</maven.plugin.compiler.version>
         <java.version>1.8</java.version>
-        <myjpa.version>${project.version}</myjpa.version>
+        <myjpa.version>3.5.7.1.1</myjpa.version>
         <mysql.version>1.1</mysql.version>
         <solo.version>1.3</solo.version>
-        <mybatis.version>3.4.6</mybatis.version>
+        <mybatis.version>3.5.7</mybatis.version>
         <spring-data-jpa.version>2.3.0.RELEASE</spring-data-jpa.version>
         <slf4j.version>1.7.21</slf4j.version>
         <jpa.version>2.2</jpa.version>
@@ -32,6 +32,8 @@
         <spring.version>5.2.6.RELEASE</spring.version>
         <spring.boot.version>2.3.0.RELEASE</spring.boot.version>
         <mybatis.spring.version>2.0.3</mybatis.spring.version>
+
+        <plugin-flatten.flatten.mode>bom</plugin-flatten.flatten.mode>
     </properties>
 
     <dependencyManagement>
@@ -61,7 +63,11 @@
                 <artifactId>mapper</artifactId>
                 <version>${tkmapper.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
             <dependency>
                 <groupId>cn.sexycode</groupId>
                 <artifactId>myjpa-core</artifactId>
@@ -154,6 +160,31 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.2.7</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>${plugin-flatten.flatten.mode}</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

@@ -29,7 +29,7 @@
         <jpa.version>2.2</jpa.version>
         <mybatis-plus.version>3.0.6</mybatis-plus.version>
         <tkmapper.version>4.1.5</tkmapper.version>
-        <spring.version>5.2.6.RELEASE</spring.version>
+        <spring.version>5.3.18</spring.version>
         <spring.boot.version>2.3.0.RELEASE</spring.boot.version>
         <mybatis.spring.version>2.0.3</mybatis.spring.version>
     </properties>
